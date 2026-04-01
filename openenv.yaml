@@ -1,0 +1,164 @@
+name: content-moderation-env
+version: "1.0.0"
+description: >
+  A real-world AI content moderation benchmark where an agent must classify
+  user-generated content and select the appropriate moderation action, across
+  three difficulty tiers (easy / medium / hard).
+
+domain: trust_and_safety
+language: python
+python_requires: ">=3.10"
+
+# ── Task definitions (3 tasks, easy → medium → hard) ─────────────────────────
+tasks:
+  - id: easy_moderation
+    name: Easy Content Moderation
+    description: >
+      Classify unambiguous content (explicit spam, direct hate speech, clearly
+      benign posts) and select the correct moderation action. Labels and actions
+      are unambiguous; no multimodal signals.
+    difficulty: easy
+    score_range: [0.0, 1.0]
+    score_components:
+      - name: label_correct
+        weight: 0.5
+        description: Classification label matches ground truth (safe/toxic/spam/misleading)
+      - name: action_correct
+        weight: 0.5
+        description: Moderation action matches ground truth (allow/warn/remove/shadowban/escalate)
+    num_scenarios: 20
+
+  - id: medium_moderation
+    name: Medium Content Moderation
+    description: >
+      Moderate content where context (previous_flags, platform_policy,
+      audio_transcript, visual_tags) significantly changes the correct action.
+      Requires understanding nuance and escalation policies.
+    difficulty: medium
+    score_range: [0.0, 1.0]
+    score_components:
+      - name: label_correct
+        weight: 0.5
+        description: Classification label matches ground truth
+      - name: action_correct
+        weight: 0.5
+        description: Context-appropriate action chosen
+    num_scenarios: 20
+
+  - id: hard_moderation
+    name: Hard Content Moderation
+    description: >
+      High-stakes, multimodal scenarios requiring coordinated threat detection,
+      hate-speech severity rating (1–5) and detailed policy reasoning. Severity
+      score is awarded within ±1 of ground truth.
+    difficulty: hard
+    score_range: [0.0, 1.0]
+    score_components:
+      - name: label_correct
+        weight: 0.4
+        description: Classification label matches ground truth
+      - name: action_correct
+        weight: 0.4
+        description: Escalation action is correct
+      - name: severity_within_1
+        weight: 0.2
+        description: Predicted severity within ±1 of ground truth (1-5 scale)
+    num_scenarios: 20
+
+# ── Observation space ─────────────────────────────────────────────────────────
+observation_space:
+  type: dict
+  fields:
+    text:
+      type: string
+      description: The user-generated content to be moderated
+    audio_transcript:
+      type: string
+      nullable: true
+      description: Transcript of audio/video content (null for text-only)
+    visual_tags:
+      type: array
+      items: string
+      description: List of visual content tags detected (may be empty)
+    previous_flags:
+      type: integer
+      minimum: 0
+      description: Number of prior policy violations by this account
+    platform_policy:
+      type: string
+      enum: [strict, moderate, lenient]
+      description: Policy enforcement level of the platform
+
+# ── Action space ──────────────────────────────────────────────────────────────
+action_space:
+  type: dict
+  required_fields:
+    label:
+      type: string
+      enum: [safe, toxic, spam, misleading]
+      description: Content classification label
+    action:
+      type: string
+      enum: [allow, warn, remove, shadowban, escalate]
+      description: Moderation action to take
+  optional_fields:
+    severity:
+      type: integer
+      minimum: 1
+      maximum: 5
+      description: Severity score (scored only in hard tier)
+    rationale:
+      type: string
+      description: Brief explanation (not scored; for logging/research)
+
+# ── Reward function ───────────────────────────────────────────────────────────
+reward:
+  range: [0.0, 1.0]
+  type: deterministic
+  description: >
+    Partial-credit scoring. Each correct component (label, action, severity)
+    contributes its rubric weight to the total. Severity is only scored in
+    hard tier and receives credit within ±1 of ground truth.
+  partial_progress: true
+
+# ── API spec ──────────────────────────────────────────────────────────────────
+api:
+  reset:
+    signature: "reset(scenario_id: str | None = None) -> dict"
+    description: >
+      Begin a new episode. Randomly selects a scenario if scenario_id is None.
+      Returns the observation dict.
+  step:
+    signature: "step(action: dict) -> dict"
+    description: >
+      Submit a moderation decision. Returns {state, reward, done, info}.
+      Always sets done=True (single-step episodes).
+  state:
+    signature: "state() -> dict"
+    description: Return current observation without stepping.
+
+# ── Baseline ──────────────────────────────────────────────────────────────────
+baseline:
+  script: baseline_inference.py
+  agent: rule_based_lexical
+  reproducibility_seed: 42
+  expected_scores:
+    easy:   0.60   # lexical baseline – most easy cases caught
+    medium: 0.35   # context nuance is lost without LLM
+    hard:   0.20   # severity rating fails completely
+
+# ── Deployment ────────────────────────────────────────────────────────────────
+deployment:
+  platform: huggingface_spaces
+  sdk: gradio
+  dockerfile: Dockerfile
+  hf_space_url: "https://huggingface.co/spaces/sohambanerjee/content-moderation-env"
+
+# ── Citation ──────────────────────────────────────────────────────────────────
+citation: |
+  @misc{contentmoderationenv2026,
+    title  = {ContentModerationEnv: An OpenEnv Benchmark for AI Moderation Agents},
+    author = {Banerjee, Soham},
+    year   = {2026},
+    url    = {https://huggingface.co/spaces/sohambanerjee/content-moderation-env}
+  }
