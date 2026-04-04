@@ -21,6 +21,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 # ── application files ─────────────────────────────────────────────────────────
 COPY --chown=appuser:appuser . .
+COPY --chown=appuser:appuser inference.py .
 
 USER appuser
 
@@ -31,4 +32,9 @@ ENV GRADIO_SERVER_PORT=7860
 
 # ── startup ───────────────────────────────────────────────────────────────────
 EXPOSE 7860
+
+# ── health check ──────────────────────────────────────────────────────────────
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s \
+    CMD curl -f http://localhost:7860/ || exit 1
+
 CMD ["python", "app.py"]

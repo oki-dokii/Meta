@@ -324,5 +324,56 @@ ContentModerationEnv · OpenEnv v1.0 · MIT License
 </p>
 """)
 
+
+# ── OpenEnv HTTP API routes ───────────────────────────────────────────────────
+# Added to the Gradio FastAPI instance so POST /reset returns HTTP 200,
+# satisfying the HF Space validator check.
+
+from fastapi.responses import JSONResponse
+from fastapi import Request
+
+
+@demo.app.post("/reset")
+async def api_reset(request: Request):
+    """POST /reset  →  initial observation, HTTP 200"""
+    try:
+        body: dict = {}
+        if request.headers.get("content-type", "").startswith("application/json"):
+            body = await request.json()
+    except Exception:
+        body = {}
+    scenario_id = body.get("scenario_id", None) if isinstance(body, dict) else None
+    try:
+        state = env.reset(scenario_id=scenario_id)
+        return JSONResponse({"state": state, "status": "ok"})
+    except Exception as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+
+
+@demo.app.post("/step")
+async def api_step(request: Request):
+    """POST /step  →  takes action dict, returns result"""
+    try:
+        body: dict = await request.json()
+    except Exception:
+        body = {}
+    action = body.get("action", {}) if isinstance(body, dict) else {}
+    try:
+        result = env.step(action)
+        return JSONResponse(result)
+    except Exception as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+
+
+@demo.app.get("/state")
+async def api_state():
+    """GET /state  →  current environment state"""
+    try:
+        state = env.state()
+        return JSONResponse({"state": state, "status": "ok"})
+    except Exception as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+
+
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", server_port=7860, share=False)

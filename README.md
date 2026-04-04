@@ -172,11 +172,11 @@ Expected output:
 ──────────────────────────────────────────────────────────────────
   TIER        N    MEAN    PERFECT    ZERO
 ──────────────────────────────────────────────────────────────────
-  easy       20   0.600       8       2
-  medium     20   0.350       2       6
-  hard       20   0.200       0      10
+  easy       20   0.750      12       2
+  medium     20   0.575       7       3
+  hard       20   0.220       1       8
 ──────────────────────────────────────────────────────────────────
-  OVERALL    60   0.383      10      18
+  OVERALL    60   0.515      20      13
 ──────────────────────────────────────────────────────────────────
 ```
 
@@ -235,9 +235,9 @@ content-moderation-env/
 | Tier | Mean Reward | Perfect (1.0) | Zero (0.0) |
 |------|-------------|----------------|------------|
 | easy | 0.750 | 12/20 | 2/20 |
-| medium | 0.575 | 9/20 | 6/20 |
-| hard | 0.220 | 1/20 | 3/20 |
-| **Overall** | **0.515** | **22/60** | **11/60** |
+| medium | 0.575 | 7/20 | 3/20 |
+| hard | 0.220 | 1/20 | 8/20 |
+| **Overall** | **0.515** | **20/60** | **13/60** |
 
 > 💡 The lexical baseline performs well on easy text patterns but struggles with policy-contextual decisions (medium) and severity rating (hard). An LLM agent should significantly outperform these scores. All numbers are reproducible with `--seed 42`.
 

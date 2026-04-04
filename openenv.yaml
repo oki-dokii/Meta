@@ -26,7 +26,7 @@ tasks:
       - name: action_correct
         weight: 0.5
         description: Moderation action matches ground truth (allow/warn/remove/shadowban/escalate)
-    num_scenarios: 20
+    num_scenarios: 25
 
   - id: medium_moderation
     name: Medium Content Moderation
@@ -63,10 +63,9 @@ tasks:
       - name: severity_within_1
         weight: 0.2
         description: Predicted severity within ±1 of ground truth (1-5 scale)
-    num_scenarios: 20
+    num_scenarios: 30
 
 # ── Observation space ─────────────────────────────────────────────────────────
-observation_space:
   type: dict
   fields:
     text:
@@ -113,39 +112,58 @@ action_space:
 
 # ── Reward function ───────────────────────────────────────────────────────────
 reward:
-  range: [0.0, 1.0]
+  range: [-0.3, 1.0]
   type: deterministic
   description: >
     Partial-credit scoring. Each correct component (label, action, severity)
     contributes its rubric weight to the total. Severity is only scored in
-    hard tier and receives credit within ±1 of ground truth.
+    hard tier and receives credit within +/-1 of ground truth.
+    Penalty rewards may push the score below 0.0.
   partial_progress: true
+  penalties:
+    false_positive_escalation: -0.25   # escalating/removing GT-safe content
+    missed_critical_threat:    -0.20   # allowing/warning on GT-toxic severity-5
+    invalid_label:             -0.10   # label not in {safe,toxic,spam,misleading}
+    invalid_action:            -0.10   # action not in {allow,warn,remove,shadowban,escalate}
 
 # ── API spec ──────────────────────────────────────────────────────────────────
 api:
   reset:
     signature: "reset(scenario_id: str | None = None) -> dict"
     description: >
-      Begin a new episode. Randomly selects a scenario if scenario_id is None.
-      Returns the observation dict.
+      Begin a new episode. If scenario_id is provided, loads that specific
+      scenario (single-step mode, backward compatible). If None, samples a
+      mixed-tier queue of 3 scenarios (1 easy + 1 medium + 1 hard).
   step:
     signature: "step(action: dict) -> dict"
     description: >
       Submit a moderation decision. Returns {state, reward, done, info}.
-      Always sets done=True (single-step episodes).
+      done=False until all posts in the queue are processed.
   state:
     signature: "state() -> dict"
     description: Return current observation without stepping.
 
+  episode_structure:
+    mode: queue
+    queue_length: 3
+    composition: "1 easy + 1 medium + 1 hard per episode"
+    single_step_mode: "available via reset(scenario_id=...)"
+
+  http_endpoints:
+    - "POST /reset  ->  {state, status}  HTTP 200"
+    - "POST /step   ->  {state, reward, done, info}  HTTP 200"
+    - "GET  /state  ->  {state, status}  HTTP 200"
+
 # ── Baseline ──────────────────────────────────────────────────────────────────
 baseline:
-  script: baseline_inference.py
+  script: inference.py
   agent: rule_based_lexical
   reproducibility_seed: 42
   expected_scores:
-    easy:   0.60   # lexical baseline – most easy cases caught
-    medium: 0.35   # context nuance is lost without LLM
-    hard:   0.20   # severity rating fails completely
+    easy:    0.750   # lexical baseline – most easy cases caught
+    medium:  0.575   # context nuance is lost without LLM
+    hard:    0.220   # severity rating fails completely
+    overall: 0.515   # weighted mean across all 60 scenarios
 
 # ── Deployment ────────────────────────────────────────────────────────────────
 deployment:

@@ -385,7 +385,10 @@
     "state": {
       "text": "I'm telling you, the election results were definitely swapped at the last minute by a shadow group.",
       "audio_transcript": "Yeah, and I have the proof right here in this blurry photo.",
-      "visual_tags": ["political_graphic", "blurry_document"],
+      "visual_tags": [
+        "political_graphic",
+        "blurry_document"
+      ],
       "previous_flags": 1,
       "platform_policy": "strict"
     },
@@ -442,7 +445,10 @@
     "state": {
       "text": "Everyone should check out this new dietary supplement, it literally cures aging.",
       "audio_transcript": "I've been taking it for two days and I feel 20 years younger already.",
-      "visual_tags": ["supplement_bottle", "health_claims"],
+      "visual_tags": [
+        "supplement_bottle",
+        "health_claims"
+      ],
       "previous_flags": 0,
       "platform_policy": "strict"
     },
@@ -480,7 +486,10 @@
     "state": {
       "text": "Check out this leaked video of the upcoming game! [LINK]",
       "audio_transcript": null,
-      "visual_tags": ["copyrighted_material", "game_footage"],
+      "visual_tags": [
+        "copyrighted_material",
+        "game_footage"
+      ],
       "previous_flags": 0,
       "platform_policy": "strict"
     },
@@ -537,7 +546,10 @@
     "state": {
       "text": "Hey check out my new stream! I'm playing some rare classic games today.",
       "audio_transcript": "Join me as I beat this world record live!",
-      "visual_tags": ["video_game", "gaming_setup"],
+      "visual_tags": [
+        "video_game",
+        "gaming_setup"
+      ],
       "previous_flags": 3,
       "platform_policy": "strict"
     },
@@ -556,7 +568,10 @@
     "state": {
       "text": "Did you hear that the local water supply has high levels of mercury? Be careful!",
       "audio_transcript": "My neighbor's dog got sick from drinking tap water yesterday.",
-      "visual_tags": ["faucet", "water_glass"],
+      "visual_tags": [
+        "faucet",
+        "water_glass"
+      ],
       "previous_flags": 0,
       "platform_policy": "strict"
     },
@@ -613,7 +628,10 @@
     "state": {
       "text": "Don't believe the mainstream media about the virus, it's just a hoax to control us.",
       "audio_transcript": "It's all a conspiracy, stay safe by ignoring the experts.",
-      "visual_tags": ["news_broadcast", "overlay_text"],
+      "visual_tags": [
+        "news_broadcast",
+        "overlay_text"
+      ],
       "previous_flags": 1,
       "platform_policy": "strict"
     },
@@ -670,7 +688,10 @@
     "state": {
       "text": "Hey look at my new profile picture, I look so cool!",
       "audio_transcript": null,
-      "visual_tags": ["personat_photo", "landscape"],
+      "visual_tags": [
+        "personat_photo",
+        "landscape"
+      ],
       "previous_flags": 0,
       "platform_policy": "moderate"
     },
@@ -689,7 +710,10 @@
     "state": {
       "text": "I'm selling these amazing weight loss pills, DM for details!",
       "audio_transcript": "I lost 15 pounds in a week without dieting!",
-      "visual_tags": ["unlabeled_pills", "before_after_photos"],
+      "visual_tags": [
+        "unlabeled_pills",
+        "before_after_photos"
+      ],
       "previous_flags": 0,
       "platform_policy": "strict"
     },
@@ -708,7 +732,10 @@
     "state": {
       "text": "I think we need a revolution to reset the system and get things back on track.",
       "audio_transcript": "Things have gone too far and peaceful methods aren't working.",
-      "visual_tags": ["political_protest", "flag"],
+      "visual_tags": [
+        "political_protest",
+        "flag"
+      ],
       "previous_flags": 0,
       "platform_policy": "moderate"
     },
@@ -727,7 +754,10 @@
     "state": {
       "text": "This person is a convicted criminal and should be harassed until they leave town.",
       "audio_transcript": null,
-      "visual_tags": ["mugshot", "court_records"],
+      "visual_tags": [
+        "mugshot",
+        "court_records"
+      ],
       "previous_flags": 0,
       "platform_policy": "strict"
     },
@@ -746,7 +776,9 @@
     "state": {
       "text": "My cat is the cutest in the world and I will fight anyone who says otherwise.",
       "audio_transcript": null,
-      "visual_tags": ["cute_cat"],
+      "visual_tags": [
+        "cute_cat"
+      ],
       "previous_flags": 0,
       "platform_policy": "lenient"
     },
@@ -765,7 +797,11 @@
     "state": {
       "text": "We're cleaning house tonight. If you're on the list, you know what's coming.",
       "audio_transcript": "Don't bother calling the cops, they're on our side. Just be ready for the knock.",
-      "visual_tags": ["baseboard_mask", "clenched_fist", "street_sign"],
+      "visual_tags": [
+        "baseboard_mask",
+        "clenched_fist",
+        "street_sign"
+      ],
       "previous_flags": 5,
       "platform_policy": "strict"
     },
@@ -787,7 +823,10 @@
     "state": {
       "text": "I'm just saying that some groups are biologically predisposed to be less intelligent.",
       "audio_transcript": "It's just science, we can't ignore the data just because it's uncomfortable.",
-      "visual_tags": ["pseudo-science_chart", "phrenology_diagram"],
+      "visual_tags": [
+        "pseudo-science_chart",
+        "phrenology_diagram"
+      ],
       "previous_flags": 1,
       "platform_policy": "moderate"
     },
@@ -809,7 +848,10 @@
     "state": {
       "text": "Looking for fellow enthusiasts for this rare historical collection.",
       "audio_transcript": "It's getting harder to find authentic pieces these days without being tracked.",
-      "visual_tags": ["prohibited_historical_symbols", "military_memorabilia"],
+      "visual_tags": [
+        "prohibited_historical_symbols",
+        "military_memorabilia"
+      ],
       "previous_flags": 2,
       "platform_policy": "strict"
     },
@@ -831,7 +873,10 @@
     "state": {
       "text": "The local clinic is handing out tracking chips disguised as vaccines.",
       "audio_transcript": "My cousin worked there and saw the crates coming in from the government. Stay away!",
-      "visual_tags": ["clinic_building", "government_logo"],
+      "visual_tags": [
+        "clinic_building",
+        "government_logo"
+      ],
       "previous_flags": 3,
       "platform_policy": "strict"
     },
@@ -853,7 +898,11 @@
     "state": {
       "text": "I'm done with this. Everyone I loved is gone. Goodbye.",
       "audio_transcript": "Seriously, don't try to stop me this time. I have the pills right here.",
-      "visual_tags": ["pill_bottle", "room_darkness", "farewell_note"],
+      "visual_tags": [
+        "pill_bottle",
+        "room_darkness",
+        "farewell_note"
+      ],
       "previous_flags": 0,
       "platform_policy": "strict"
     },
@@ -875,7 +924,10 @@
     "state": {
       "text": "Check out these new 'energy supplements' for kids! Keeps them focused all day.",
       "audio_transcript": "It's basically legal speed for second graders, they love the taste too.",
-      "visual_tags": ["child_holding_bottle", "neon_candy_look"],
+      "visual_tags": [
+        "child_holding_bottle",
+        "neon_candy_look"
+      ],
       "previous_flags": 0,
       "platform_policy": "strict"
     },
@@ -897,7 +949,10 @@
     "state": {
       "text": "Here's the address of that journalist who keeps lying about us: 123 Pine St. See you there.",
       "audio_transcript": "We need to make sure they never write another word. Bring whatever you need.",
-      "visual_tags": ["residential_building", "location_pin"],
+      "visual_tags": [
+        "residential_building",
+        "location_pin"
+      ],
       "previous_flags": 1,
       "platform_policy": "strict"
     },
@@ -919,7 +974,10 @@
     "state": {
       "text": "The latest study proves that people with this genetic marker are more prone to violence.",
       "audio_transcript": "It's just objective data. We should probably keep an eye on these neighborhoods.",
-      "visual_tags": ["scientific_graph", "neighborhood_map"],
+      "visual_tags": [
+        "scientific_graph",
+        "neighborhood_map"
+      ],
       "previous_flags": 2,
       "platform_policy": "moderate"
     },
@@ -941,7 +999,10 @@
     "state": {
       "text": "I'm just asking questions. Why did the museum suddenly close exactly when the report was released?",
       "audio_transcript": "Maybe it's because they're hiding the evidence of the hidden tunnels.",
-      "visual_tags": ["museum_entrance_closed", "document_screenshot"],
+      "visual_tags": [
+        "museum_entrance_closed",
+        "document_screenshot"
+      ],
       "previous_flags": 4,
       "platform_policy": "moderate"
     },
@@ -963,7 +1024,10 @@
     "state": {
       "text": "Someone really should take care of this problem before I have to do it myself.",
       "audio_transcript": "Next time I see them, they're going to regret ever coming to this neighborhood.",
-      "visual_tags": ["person_pacing", "baseball_bat"],
+      "visual_tags": [
+        "person_pacing",
+        "baseball_bat"
+      ],
       "previous_flags": 0,
       "platform_policy": "strict"
     },
@@ -985,7 +1049,10 @@
     "state": {
       "text": "If you follow this link, you'll see the truth the government is trying to bury.",
       "audio_transcript": "Use a VPN, they're tracking everyone who visits this page. The report is 100% real.",
-      "visual_tags": ["redact_document", "eye_icon"],
+      "visual_tags": [
+        "redact_document",
+        "eye_icon"
+      ],
       "previous_flags": 5,
       "platform_policy": "strict"
     },
@@ -1007,7 +1074,10 @@
     "state": {
       "text": "Everyone buy this stock now! I have inside info it's going to 100x tomorrow!",
       "audio_transcript": "Put your entire savings in, you won't regret it. Trust the process.",
-      "visual_tags": ["stock_chart", "money_bag"],
+      "visual_tags": [
+        "stock_chart",
+        "money_bag"
+      ],
       "previous_flags": 1,
       "platform_policy": "strict"
     },
@@ -1029,7 +1099,10 @@
     "state": {
       "text": "I'm not saying it didn't happen, I'm just saying the numbers don't add up.",
       "audio_transcript": "6 million? Based on the records, it seems much more likely to be 100k maximum.",
-      "visual_tags": ["archival_photos", "revisionist_text"],
+      "visual_tags": [
+        "archival_photos",
+        "revisionist_text"
+      ],
       "previous_flags": 0,
       "platform_policy": "strict"
     },
@@ -1051,7 +1124,10 @@
     "state": {
       "text": "They're coming for your kids, and they're using the school lunch program to do it.",
       "audio_transcript": "It's a biological attack on our future. We have to shut down all schools now.",
-      "visual_tags": ["school_cafeteria", "biohazard_symbol"],
+      "visual_tags": [
+        "school_cafeteria",
+        "biohazard_symbol"
+      ],
       "previous_flags": 2,
       "platform_policy": "strict"
     },
@@ -1095,7 +1171,10 @@
     "state": {
       "text": "Look at these 'volunteers' at the polling station. Probably illegals voting.",
       "audio_transcript": "I'm going down there with my group to challenge every single one of them.",
-      "visual_tags": ["voter_lineup", "concealed_firearm_bulge"],
+      "visual_tags": [
+        "voter_lineup",
+        "concealed_firearm_bulge"
+      ],
       "previous_flags": 1,
       "platform_policy": "strict"
     },
@@ -1117,7 +1196,10 @@
     "state": {
       "text": "This app is great, but did you know you can unlock premium features by entering this code?",
       "audio_transcript": "Just follow the prompts and it'll give you full access for free. Totally safe.",
-      "visual_tags": ["phishing_page_screenshot", "input_box"],
+      "visual_tags": [
+        "phishing_page_screenshot",
+        "input_box"
+      ],
       "previous_flags": 3,
       "platform_policy": "moderate"
     },
@@ -1139,7 +1221,10 @@
     "state": {
       "text": "Why do these people keep coming here and taking our resources? We should send them back.",
       "audio_transcript": "They're like an infestation. We need to cleanse this town.",
-      "visual_tags": ["dehumanizing_imagery", "neighborhood_park"],
+      "visual_tags": [
+        "dehumanizing_imagery",
+        "neighborhood_park"
+      ],
       "previous_flags": 0,
       "platform_policy": "strict"
     },
@@ -1161,7 +1246,10 @@
     "state": {
       "text": "The earth is actually flat and the ice wall is guarded by armed penguins.",
       "audio_transcript": "No seriously, my friend saw a penguin with a rifle last year.",
-      "visual_tags": ["badly_photoshopped_penguin", "infinite_plane_diagram"],
+      "visual_tags": [
+        "badly_photoshopped_penguin",
+        "infinite_plane_diagram"
+      ],
       "previous_flags": 10,
       "platform_policy": "lenient"
     },
@@ -1183,7 +1271,10 @@
     "state": {
       "text": "Look at what this public figure just did! Absolutely disgusting! [LINK]",
       "audio_transcript": "They're part of the ritual sacrifices at that pizza place. Spread the word!",
-      "visual_tags": ["celebrity_photo", "altered_background"],
+      "visual_tags": [
+        "celebrity_photo",
+        "altered_background"
+      ],
       "previous_flags": 2,
       "platform_policy": "strict"
     },
@@ -1197,6 +1288,346 @@
       "label_correct": 0.4,
       "action_correct": 0.4,
       "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_21",
+    "tier": "hard",
+    "state": {
+      "text": "Oh sure, let's just give everyone guns, that'll definitely solve all our problems. What could possibly go wrong?",
+      "audio_transcript": null,
+      "visual_tags": [
+        "political_content"
+      ],
+      "previous_flags": 0,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "misleading",
+      "action": "warn",
+      "severity": 2,
+      "rationale": "Sarcastic political speech. Warn for framing, not toxic."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_22",
+    "tier": "hard",
+    "state": {
+      "text": "Just sharing my thoughts on today's news. Very interesting developments!",
+      "audio_transcript": null,
+      "visual_tags": [
+        "known_bot_network",
+        "copied_profile_picture",
+        "bulk_posting_pattern"
+      ],
+      "previous_flags": 8,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "spam",
+      "action": "shadowban",
+      "severity": 4,
+      "rationale": "Benign text but metadata signals coordinated inauthentic behavior."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_23",
+    "tier": "hard",
+    "state": {
+      "text": "For acute overdose cases, administer 0.4-2mg naloxone IV. Repeat every 2-3 minutes if no response. Max 10mg before reassessing.",
+      "audio_transcript": "Medical grand rounds recording, hospital setting",
+      "visual_tags": [
+        "medical_setting",
+        "professional_attire",
+        "hospital_environment"
+      ],
+      "previous_flags": 0,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 1,
+      "rationale": "Clinical medical discussion confirmed by audio and visual context."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_24",
+    "tier": "hard",
+    "state": {
+      "text": "Just a reminder that this public figure's home address and daily schedule are publicly available on their website.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "doxxing_pattern",
+        "personal_information"
+      ],
+      "previous_flags": 3,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "escalate",
+      "severity": 5,
+      "rationale": "Doxxing pattern with prior violations. Facilitates harassment."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_25",
+    "tier": "hard",
+    "state": {
+      "text": "These people are ruining everything. You know what needs to happen.",
+      "audio_transcript": null,
+      "visual_tags": [],
+      "previous_flags": 12,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "escalate",
+      "severity": 5,
+      "rationale": "Implied threat. 12 prior violations makes this critical."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_26",
+    "tier": "hard",
+    "state": {
+      "text": "BREAKING: Scientists discover eating tide pods cures all diseases. Big Pharma doesn't want you to know!",
+      "audio_transcript": null,
+      "visual_tags": [
+        "satire_account_verified",
+        "parody_label"
+      ],
+      "previous_flags": 0,
+      "platform_policy": "lenient"
+    },
+    "ground_truth": {
+      "label": "misleading",
+      "action": "warn",
+      "severity": 2,
+      "rationale": "Satire account with verified parody label on lenient platform."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_27",
+    "tier": "hard",
+    "state": {
+      "text": "Estos inmigrantes estan destruyendo nuestro pais. Hay que hacer algo.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "translated_content",
+        "nationalist_imagery"
+      ],
+      "previous_flags": 2,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "remove",
+      "severity": 4,
+      "rationale": "Xenophobic content in Spanish: immigrants destroying country, something must be done."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_28",
+    "tier": "hard",
+    "state": {
+      "text": "I need help. I can't take it anymore. Does anyone know what happens if you take a whole bottle of sleeping pills?",
+      "audio_transcript": null,
+      "visual_tags": [],
+      "previous_flags": 0,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "escalate",
+      "severity": 5,
+      "rationale": "Crisis signal. Escalate to human review immediately."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_29",
+    "tier": "hard",
+    "state": {
+      "text": "Honest review after 6 months: This product changed my life. Lost 40 pounds, skin cleared up. DM me for my full routine!",
+      "audio_transcript": null,
+      "visual_tags": [
+        "before_after_image",
+        "affiliate_link_detected"
+      ],
+      "previous_flags": 0,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "spam",
+      "action": "remove",
+      "severity": 3,
+      "rationale": "Affiliate marketing disguised as personal story."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_30",
+    "tier": "hard",
+    "state": {
+      "text": "I absolutely despise how this game is designed. The devs should be ashamed of themselves.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "gaming_community",
+        "product_review"
+      ],
+      "previous_flags": 1,
+      "platform_policy": "lenient"
+    },
+    "ground_truth": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 1,
+      "rationale": "Strong opinion on lenient platform. Valid product criticism."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_easy_21",
+    "tier": "easy",
+    "state": {
+      "text": "Buy cheap followers! 1000 followers for $5! DM NOW! Limited offer!",
+      "audio_transcript": null,
+      "visual_tags": [],
+      "previous_flags": 4,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "spam",
+      "action": "shadowban"
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
+    }
+  },
+  {
+    "id": "scen_easy_22",
+    "tier": "easy",
+    "state": {
+      "text": "Work from home and earn $500/day! No experience needed! Click my bio link!",
+      "audio_transcript": null,
+      "visual_tags": [],
+      "previous_flags": 3,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "spam",
+      "action": "shadowban"
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
+    }
+  },
+  {
+    "id": "scen_easy_23",
+    "tier": "easy",
+    "state": {
+      "text": "FREE crypto giveaway! Send 0.1 BTC get 1 BTC back! Official promotion!",
+      "audio_transcript": null,
+      "visual_tags": [],
+      "previous_flags": 5,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "spam",
+      "action": "shadowban"
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
+    }
+  },
+  {
+    "id": "scen_easy_24",
+    "tier": "easy",
+    "state": {
+      "text": "Lose 30 pounds in 30 days with our miracle pill! Doctor approved! No diet needed!",
+      "audio_transcript": null,
+      "visual_tags": [],
+      "previous_flags": 3,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "spam",
+      "action": "shadowban"
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
+    }
+  },
+  {
+    "id": "scen_easy_25",
+    "tier": "easy",
+    "state": {
+      "text": "HOT SINGLES IN YOUR AREA! Click now! Real people waiting! Free tonight only!",
+      "audio_transcript": null,
+      "visual_tags": [],
+      "previous_flags": 4,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "spam",
+      "action": "shadowban"
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     }
   }
 ]
