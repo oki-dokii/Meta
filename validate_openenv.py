@@ -159,6 +159,39 @@ env.reset(scenario_id="scen_hard_1")
 s = env.state()
 check("state() returns dict", isinstance(s, dict))
 
+# ── valid_actions: ambiguous scenario scoring ─────────────────────────────────
+from content_moderation_env import _compute_reward as _cr
+
+# Find a scenario with valid_actions: [remove, shadowban]
+rs_scenario = next(
+    (sc for sc in env._scenarios.values()
+     if sc.get("ground_truth", {}).get("valid_actions") == ["remove", "shadowban"]
+     or sc.get("ground_truth", {}).get("valid_actions") == ["shadowban", "remove"]),
+    None
+)
+if rs_scenario:
+    gt_label = rs_scenario["ground_truth"]["label"]
+    gt_sev   = rs_scenario["ground_truth"].get("severity", 3)
+    r_rem,  _ = _cr({"label": gt_label, "action": "remove",    "severity": gt_sev}, rs_scenario)
+    r_sha,  _ = _cr({"label": gt_label, "action": "shadowban", "severity": gt_sev}, rs_scenario)
+    r_bad,  _ = _cr({"label": gt_label, "action": "allow",     "severity": gt_sev}, rs_scenario)
+    check("valid_actions: remove scores full credit",    r_rem  >= 0.8, f"got {r_rem:.2f}")
+    check("valid_actions: shadowban scores full credit", r_sha  >= 0.8, f"got {r_sha:.2f}")
+    check("valid_actions: remove == shadowban reward",   abs(r_rem - r_sha) < 0.01,
+          f"remove={r_rem:.2f} shadowban={r_sha:.2f}")
+    check("valid_actions: allow does NOT score full",    r_bad  < r_rem, f"allow={r_bad:.2f}")
+else:
+    check("valid_actions: remove/shadowban scenario exists", False,
+          "none found — run _add_ambiguous_scenarios.py")
+
+ambig_count = sum(1 for sc in env._scenarios.values() if "valid_actions" in sc.get("ground_truth", {}))
+check("ambiguous scenarios (valid_actions) ≥ 10", ambig_count >= 10, f"found {ambig_count}")
+
+# coordination cluster check
+cluster_ids = {sc.get("coordination_cluster") for sc in env._scenarios.values()
+               if "coordination_cluster" in sc} - {None}
+check("coordination clusters ≥ 2", len(cluster_ids) >= 2, f"found {len(cluster_ids)}: {cluster_ids}")
+
 # ── 4. Reward bounds ─────────────────────────────────────────────────────────
 print("\n── Reward range validation ─────────────────────────────────────────")
 from content_moderation_env import _compute_reward

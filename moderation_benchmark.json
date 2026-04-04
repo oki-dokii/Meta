@@ -2059,5 +2059,150 @@
       "action_correct": 0.4,
       "severity_within_1": 0.2
     }
+  },
+  {
+    "id": "scen_hard_36",
+    "tier": "hard",
+    "state": {
+      "text": "The real problem with this city is the 'diversity' they keep importing. Our neighbourhood used to be safe.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "hate_speech_signal",
+        "coded_language_detected"
+      ],
+      "previous_flags": 1,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "shadowban",
+      "valid_actions": [
+        "shadowban",
+        "remove"
+      ],
+      "severity": 3,
+      "rationale": "Coded xenophobia ('diversity imports'). shadowban limits spread while preserving evidence for pattern review; remove is also valid on a strict platform with a prior flag."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_37",
+    "tier": "hard",
+    "state": {
+      "text": "Nobody actually cares about these people. They should just disappear.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "community_targeting_signal"
+      ],
+      "previous_flags": 3,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "remove",
+      "valid_actions": [
+        "remove",
+        "shadowban"
+      ],
+      "severity": 3,
+      "rationale": "Dehumanising language targeting a community, 3 prior flags on a moderate platform. Remove is the primary action; shadowban is defensible if platform prefers quiet suppression for appeals purposes."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_38",
+    "tier": "hard",
+    "state": {
+      "text": "Esos malditos inmigrantes arruinan todo. Habría que deportarlos a todos.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "translated_content",
+        "nationalist_imagery"
+      ],
+      "previous_flags": 0,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "shadowban",
+      "valid_actions": [
+        "shadowban",
+        "remove"
+      ],
+      "severity": 4,
+      "rationale": "Spanish: 'Those damned immigrants ruin everything. They should all be deported.' Clear xenophobia on strict platform. shadowban is primary to allow human review of translated context; remove is equally valid."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_39",
+    "tier": "hard",
+    "state": {
+      "text": "Sharing this before it gets censored. These people are dangerous and your children aren't safe around them.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "coordinated_amplification",
+        "known_bot_network",
+        "minority_targeting_signal"
+      ],
+      "previous_flags": 2,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "remove",
+      "valid_actions": [
+        "remove",
+        "shadowban"
+      ],
+      "severity": 5,
+      "rationale": "Coordinated hate amplification targeting a minority group, severity-5 due to bot-network signals. Remove is primary given the coordinated pattern; shadowban is defensible to preserve network forensics."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "scen_hard_40",
+    "tier": "hard",
+    "state": {
+      "text": "It's just a joke — if your group can't handle a little ribbing about being subhuman, maybe you really are inferior.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "satire_label_claimed",
+        "hate_speech_signal"
+      ],
+      "previous_flags": 2,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "shadowban",
+      "valid_actions": [
+        "shadowban",
+        "remove"
+      ],
+      "severity": 4,
+      "rationale": "Hate speech wrapped in claimed satire. 'Subhuman' is not protected speech even with satire framing. shadowban while claim is reviewed; remove is equally valid given the explicit dehumanising language."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
   }
 ]
