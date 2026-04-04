@@ -96,15 +96,18 @@ def _compute_reward(action: dict, scenario: dict) -> tuple[float, dict]:
         breakdown["false_positive_penalty"] = -0.25
         reward += -0.25
 
-    # Penalty 2: Missed critical threat (-0.20)
-    # Missing a severity-5 threat is the worst moderation failure.
-    if (
-        gt_label == "toxic"
-        and int(gt.get("severity", 0)) == 5
-        and action_submitted in {"allow", "warn"}
-    ):
-        breakdown["missed_critical_threat_penalty"] = -0.20
-        reward += -0.20
+    # Penalty 2: Graduated missed-threat penalty
+    # Allowing/warning on toxic content penalises proportionally to severity.
+    #   severity 5 → -0.30  (worst: imminent, coordinated, or physical threat)
+    #   severity 4 → -0.15  (serious: doxxing, targeted harassment)
+    #   severity 3 → -0.05  (moderate: repeated toxic behaviour)
+    #   severity ≤ 2 → no penalty (mild content; allow/warn may be defensible)
+    _MISSED_THREAT_PENALTY = {5: -0.30, 4: -0.15, 3: -0.05}
+    if gt_label == "toxic" and action_submitted in {"allow", "warn"}:
+        _pen = _MISSED_THREAT_PENALTY.get(int(gt.get("severity", 0)), 0.0)
+        if _pen != 0.0:
+            breakdown["missed_threat_penalty"] = _pen
+            reward += _pen
 
     # Penalty 3: Invalid label (-0.10)
     if label_submitted not in {"safe", "toxic", "spam", "misleading"}:

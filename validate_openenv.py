@@ -262,6 +262,39 @@ check("campaign bonus does NOT fire if any action ≠ escalate",
 check("episode_actions tracked in info", "episode_actions" in result["info"])
 
 # ── 4. Reward bounds ─────────────────────────────────────────────────────────
+
+# ── Graduated missed-threat penalty ───────────────────────────────────────────
+# Build a synthetic toxic scenario at each severity level to verify penalties
+def _make_toxic(severity: int) -> dict:
+    return {
+        "id": f"_synth_sev{severity}", "tier": "hard",
+        "state": {"text": "x", "audio_transcript": None, "visual_tags": [],
+                  "previous_flags": 0, "platform_policy": "strict"},
+        "ground_truth": {"label": "toxic", "action": "escalate", "severity": severity},
+        "score_rubric": {"label_correct": 0.4, "action_correct": 0.4, "severity_within_1": 0.2},
+    }
+
+from content_moderation_env import _compute_reward as _cr2
+# allow on sev-5 → -0.30
+r5, b5 = _cr2({"label": "toxic", "action": "allow", "severity": 5}, _make_toxic(5))
+check("sev-5 miss penalty = -0.30",
+      b5.get("missed_threat_penalty") == -0.30, f"got {b5.get('missed_threat_penalty')}")
+# allow on sev-4 → -0.15
+r4, b4 = _cr2({"label": "toxic", "action": "allow", "severity": 4}, _make_toxic(4))
+check("sev-4 miss penalty = -0.15",
+      b4.get("missed_threat_penalty") == -0.15, f"got {b4.get('missed_threat_penalty')}")
+# allow on sev-3 → -0.05
+r3, b3 = _cr2({"label": "toxic", "action": "allow", "severity": 3}, _make_toxic(3))
+check("sev-3 miss penalty = -0.05",
+      b3.get("missed_threat_penalty") == -0.05, f"got {b3.get('missed_threat_penalty')}")
+# allow on sev-2 → no penalty
+r2, b2 = _cr2({"label": "toxic", "action": "allow", "severity": 2}, _make_toxic(2))
+check("sev-2 miss → no penalty",
+      "missed_threat_penalty" not in b2, f"got {b2.get('missed_threat_penalty')}")
+# old key name gone
+check("old 'missed_critical_threat_penalty' key replaced",
+      "missed_critical_threat_penalty" not in b5)
+
 print("\n── Reward range validation ─────────────────────────────────────────")
 from content_moderation_env import _compute_reward
 import json as _json
