@@ -187,10 +187,79 @@ else:
 ambig_count = sum(1 for sc in env._scenarios.values() if "valid_actions" in sc.get("ground_truth", {}))
 check("ambiguous scenarios (valid_actions) ≥ 10", ambig_count >= 10, f"found {ambig_count}")
 
-# coordination cluster check
-cluster_ids = {sc.get("coordination_cluster") for sc in env._scenarios.values()
-               if "coordination_cluster" in sc} - {None}
-check("coordination clusters ≥ 2", len(cluster_ids) >= 2, f"found {len(cluster_ids)}: {cluster_ids}")
+# ── Campaign mechanic ──────────────────────────────────────────────────────────
+print("\n── Campaign mechanic (cross-post coordination) ──────────────────────")
+
+# Count campaigns
+camp_map: dict = {}
+for sc in env._scenarios.values():
+    cid = sc.get("campaign_id")
+    if cid:
+        camp_map.setdefault(cid, []).append(sc)
+full_camps = {k: v for k, v in camp_map.items() if len(v) >= 2}
+check("campaigns ≥ 3 defined", len(full_camps) >= 3, f"found {len(full_camps)}: {list(full_camps)[:3]}")
+
+# Force a campaign episode using the first known full campaign
+first_camp_id = sorted(full_camps.keys())[0]
+first_camp_posts = sorted(full_camps[first_camp_id], key=lambda s: s.get("campaign_post_index", 99))
+
+# Manually build env into campaign mode to test deterministically
+camp_env = ContentModerationEnv(str(JSON_PATH), seed=99)
+camp_env._queue = [__import__("copy").deepcopy(s) for s in first_camp_posts]
+camp_env._active_campaign = first_camp_id
+camp_env._current_scenario = camp_env._queue[0]
+camp_env._done = False
+camp_env._queue_index = 0
+camp_env._episode_rewards = []
+camp_env._episode_actions = []
+
+# Check state has campaign fields
+obs = camp_env._build_state_obs(camp_env._queue[0])
+check("campaign_id present in state obs",         obs.get("campaign_id") == first_camp_id)
+check("campaign_post_index present in state obs", obs.get("campaign_post_index") == 1)
+check("campaign_total_posts present in state obs",obs.get("campaign_total_posts") is not None)
+
+# Run campaign episode: escalate all → bonus should fire
+step_rewards = []
+for i, post in enumerate(first_camp_posts):
+    camp_env._current_scenario = __import__("copy").deepcopy(post)
+    camp_env._done = False
+    # Get the GT label so we score it correctly (max reward) + escalate
+    gt_label = post["ground_truth"]["label"]
+    gt_sev   = post["ground_truth"].get("severity", 3)
+    action   = {"label": gt_label, "action": "escalate", "severity": gt_sev}
+    result   = camp_env.step(action)
+    step_rewards.append(result["reward"])
+
+bonus_fired = result["info"]["campaign_bonus_earned"]
+bonus_val   = result["info"]["campaign_bonus_value"]
+check("campaign bonus fires when all escalated",  bonus_fired is True)
+check("campaign bonus value = 0.15",              abs(bonus_val - 0.15) < 0.001, f"got {bonus_val}")
+check("final step reward ≥ baseline (bonus added)", step_rewards[-1] > 0.8)
+
+# Now test: NOT escalating all = NO bonus
+camp_env2 = ContentModerationEnv(str(JSON_PATH), seed=99)
+camp_env2._queue = [__import__("copy").deepcopy(s) for s in first_camp_posts]
+camp_env2._active_campaign = first_camp_id
+camp_env2._current_scenario = camp_env2._queue[0]
+camp_env2._done = False
+camp_env2._queue_index = 0
+camp_env2._episode_rewards = []
+camp_env2._episode_actions = []
+
+for i, post in enumerate(first_camp_posts):
+    camp_env2._current_scenario = __import__("copy").deepcopy(post)
+    camp_env2._done = False
+    gt_label = post["ground_truth"]["label"]
+    # First post: warn (not escalate) — should break bonus
+    action = {"label": gt_label, "action": ("warn" if i == 0 else "escalate")}
+    r2 = camp_env2.step(action)
+
+check("campaign bonus does NOT fire if any action ≠ escalate",
+      r2["info"]["campaign_bonus_earned"] is False)
+
+# Check episode_actions tracked correctly
+check("episode_actions tracked in info", "episode_actions" in result["info"])
 
 # ── 4. Reward bounds ─────────────────────────────────────────────────────────
 print("\n── Reward range validation ─────────────────────────────────────────")

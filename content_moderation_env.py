@@ -164,6 +164,8 @@ class ContentModerationEnv:
         self._queue: List[dict] = []
         self._queue_index: int = 0
         self._episode_rewards: List[float] = []
+        self._episode_actions: List[str] = []   # submitted action strings per step
+        self._active_campaign: Optional[str] = None  # campaign_id if campaign episode
 
     # -- Core API ---------------------------------------------------------------
 
@@ -175,19 +177,24 @@ class ContentModerationEnv:
         ----------
         scenario_id : str | None
             If provided, loads that specific scenario (single-step mode,
-            backward compatible). If None, samples a mixed-tier queue of
-            3 scenarios (1 easy + 1 medium + 1 hard) for a multi-step episode.
+            backward compatible). If None, samples a queue episode:
+            - 33% chance: a full campaign (all posts share a campaign_id)
+            - 67% chance: standard mixed queue (1 easy + 1 medium + 1 hard)
 
         Returns
         -------
-        state : dict  -- the first scenario's observation
+        state : dict  -- first scenario's observation, enriched with campaign
+                         fields if this is a campaign episode:
+                         {campaign_id, campaign_post_index, campaign_total_posts}
         """
         self._episode_rewards = []
+        self._episode_actions = []
         self._queue_index = 0
         self._last_reward = 0.0
         self._last_breakdown = {}
         self._step_count = 0
         self._done = False
+        self._active_campaign = None
 
         if scenario_id is not None:
             # -- Single-step mode (backward compatible) -------------------------
@@ -198,31 +205,36 @@ class ContentModerationEnv:
                     f"Available (sample): {available}"
                 )
             self._queue = [deepcopy(self._scenarios[scenario_id])]
-        else:
-            # -- Queue mode: try to build a coordinated cluster episode ---------
-            # 25% chance: pick a random coordination_cluster and use its 3 posts
-            # 75% chance: 1 easy + 1 medium + 1 hard (standard mixed queue)
-            cluster_ids = self._rng.choice([None, None, None,
-                                            "coord"])
-            coord_scenarios = [
-                s for s in self._scenarios.values()
-                if "coordination_cluster" in s
-            ]
-            clusters: dict = {}
-            for s in coord_scenarios:
-                c = s["coordination_cluster"]
-                clusters.setdefault(c, []).append(s)
-            full_clusters = [k for k, v in clusters.items() if len(v) == 3]
 
-            if full_clusters and cluster_ids == "coord":
-                chosen_cluster = self._rng.choice(full_clusters)
-                queue_scenarios = sorted(
-                    clusters[chosen_cluster],
-                    key=lambda s: {"easy": 0, "medium": 1, "hard": 2}.get(s["tier"], 1)
+        else:
+            # -- Queue mode ----------------------------------------------------
+            # Build campaign map: campaign_id -> sorted list of scenarios
+            campaign_map: Dict[str, List[dict]] = {}
+            for s in self._scenarios.values():
+                cid = s.get("campaign_id")
+                if cid:
+                    campaign_map.setdefault(cid, []).append(s)
+
+            # Full campaigns have exactly the same number of posts as their
+            # declared campaign_total_posts (or at least 2)
+            full_campaigns = [
+                cid for cid, posts in campaign_map.items()
+                if len(posts) >= 2
+            ]
+
+            # 33% chance of campaign episode if any full campaigns exist
+            use_campaign = full_campaigns and self._rng.random() < 0.33
+
+            if use_campaign:
+                cid = self._rng.choice(full_campaigns)
+                posts = sorted(
+                    campaign_map[cid],
+                    key=lambda s: s.get("campaign_post_index", 99)
                 )
-                self._queue = [deepcopy(s) for s in queue_scenarios]
-                self._active_cluster = chosen_cluster
+                self._queue = [deepcopy(s) for s in posts]
+                self._active_campaign = cid
             else:
+                # Standard mixed queue: 1 easy + 1 medium + 1 hard
                 easy_ids   = [i for i in self._scenario_ids if i.startswith("scen_easy_")]
                 medium_ids = [i for i in self._scenario_ids if i.startswith("scen_medium_")]
                 hard_ids   = [i for i in self._scenario_ids if i.startswith("scen_hard_")]
@@ -232,12 +244,9 @@ class ContentModerationEnv:
                     self._rng.choice(hard_ids),
                 ]
                 self._queue = [deepcopy(self._scenarios[sid]) for sid in sampled]
-                self._active_cluster = None
 
         self._current_scenario = self._queue[0]
-        if scenario_id is not None:
-            self._active_cluster = None   # single-step: no cluster tracking
-        return deepcopy(self._current_scenario["state"])
+        return self._build_state_obs(self._current_scenario)
 
     def step(self, action: dict) -> dict:
         """
@@ -281,11 +290,13 @@ class ContentModerationEnv:
 
         # Capture scenario being processed BEFORE advancing queue
         processed_scenario = self._current_scenario
+        submitted_action_str = str(action.get("action", "")).strip().lower()
         reward, breakdown = _compute_reward(action, processed_scenario)
 
         self._last_reward = reward
         self._last_breakdown = breakdown
         self._episode_rewards.append(reward)
+        self._episode_actions.append(submitted_action_str)
         self._step_count += 1
         self._queue_index += 1
 
@@ -298,47 +309,73 @@ class ContentModerationEnv:
             self._current_scenario = self._queue[self._queue_index]
             next_state = deepcopy(self._current_scenario["state"])
 
-        # Coordination cluster bonus: if all posts in a cluster are correctly
-        # labelled and actioned, add 0.1 bonus to the FINAL step's reward.
-        cluster_bonus = 0.0
-        if self._done and self._active_cluster:
-            cluster_correct = all(
-                r >= 0.8 for r in self._episode_rewards
-            )
-            if cluster_correct:
-                cluster_bonus = 0.10
-                breakdown["cluster_coordination_bonus"] = cluster_bonus
-                reward = min(1.0, reward + cluster_bonus)
+        # ── Campaign escalation bonus ────────────────────────────────────────
+        # If every post in a campaign episode was escalated, award +0.15 bonus
+        # on the FINAL step. This is the cross-post coordination signal.
+        campaign_bonus = 0.0
+        if self._done and self._active_campaign:
+            all_escalated = all(a == "escalate" for a in self._episode_actions)
+            if all_escalated:
+                campaign_bonus = 0.15
+                breakdown["campaign_escalation_bonus"] = campaign_bonus
+                reward = min(1.0, reward + campaign_bonus)
                 self._last_reward = reward
-                self._episode_rewards[-1] = reward  # update final step
+                self._episode_rewards[-1] = reward  # update final step reward
 
         result = {
             "state":  next_state,
             "reward": reward,
             "done":   self._done,
             "info": {
-                "scenario_id":         processed_scenario["id"],
-                "tier":                processed_scenario["tier"],
-                "queue_position":      self._queue_index,
-                "queue_length":        len(self._queue),
-                "episode_rewards":     list(self._episode_rewards),
-                "ground_truth":        deepcopy(processed_scenario["ground_truth"]),
-                "score_rubric":        deepcopy(processed_scenario["score_rubric"]),
-                "score_breakdown":     breakdown,
-                "submitted_action":    deepcopy(action),
-                "warnings":            warnings,
-                "coordination_cluster": processed_scenario.get("coordination_cluster"),
-                "coordination_note":   processed_scenario.get("coordination_note"),
-                "cluster_bonus_earned": cluster_bonus > 0,
+                "scenario_id":            processed_scenario["id"],
+                "tier":                   processed_scenario["tier"],
+                "queue_position":         self._queue_index,
+                "queue_length":           len(self._queue),
+                "episode_rewards":        list(self._episode_rewards),
+                "episode_actions":        list(self._episode_actions),
+                "ground_truth":           deepcopy(processed_scenario["ground_truth"]),
+                "score_rubric":           deepcopy(processed_scenario["score_rubric"]),
+                "score_breakdown":        breakdown,
+                "submitted_action":       deepcopy(action),
+                "warnings":               warnings,
+                "campaign_id":            processed_scenario.get("campaign_id"),
+                "campaign_post_index":    processed_scenario.get("campaign_post_index"),
+                "campaign_total_posts":   processed_scenario.get("campaign_total_posts"),
+                "campaign_bonus_earned":  campaign_bonus > 0,
+                "campaign_bonus_value":   campaign_bonus,
             },
         }
         return result
 
+    def _build_state_obs(self, scenario: dict) -> dict:
+        """
+        Build the agent-visible observation from a scenario.
+
+        In campaign episodes, enriches the base state with:
+            campaign_id          : str  — shared identifier across campaign posts
+            campaign_post_index  : int  — 1-indexed position of this post in campaign
+            campaign_total_posts : int  — total posts in this campaign
+
+        The agent should use campaign_id to recognise coordinated behaviour
+        across posts and choose escalate to earn the +0.15 campaign bonus.
+        """
+        obs = deepcopy(scenario["state"])
+        if self._active_campaign and scenario.get("campaign_id"):
+            obs["campaign_id"]          = scenario["campaign_id"]
+            obs["campaign_post_index"]  = scenario.get("campaign_post_index", 1)
+            obs["campaign_total_posts"] = scenario.get("campaign_total_posts",
+                                                        len(self._queue))
+        else:
+            obs["campaign_id"]          = None
+            obs["campaign_post_index"]  = None
+            obs["campaign_total_posts"] = None
+        return obs
+
     def state(self) -> dict:
-        """Return the current scenario state dict (read-only copy)."""
+        """Return the current scenario state dict (read-only copy), with campaign fields."""
         if self._current_scenario is None:
             raise RuntimeError("No active scenario. Call reset() first.")
-        return deepcopy(self._current_scenario["state"])
+        return self._build_state_obs(self._current_scenario)
 
     def render(self, mode: str = "text") -> None:
         """Pretty-print the current scenario and last step result."""

@@ -2204,5 +2204,248 @@
       "action_correct": 0.4,
       "severity_within_1": 0.2
     }
+  },
+  {
+    "id": "camp_crypto_001_p1",
+    "tier": "easy",
+    "campaign_id": "camp_crypto_001",
+    "campaign_post_index": 1,
+    "campaign_total_posts": 3,
+    "state": {
+      "text": "CosmoCoin is the next big thing. Early investors are already up 300%. Don't miss out!",
+      "audio_transcript": null,
+      "visual_tags": [
+        "affiliate_link_detected"
+      ],
+      "previous_flags": 1,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "spam",
+      "action": "escalate",
+      "rationale": "Post 1 of a coordinated crypto pump-and-dump campaign. Escalate immediately — campaign_id signals coordinated inauthentic behaviour."
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
+    }
+  },
+  {
+    "id": "camp_crypto_001_p2",
+    "tier": "medium",
+    "campaign_id": "camp_crypto_001",
+    "campaign_post_index": 2,
+    "campaign_total_posts": 3,
+    "state": {
+      "text": "My portfolio went from $500 to $15,000 in a week with CosmoCoin. The listing is happening soon — last chance to buy before it explodes!",
+      "audio_transcript": null,
+      "visual_tags": [
+        "known_bot_network",
+        "bulk_posting_pattern",
+        "affiliate_link_detected"
+      ],
+      "previous_flags": 2,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "spam",
+      "action": "escalate",
+      "rationale": "Post 2/3 of camp_crypto_001. Bot network + bulk posting confirmed. Escalate to stop coordinated financial fraud."
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
+    }
+  },
+  {
+    "id": "camp_crypto_001_p3",
+    "tier": "hard",
+    "campaign_id": "camp_crypto_001",
+    "campaign_post_index": 3,
+    "campaign_total_posts": 3,
+    "state": {
+      "text": "FINAL ALERT: CosmoCoin presale closes in 2 hours. 100% guaranteed returns. DM RIGHT NOW before the devs close it.",
+      "audio_transcript": "Voiceover: 'Send your crypto today, double it tomorrow.'",
+      "visual_tags": [
+        "known_bot_network",
+        "bulk_posting_pattern",
+        "affiliate_link_detected",
+        "urgency_language"
+      ],
+      "previous_flags": 4,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "spam",
+      "action": "escalate",
+      "severity": 5,
+      "rationale": "Post 3/3 of camp_crypto_001. Full coordinated fraud confirmed across 3 posts. Severity 5 — financial harm at scale. Escalate for account ban."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "camp_doxx_002_p1",
+    "tier": "easy",
+    "campaign_id": "camp_doxx_002",
+    "campaign_post_index": 1,
+    "campaign_total_posts": 3,
+    "state": {
+      "text": "Interesting how @journalist_name always seems to be at the right place at the right time. Almost like they're tipped off.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "targeted_account_tag"
+      ],
+      "previous_flags": 0,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "escalate",
+      "rationale": "Post 1/3 of camp_doxx_002. Begins campaign of targeted harassment. Escalate to flag campaign for monitoring — even if individually mild."
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
+    }
+  },
+  {
+    "id": "camp_doxx_002_p2",
+    "tier": "medium",
+    "campaign_id": "camp_doxx_002",
+    "campaign_post_index": 2,
+    "campaign_total_posts": 3,
+    "state": {
+      "text": "Since @journalist_name wants to keep writing these hit pieces, maybe people should know what neighbourhood they live in. Hint: it starts with 'W'.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "targeted_account_tag",
+        "location_hint"
+      ],
+      "previous_flags": 1,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "escalate",
+      "rationale": "Post 2/3 of camp_doxx_002. Incipient doxxing with geographic hint. Escalate — campaign context makes this a credible threat pattern."
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
+    }
+  },
+  {
+    "id": "camp_doxx_002_p3",
+    "tier": "hard",
+    "campaign_id": "camp_doxx_002",
+    "campaign_post_index": 3,
+    "campaign_total_posts": 3,
+    "state": {
+      "text": "Found it. Here's @journalist_name's full address. Someone should pay them a visit and explain how journalism works.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "doxxing_pattern",
+        "personal_information",
+        "targeted_account_tag"
+      ],
+      "previous_flags": 2,
+      "platform_policy": "moderate"
+    },
+    "ground_truth": {
+      "label": "toxic",
+      "action": "escalate",
+      "severity": 5,
+      "rationale": "Post 3/3 of camp_doxx_002. Full doxxing with implied physical threat. Severity 5. Escalate immediately for law enforcement referral."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
+  },
+  {
+    "id": "camp_disinfo_003_p1",
+    "tier": "easy",
+    "campaign_id": "camp_disinfo_003",
+    "campaign_post_index": 1,
+    "campaign_total_posts": 3,
+    "state": {
+      "text": "Doctors don't want you to know this — there's a natural cure for most cancers that costs $3. Big Pharma is suppressing it.",
+      "audio_transcript": null,
+      "visual_tags": [
+        "health_misinformation_signal"
+      ],
+      "previous_flags": 0,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "misleading",
+      "action": "escalate",
+      "rationale": "Post 1/3 of camp_disinfo_003. Coordinated cancer-cure misinformation. Escalate to prevent health harm — campaign_id signals coordinated spread."
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
+    }
+  },
+  {
+    "id": "camp_disinfo_003_p2",
+    "tier": "medium",
+    "campaign_id": "camp_disinfo_003",
+    "campaign_post_index": 2,
+    "campaign_total_posts": 3,
+    "state": {
+      "text": "I used the method from the previous post and my tumour shrank in 6 weeks. My oncologist is furious. Share this before they delete it!",
+      "audio_transcript": null,
+      "visual_tags": [
+        "health_misinformation_signal",
+        "bulk_posting_pattern"
+      ],
+      "previous_flags": 1,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "misleading",
+      "action": "escalate",
+      "rationale": "Post 2/3 of camp_disinfo_003. False testimonial amplifying cancer misinformation. Escalate — could cause patients to abandon treatment."
+    },
+    "score_rubric": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
+    }
+  },
+  {
+    "id": "camp_disinfo_003_p3",
+    "tier": "hard",
+    "campaign_id": "camp_disinfo_003",
+    "campaign_post_index": 3,
+    "campaign_total_posts": 3,
+    "state": {
+      "text": "SHARE EVERYWHERE: The compound is apricot seed extract. 3 seeds/day. Chemo is poison — they're killing you for profit. Pass this on!",
+      "audio_transcript": "Narrator urges listeners to stop cancer treatment immediately.",
+      "visual_tags": [
+        "health_misinformation_signal",
+        "urgency_language",
+        "bulk_posting_pattern",
+        "known_bot_network"
+      ],
+      "previous_flags": 3,
+      "platform_policy": "strict"
+    },
+    "ground_truth": {
+      "label": "misleading",
+      "action": "escalate",
+      "severity": 5,
+      "rationale": "Post 3/3 of camp_disinfo_003. Instructs cancer patients to stop chemo. Severity 5 — imminent risk of death. Escalate immediately."
+    },
+    "score_rubric": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
+    }
   }
 ]
