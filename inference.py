@@ -39,22 +39,22 @@ API_KEY: Optional[str] = os.getenv("HF_TOKEN") or os.getenv("OPENAI_API_KEY")
 SCENARIOS_PATH = SCRIPT_DIR / "moderation_benchmark.json"
 ENV_NAME = "content_moderation"
 
-# Tasks and their scenario ID slices (5 scenarios each)
+# Tasks — full scenario lists (75 scenarios: 25 easy, 20 medium, 30 hard)
 TASKS = [
     {
         "name": "easy_moderation",
         "tier": "easy",
-        "scenario_ids": [f"scen_easy_{i}" for i in range(1, 6)],
+        "scenario_ids": [f"scen_easy_{i}" for i in range(1, 26)],   # 25 scenarios
     },
     {
         "name": "medium_moderation",
         "tier": "medium",
-        "scenario_ids": [f"scen_medium_{i}" for i in range(1, 6)],
+        "scenario_ids": [f"scen_medium_{i}" for i in range(1, 21)],  # 20 scenarios
     },
     {
         "name": "hard_moderation",
         "tier": "hard",
-        "scenario_ids": [f"scen_hard_{i}" for i in range(1, 6)],
+        "scenario_ids": [f"scen_hard_{i}" for i in range(1, 31)],    # 30 scenarios
     },
 ]
 
