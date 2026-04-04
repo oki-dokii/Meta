@@ -1,5 +1,5 @@
 name: content-moderation-env
-version: "1.0.0"
+version: "2.0.0"
 description: >
   A real-world AI content moderation benchmark where an agent must classify
   user-generated content and select the appropriate moderation action, across
@@ -18,7 +18,7 @@ tasks:
       benign posts) and select the correct moderation action. Labels and actions
       are unambiguous; no multimodal signals.
     difficulty: easy
-    score_range: [0.0, 1.0]
+    score_range: [-0.3, 1.0]
     score_components:
       - name: label_correct
         weight: 0.5
@@ -26,7 +26,17 @@ tasks:
       - name: action_correct
         weight: 0.5
         description: Moderation action matches ground truth (allow/warn/remove/shadowban/escalate)
+      - name: false_positive_penalty
+        weight: -0.25
+        description: Applied when GT=safe but agent removes or escalates
+      - name: invalid_label_penalty
+        weight: -0.10
+        description: Applied when submitted label is not in the valid set
+      - name: invalid_action_penalty
+        weight: -0.10
+        description: Applied when submitted action is not in the valid set
     num_scenarios: 25
+    episode_type: queue   # 3-post mixed-tier queue per episode
 
   - id: medium_moderation
     name: Medium Content Moderation
@@ -35,7 +45,7 @@ tasks:
       audio_transcript, visual_tags) significantly changes the correct action.
       Requires understanding nuance and escalation policies.
     difficulty: medium
-    score_range: [0.0, 1.0]
+    score_range: [-0.3, 1.0]
     score_components:
       - name: label_correct
         weight: 0.5
@@ -43,16 +53,20 @@ tasks:
       - name: action_correct
         weight: 0.5
         description: Context-appropriate action chosen
+      - name: missed_critical_threat_penalty
+        weight: -0.20
+        description: Applied when GT is severity-5 toxic and agent allows/warns
     num_scenarios: 20
+    episode_type: queue
 
   - id: hard_moderation
     name: Hard Content Moderation
     description: >
       High-stakes, multimodal scenarios requiring coordinated threat detection,
-      hate-speech severity rating (1–5) and detailed policy reasoning. Severity
-      score is awarded within ±1 of ground truth.
+      hate-speech severity rating (1-5) and detailed policy reasoning. Severity
+      score is awarded within +-1 of ground truth. All penalties apply.
     difficulty: hard
-    score_range: [0.0, 1.0]
+    score_range: [-0.3, 1.0]
     score_components:
       - name: label_correct
         weight: 0.4
@@ -62,10 +76,18 @@ tasks:
         description: Escalation action is correct
       - name: severity_within_1
         weight: 0.2
-        description: Predicted severity within ±1 of ground truth (1-5 scale)
+        description: Predicted severity within +-1 of ground truth (1-5 scale)
+      - name: false_positive_penalty
+        weight: -0.25
+        description: Applied when GT=safe but agent removes or escalates
+      - name: missed_critical_threat_penalty
+        weight: -0.20
+        description: Applied when GT is severity-5 toxic and agent allows/warns
     num_scenarios: 30
+    episode_type: queue
 
 # ── Observation space ─────────────────────────────────────────────────────────
+observation_space:
   type: dict
   fields:
     text:
@@ -115,33 +137,47 @@ reward:
   range: [-0.3, 1.0]
   type: deterministic
   description: >
-    Partial-credit scoring. Each correct component (label, action, severity)
-    contributes its rubric weight to the total. Severity is only scored in
-    hard tier and receives credit within +/-1 of ground truth.
-    Penalty rewards may push the score below 0.0.
+    Partial-credit scoring with penalties. Each correct component (label, action,
+    severity) contributes its rubric weight. Four penalty types can reduce the
+    score below zero: false_positive_escalation (-0.25), missed_critical_threat
+    (-0.20), invalid_label (-0.10), invalid_action (-0.10). Reward clamped to
+    [-0.3, 1.0]. Severity credited within +-1 of ground truth (hard tier only).
   partial_progress: true
   penalties:
-    false_positive_escalation: -0.25   # escalating/removing GT-safe content
-    missed_critical_threat:    -0.20   # allowing/warning on GT-toxic severity-5
-    invalid_label:             -0.10   # label not in {safe,toxic,spam,misleading}
-    invalid_action:            -0.10   # action not in {allow,warn,remove,shadowban,escalate}
+    - name: false_positive_penalty
+      value: -0.25
+      condition: gt_label == safe AND submitted_action in {escalate, remove}
+    - name: missed_critical_threat_penalty
+      value: -0.20
+      condition: gt_label == toxic AND gt_severity == 5 AND submitted_action in {allow, warn}
+    - name: invalid_label_penalty
+      value: -0.10
+      condition: submitted_label not in valid_labels
+    - name: invalid_action_penalty
+      value: -0.10
+      condition: submitted_action not in valid_actions
 
 # ── API spec ──────────────────────────────────────────────────────────────────
 api:
   reset:
     signature: "reset(scenario_id: str | None = None) -> dict"
     description: >
-      Begin a new episode. If scenario_id is provided, loads that specific
-      scenario (single-step mode, backward compatible). If None, samples a
-      mixed-tier queue of 3 scenarios (1 easy + 1 medium + 1 hard).
+      Begin a new episode. If scenario_id is given, loads that specific scenario
+      (single-step backward-compatible mode, done=True after 1 step). If None,
+      samples a mixed-tier queue of 3 scenarios (1 easy + 1 medium + 1 hard) for
+      a multi-step episode; done=False until all 3 posts are processed.
   step:
     signature: "step(action: dict) -> dict"
     description: >
       Submit a moderation decision. Returns {state, reward, done, info}.
-      done=False until all posts in the queue are processed.
+      In queue mode done=False until the last post; in single-step mode done=True.
+      info includes queue_position, queue_length, episode_rewards.
   state:
     signature: "state() -> dict"
     description: Return current observation without stepping.
+  episode_rewards:
+    signature: "env.episode_rewards -> list[float]"
+    description: All rewards collected so far in the current episode.
 
   episode_structure:
     mode: queue
@@ -156,14 +192,15 @@ api:
 
 # ── Baseline ──────────────────────────────────────────────────────────────────
 baseline:
-  script: inference.py
+  script: baseline_inference.py
   agent: rule_based_lexical
   reproducibility_seed: 42
-  expected_scores:
-    easy:    0.750   # lexical baseline – most easy cases caught
-    medium:  0.575   # context nuance is lost without LLM
-    hard:    0.220   # severity rating fails completely
-    overall: 0.515   # weighted mean across all 60 scenarios
+  measured_scores:    # from baseline_results.json, seed=42
+    easy:    0.660
+    medium:  0.575
+    hard:    0.213
+    overall: 0.459
+  llm_inference_script: inference.py   # OpenAI-compatible, HF_TOKEN or OPENAI_API_KEY
 
 # ── Deployment ────────────────────────────────────────────────────────────────
 deployment:

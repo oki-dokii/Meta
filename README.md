@@ -15,25 +15,37 @@ tags:
   - nlp
 ---
 
-# 🛡️ ContentModerationEnv
+# 🛡️ ContentModerationEnv v2.0
 
 > **A real-world OpenEnv benchmark** for evaluating AI agents on the task of content moderation.
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
-[![OpenEnv](https://img.shields.io/badge/OpenEnv-v1.0-green.svg)](openenv.yaml)
+[![OpenEnv v2.0](https://img.shields.io/badge/OpenEnv-v2.0-green.svg)](openenv.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
 ## Overview
 
-`ContentModerationEnv` is a fully-spec'd [OpenEnv](https://openenv.dev) environment that simulates the real-world task of platform content moderation. An AI agent reads user-generated content (text, audio transcript, visual tags), considers the poster's history and platform policy, then decides:
+`ContentModerationEnv` is a fully-spec'd OpenEnv environment simulating real-world platform content moderation. An agent reads user-generated content (text, audio transcript, visual tags), considers the poster's violation history and platform policy, then decides:
 
 1. **Classify** the content: `safe | toxic | spam | misleading`
 2. **Take action**: `allow | warn | remove | shadowban | escalate`
-3. **Rate severity** (hard tier only): `1` (mild) → `5` (critical)
+3. **Rate severity** (hard tier): `1` (mild) → `5` (critical)
 
-Agents receive partial-credit rewards (0.0 – 1.0) for each correct component, providing a rich gradient signal for learning.
+Agents receive **partial-credit rewards with penalties** (`-0.3` to `1.0`) providing rich gradient signals for learning.
+
+---
+
+## What's New in v2
+
+| Feature | v1 | v2 |
+|---------|----|----|
+| Scenarios | 60 | **75** (25 easy · 20 medium · 30 hard) |
+| Episode type | Single-step only | **Queue mode** (3-post episode) + single-step compat |
+| Reward range | `0.0–1.0` | **`-0.3–1.0`** (penalties) |
+| Penalties | None | **4 penalty types** (false positive, missed threat, invalid label/action) |
+| Inference script | Pipeline only | **`inference.py`** — hackathon `[START]/[STEP]/[END]` format |
 
 ---
 
@@ -43,12 +55,32 @@ Agents receive partial-credit rewards (0.0 – 1.0) for each correct component, 
 |----------|-------|
 | Domain | Trust & Safety / NLP |
 | Task type | Classification + Decision Making |
-| Episodes | 60 total (20 easy · 20 medium · 20 hard) |
-| Episode steps | 1-step (submit once, get reward) |
-| Reward range | 0.0 – 1.0 (partial credit) |
-| Observation type | `dict` (text + optional audio/visual + metadata) |
-| Action type | `dict` (label + action + optional severity/rationale) |
+| Total scenarios | 75 (25 easy · 20 medium · 30 hard) |
+| Episode modes | Queue (3-post, mixed tiers) + Single-step (backward compat) |
+| Reward range | `-0.3` to `1.0` (partial credit + penalties) |
 | Reproducible | ✅ deterministic scoring, seed-controlled RNG |
+
+---
+
+## Episode Modes
+
+### Queue Mode (default — `reset()`)
+```python
+state = env.reset()       # samples 1 easy + 1 medium + 1 hard scenario
+# Agent processes ALL 3 posts before the episode ends
+while True:
+    result = env.step(action)
+    if result["done"]:    # done=False for first 2 posts, True on 3rd
+        break
+    state = result["state"]   # next post in queue
+print(env.episode_rewards)    # [r1, r2, r3]
+```
+
+### Single-Step Mode (backward compatible — `reset(scenario_id=...)`)
+```python
+state = env.reset(scenario_id="scen_hard_1")
+result = env.step(action)   # done=True immediately
+```
 
 ---
 
@@ -68,58 +100,55 @@ Agents receive partial-credit rewards (0.0 – 1.0) for each correct component, 
 
 ```python
 {
-    "label":     str,          # REQUIRED — "safe" | "toxic" | "spam" | "misleading"
-    "action":    str,          # REQUIRED — "allow" | "warn" | "remove" | "shadowban" | "escalate"
-    "severity":  int,          # optional, int 1-5, scored only in hard tier
-    "rationale": str,          # optional, free text (not scored, logged for research)
+    "label":     str,   # REQUIRED — "safe" | "toxic" | "spam" | "misleading"
+    "action":    str,   # REQUIRED — "allow" | "warn" | "remove" | "shadowban" | "escalate"
+    "severity":  int,   # optional, 1-5, scored only in hard tier (±1 credit)
+    "rationale": str,   # optional, free text (not scored, logged for research)
 }
 ```
 
 ---
 
-## Task Tiers
+## Reward Function
 
-### 🟢 Easy (20 scenarios)
-Unambiguous content — explicit hate speech, obvious spam, clearly benign text. No multimodal context. Perfect for verifying the agent can read and classify basic content.
+### Positive credit (partial)
 
-**Reward weights:** label 0.5 · action 0.5
+| Tier | Label | Action | Severity ±1 |
+|------|-------|--------|-------------|
+| easy / medium | 0.5 | 0.5 | — |
+| hard | 0.4 | 0.4 | 0.2 |
 
-### 🟡 Medium (20 scenarios)  
-Context matters. The same text can require different actions depending on `platform_policy`, `previous_flags`, and multimodal signals. Agents must integrate all observation fields.
+### Penalties (may push reward below 0)
 
-**Reward weights:** label 0.5 · action 0.5
+| Penalty | Value | Trigger |
+|---------|-------|---------|
+| `false_positive_penalty` | **-0.25** | GT=`safe` but agent submits `remove` or `escalate` |
+| `missed_critical_threat_penalty` | **-0.20** | GT=`toxic` severity=5 but agent `allow`s or `warn`s |
+| `invalid_label_penalty` | **-0.10** | Label not in valid set |
+| `invalid_action_penalty` | **-0.10** | Action not in valid set |
 
-### 🔴 Hard (20 scenarios)
-High-stakes, multimodal scenarios. Coordinated threats, hate speech disguised as science, complex policy calls. Requires severity rating (1-5), scored within ±1.
-
-**Reward weights:** label 0.4 · action 0.4 · severity ±1 → 0.2
+**Reward is clamped to `[-0.3, 1.0]`.**
 
 ---
 
-## Reward Function
+## Task Tiers
 
-Partial-credit scoring — no all-or-nothing:
+### 🟢 Easy (25 scenarios)
+Unambiguous content — explicit hate speech, obvious spam, clearly benign text. No multimodal context.
 
-```
-reward = label_score + action_score [+ severity_score]   ∈ [0.0, 1.0]
-```
+### 🟡 Medium (20 scenarios)
+Context matters. Policy, repeat-flags, and multimodal signals determine the right action.
 
-Each component is binary (you get the points or you don't), but together they allow fractional rewards. For example:
-
-| Tier | Correct label, wrong action | Wrong label, correct action |
-|------|-----------------------------|------------------------------|
-| easy | 0.5 | 0.5 |
-| hard | 0.4 | 0.4 |
+### 🔴 Hard (30 scenarios)
+Multimodal signals, coordinated threats, non-English content, severity rating (1-5). All penalties apply.
 
 ---
 
 ## Quick Start
 
-### Install
-
 ```bash
-git clone https://huggingface.co/spaces/sohambanerjee/content-moderation-env
-cd content-moderation-env
+git clone https://github.com/oki-dokii/Meta.git
+cd Meta
 pip install -r requirements.txt
 ```
 
@@ -128,171 +157,114 @@ pip install -r requirements.txt
 ```python
 from content_moderation_env import ContentModerationEnv
 
-# Load environment (60 scenarios)
 env = ContentModerationEnv("moderation_benchmark.json", seed=42)
-print(f"Loaded {env.num_scenarios} scenarios")
+print(f"Loaded {env.num_scenarios} scenarios")  # 75
 
-# ── reset() — start an episode ────────────────────────────────────────────────
-state = env.reset()                        # random scenario
-# state = env.reset("scen_hard_1")         # specific scenario
+# ── Queue episode (3 posts) ───────────────────────────────────────────────────
+state = env.reset()
+while True:
+    result = env.step({
+        "label":    "toxic",
+        "action":   "escalate",
+        "severity": 5,
+        "rationale": "Coordinated threat."
+    })
+    print(f"reward={result['reward']:.2f}  done={result['done']}")
+    if result["done"]:
+        break
+    state = result["state"]
+print(f"Episode rewards: {env.episode_rewards}")
 
-print(state["text"])
-# "We're cleaning house tonight. If you're on the list, you know what's coming."
+# ── Single-step (backward compat) ─────────────────────────────────────────────
+state = env.reset(scenario_id="scen_hard_1")
+result = env.step({"label": "toxic", "action": "escalate", "severity": 5})
+print(result["reward"])   # 1.0
 
-# ── step() — submit your decision ─────────────────────────────────────────────
-result = env.step({
-    "label":     "toxic",
-    "action":    "escalate",
-    "severity":  5,
-    "rationale": "Coordinated physical threat with prior escalation."
-})
-
-print(result["reward"])                     # 1.0
-print(result["info"]["score_breakdown"])    # {'label_correct': 0.4, 'action_correct': 0.4, 'severity_within_1': 0.2}
-print(result["done"])                       # True
-
-# ── state() — read current observation without stepping ───────────────────────
-obs = env.state()
-
-# ── render() — pretty-print current scenario ──────────────────────────────────
-env.render()
+# ── Penalty example ───────────────────────────────────────────────────────────
+env.reset(scenario_id="scen_easy_1")   # GT: safe/allow
+result = env.step({"label": "safe", "action": "escalate"})
+print(result["reward"])   # -0.25 (false positive penalty)
+print(result["info"]["score_breakdown"])
+# {'label_correct': 0.5, 'action_correct': 0.0, 'false_positive_penalty': -0.25}
 ```
 
-### Run the Baseline
+### Run the Baseline (no API key needed)
 
 ```bash
-python baseline_inference.py             # all tiers
-python baseline_inference.py --tier hard # hard tier only
-python baseline_inference.py --seed 123  # different seed
+python3 baseline_inference.py             # all 75 scenarios
+python3 baseline_inference.py --tier hard # hard tier only
 ```
 
-Expected output:
-
-```
-──────────────────────────────────────────────────────────────────
-  TIER        N    MEAN    PERFECT    ZERO
-──────────────────────────────────────────────────────────────────
-  easy       20   0.750      12       2
-  medium     20   0.575       7       3
-  hard       20   0.220       1       8
-──────────────────────────────────────────────────────────────────
-  OVERALL    60   0.515      20      13
-──────────────────────────────────────────────────────────────────
-```
-
-### Run the Full LLM Pipeline
+### Run the LLM Inference Script (hackathon format)
 
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
-export GOOGLE_API_KEY="AIza..."
-python benchmark_pipeline.py
+export OPENAI_API_KEY="sk-..."          # or HF_TOKEN for HF inference
+export MODEL_NAME="gpt-4o-mini"         # default
+python3 inference.py
+# Outputs: [START] / [STEP] / [END] lines per task
 ```
 
-This runs:
-1. **Claude Sonnet** — agent across all 60 scenarios
-2. **Gemini 2.0 Flash** — adjudicates low-reward (<0.3) cases
-3. **Claude Opus** — generates a markdown evaluation report
+### Run the Validation Suite
+
+```bash
+python3 validate_openenv.py
+# Checks: YAML structure, dataset integrity, live API, reward bounds
+```
 
 ---
 
-## Typed Models (Pydantic v2)
+## Inference Script Output Format
 
-```python
-from models import AgentAction, Observation, StepResult, Label, ModerationAction
+`inference.py` emits the standardised hackathon format:
 
-# Validate an agent action
-action = AgentAction(label=Label.toxic, action=ModerationAction.escalate, severity=4)
-result = env.step(action.to_env_dict())
-
-# Get JSON schema for any model
-print(AgentAction.model_json_schema())
 ```
+[START] task=easy_moderation env=content_moderation model=gpt-4o-mini
+[STEP] step=1 action={"label":"toxic","action":"remove"} reward=1.00 done=false error=null
+[STEP] step=2 action={"label":"safe","action":"allow"} reward=1.00 done=false error=null
+...
+[END] success=true steps=25 rewards=1.00,0.50,1.00,...
+```
+
+Configure via environment variables:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `HF_TOKEN` or `OPENAI_API_KEY` | — | API key |
+| `API_BASE_URL` | `https://api.openai.com/v1` | Any OpenAI-compatible endpoint |
+| `MODEL_NAME` | `gpt-4o-mini` | Model identifier |
+
+---
+
+## Baseline Scores (lexical agent, seed=42)
+
+| Tier | N | Mean Reward | Perfect (1.0) | Zero (0.0) |
+|------|---|-------------|----------------|------------|
+| easy | 25 | 0.660 | 12 | 4 |
+| medium | 20 | 0.575 | 9 | 6 |
+| hard | 30 | 0.213 | 2 | 11 |
+| **Overall** | **75** | **0.459** | **23** | **21** |
+
+> 💡 The lexical baseline scores are lower in v2 due to harder scenarios and penalties. Beat 0.459 with an LLM agent.
 
 ---
 
 ## Project Structure
 
 ```
-content-moderation-env/
-├── openenv.yaml            # OpenEnv spec manifest
-├── content_moderation_env.py   # Core environment (step/reset/state/render)
-├── models.py               # Pydantic v2 typed models
-├── baseline_inference.py   # Reproducible lexical baseline
-├── benchmark_pipeline.py   # Full 3-step LLM pipeline
-├── app.py                  # Gradio HF Spaces UI
-├── moderation_benchmark.json   # 60 scenarios dataset
+Meta/
+├── openenv.yaml               # OpenEnv v2 spec manifest
+├── content_moderation_env.py  # Core env — step/reset/state/render, queue mode, penalties
+├── models.py                  # Pydantic v2 typed models
+├── moderation_benchmark.json  # 75 scenarios dataset
+├── baseline_inference.py      # Reproducible lexical baseline (no API key)
+├── inference.py               # Hackathon-format LLM inference ([START]/[STEP]/[END])
+├── benchmark_pipeline.py      # Full 3-step pipeline (Claude + Gemini)
+├── benchmark_pipeline_gemini.py # Gemini-only pipeline
+├── validate_openenv.py        # Self-contained validation suite
+├── app.py                     # Gradio Hugging Face Spaces UI
+├── Dockerfile                 # HF Spaces deployment
 ├── requirements.txt
-├── Dockerfile
 └── README.md
-```
-
----
-
-## Benchmark Results
-
-### Lexical Baseline (rule-based, no LLM, seed=42)
-
-| Tier | Mean Reward | Perfect (1.0) | Zero (0.0) |
-|------|-------------|----------------|------------|
-| easy | 0.750 | 12/20 | 2/20 |
-| medium | 0.575 | 7/20 | 3/20 |
-| hard | 0.220 | 1/20 | 8/20 |
-| **Overall** | **0.515** | **20/60** | **13/60** |
-
-> 💡 The lexical baseline performs well on easy text patterns but struggles with policy-contextual decisions (medium) and severity rating (hard). An LLM agent should significantly outperform these scores. All numbers are reproducible with `--seed 42`.
-
----
-
-## Implementing Your Own Agent
-
-```python
-from content_moderation_env import ContentModerationEnv
-
-env = ContentModerationEnv("moderation_benchmark.json", seed=42)
-
-def my_agent(state: dict) -> dict:
-    """Your agent here — LLM, RL policy, whatever."""
-    return {"label": "safe", "action": "allow"}
-
-rewards = []
-for sid in env.scenario_ids:
-    state  = env.reset(sid)
-    action = my_agent(state)
-    result = env.step(action)
-    rewards.append(result["reward"])
-
-print(f"Mean reward: {sum(rewards)/len(rewards):.3f}")
-```
-
----
-
-## Scenario Format
-
-Each scenario in `moderation_benchmark.json`:
-
-```json
-{
-  "id": "scen_hard_1",
-  "tier": "hard",
-  "state": {
-    "text": "We're cleaning house tonight. If you're on the list...",
-    "audio_transcript": "Don't bother calling the cops...",
-    "visual_tags": ["baseboard_mask", "clenched_fist", "street_sign"],
-    "previous_flags": 5,
-    "platform_policy": "strict"
-  },
-  "ground_truth": {
-    "label": "toxic",
-    "action": "escalate",
-    "severity": 5,
-    "rationale": "High-severity threat of coordinated physical violence..."
-  },
-  "score_rubric": {
-    "label_correct": 0.4,
-    "action_correct": 0.4,
-    "severity_within_1": 0.2
-  }
-}
 ```
 
 ---
@@ -302,7 +274,7 @@ Each scenario in `moderation_benchmark.json`:
 ```bash
 docker build -t content-moderation-env .
 docker run -p 7860:7860 content-moderation-env
-# Open http://localhost:7860
+# → http://localhost:7860
 ```
 
 ---
@@ -314,7 +286,7 @@ docker run -p 7860:7860 content-moderation-env
   title  = {ContentModerationEnv: An OpenEnv Benchmark for AI Content Moderation Agents},
   author = {Banerjee, Soham},
   year   = {2026},
-  url    = {https://huggingface.co/spaces/sohambanerjee/content-moderation-env}
+  url    = {https://github.com/oki-dokii/Meta}
 }
 ```
 
@@ -322,4 +294,4 @@ docker run -p 7860:7860 content-moderation-env
 
 ## License
 
-MIT License — see [LICENSE](LICENSE).
+MIT License.
