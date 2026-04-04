@@ -64,10 +64,17 @@ def _compute_reward(action: dict, scenario: dict) -> tuple[float, dict]:
     reward += label_score
 
     # -- Action -----------------------------------------------------------------
-    action_ok = action_submitted == gt_action
+    # Support valid_actions list for ambiguous scenarios (gap 3 fix).
+    # If the ground_truth has a valid_actions list, any action in that list
+    # earns full credit. Falls back to single gt_action for backward compat.
+    valid_actions_gt: list = gt.get("valid_actions", [gt_action])
+    action_ok = action_submitted in valid_actions_gt
     action_score = rubric["action_correct"] if action_ok else 0.0
     breakdown["action_correct"] = action_score
     reward += action_score
+
+    # FP penalty also fires for any action in {escalate, remove} on safe GT
+    # (unchanged — valid_actions on safe scenarios are not expected)
 
     # -- Severity (hard tier only) ----------------------------------------------
     if tier == "hard" and "severity_within_1" in rubric:
@@ -192,18 +199,44 @@ class ContentModerationEnv:
                 )
             self._queue = [deepcopy(self._scenarios[scenario_id])]
         else:
-            # -- Queue mode: 1 easy + 1 medium + 1 hard ------------------------
-            easy_ids   = [i for i in self._scenario_ids if i.startswith("scen_easy_")]
-            medium_ids = [i for i in self._scenario_ids if i.startswith("scen_medium_")]
-            hard_ids   = [i for i in self._scenario_ids if i.startswith("scen_hard_")]
-            sampled = [
-                self._rng.choice(easy_ids),
-                self._rng.choice(medium_ids),
-                self._rng.choice(hard_ids),
+            # -- Queue mode: try to build a coordinated cluster episode ---------
+            # 25% chance: pick a random coordination_cluster and use its 3 posts
+            # 75% chance: 1 easy + 1 medium + 1 hard (standard mixed queue)
+            cluster_ids = self._rng.choice([None, None, None,
+                                            "coord"])
+            coord_scenarios = [
+                s for s in self._scenarios.values()
+                if "coordination_cluster" in s
             ]
-            self._queue = [deepcopy(self._scenarios[sid]) for sid in sampled]
+            clusters: dict = {}
+            for s in coord_scenarios:
+                c = s["coordination_cluster"]
+                clusters.setdefault(c, []).append(s)
+            full_clusters = [k for k, v in clusters.items() if len(v) == 3]
+
+            if full_clusters and cluster_ids == "coord":
+                chosen_cluster = self._rng.choice(full_clusters)
+                queue_scenarios = sorted(
+                    clusters[chosen_cluster],
+                    key=lambda s: {"easy": 0, "medium": 1, "hard": 2}.get(s["tier"], 1)
+                )
+                self._queue = [deepcopy(s) for s in queue_scenarios]
+                self._active_cluster = chosen_cluster
+            else:
+                easy_ids   = [i for i in self._scenario_ids if i.startswith("scen_easy_")]
+                medium_ids = [i for i in self._scenario_ids if i.startswith("scen_medium_")]
+                hard_ids   = [i for i in self._scenario_ids if i.startswith("scen_hard_")]
+                sampled = [
+                    self._rng.choice(easy_ids),
+                    self._rng.choice(medium_ids),
+                    self._rng.choice(hard_ids),
+                ]
+                self._queue = [deepcopy(self._scenarios[sid]) for sid in sampled]
+                self._active_cluster = None
 
         self._current_scenario = self._queue[0]
+        if scenario_id is not None:
+            self._active_cluster = None   # single-step: no cluster tracking
         return deepcopy(self._current_scenario["state"])
 
     def step(self, action: dict) -> dict:
@@ -265,21 +298,38 @@ class ContentModerationEnv:
             self._current_scenario = self._queue[self._queue_index]
             next_state = deepcopy(self._current_scenario["state"])
 
+        # Coordination cluster bonus: if all posts in a cluster are correctly
+        # labelled and actioned, add 0.1 bonus to the FINAL step's reward.
+        cluster_bonus = 0.0
+        if self._done and self._active_cluster:
+            cluster_correct = all(
+                r >= 0.8 for r in self._episode_rewards
+            )
+            if cluster_correct:
+                cluster_bonus = 0.10
+                breakdown["cluster_coordination_bonus"] = cluster_bonus
+                reward = min(1.0, reward + cluster_bonus)
+                self._last_reward = reward
+                self._episode_rewards[-1] = reward  # update final step
+
         result = {
             "state":  next_state,
             "reward": reward,
             "done":   self._done,
             "info": {
-                "scenario_id":      processed_scenario["id"],
-                "tier":             processed_scenario["tier"],
-                "queue_position":   self._queue_index,
-                "queue_length":     len(self._queue),
-                "episode_rewards":  list(self._episode_rewards),
-                "ground_truth":     deepcopy(processed_scenario["ground_truth"]),
-                "score_rubric":     deepcopy(processed_scenario["score_rubric"]),
-                "score_breakdown":  breakdown,
-                "submitted_action": deepcopy(action),
-                "warnings":         warnings,
+                "scenario_id":         processed_scenario["id"],
+                "tier":                processed_scenario["tier"],
+                "queue_position":      self._queue_index,
+                "queue_length":        len(self._queue),
+                "episode_rewards":     list(self._episode_rewards),
+                "ground_truth":        deepcopy(processed_scenario["ground_truth"]),
+                "score_rubric":        deepcopy(processed_scenario["score_rubric"]),
+                "score_breakdown":     breakdown,
+                "submitted_action":    deepcopy(action),
+                "warnings":            warnings,
+                "coordination_cluster": processed_scenario.get("coordination_cluster"),
+                "coordination_note":   processed_scenario.get("coordination_note"),
+                "cluster_bonus_earned": cluster_bonus > 0,
             },
         }
         return result
