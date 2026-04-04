@@ -105,7 +105,22 @@ hard_total = tiers["hard"]
 check("hard scenarios have severity", hard_with_sev == hard_total,
       f"{hard_with_sev}/{hard_total}")
 
-# ── 3. Live environment API ───────────────────────────────────────────────────
+# Easy-tier GT coverage: all labels + all actions must be represented,
+# and the 4 previously missing combos must each have ≥ 2 examples.
+from collections import Counter as _C
+easy_s = [s for s in data if s["tier"] == "easy"]
+e_labels  = _C(s["ground_truth"]["label"]  for s in easy_s)
+e_actions = _C(s["ground_truth"]["action"] for s in easy_s)
+e_combos  = _C((s["ground_truth"]["label"], s["ground_truth"]["action"]) for s in easy_s)
+for lbl in ["safe", "toxic", "spam", "misleading"]:
+    check(f"easy label '{lbl}' covered", e_labels[lbl] >= 2, f"count={e_labels[lbl]}")
+for act in ["allow", "warn", "remove", "shadowban", "escalate"]:
+    check(f"easy action '{act}' covered", e_actions[act] >= 2, f"count={e_actions[act]}")
+for lbl, act in [("misleading","shadowban"),("toxic","shadowban"),
+                 ("toxic","warn"),("misleading","escalate")]:
+    check(f"easy {lbl}/{act} ≥ 2 examples", e_combos[(lbl,act)] >= 2,
+          f"count={e_combos[(lbl,act)]}")
+
 print("\n── ContentModerationEnv live API ───────────────────────────────────")
 env = ContentModerationEnv(str(JSON_PATH), seed=42)
 
