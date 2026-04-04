@@ -75,10 +75,12 @@ Ten hard scenarios have `valid_actions: [remove, shadowban]` or similar — two 
 
 | Feature | v1 | v2 |
 |---------|----|----|
-| Scenarios | 60 | **75** (25 easy · 20 medium · 30 hard) |
-| Episode type | Single-step only | **Queue mode** (3-post episode) + single-step compat |
-| Reward range | `0.0–1.0` | **`-0.3–1.0`** (penalties) |
-| Penalties | None | **4 penalty types** (false positive, missed threat, invalid label/action) |
+| Scenarios | 60 | **100** (25 easy · 20 medium · 40 hard · 15 campaign) |
+| Episode type | Single-step only | **Queue mode** (3-post) + single-step + campaign detection |
+| Reward range | `0.0–1.0` | **`-0.3–1.0`** (mod) / **`-0.2–1.0`** (campaign) |
+| Penalties | None | **4 penalty types** + campaign false-positive penalty |
+| Evasion scenarios | None | **10 adversarial evasion** scenarios with detection bonus |
+| Platform context | None | **`platform`** field on all scenarios (reddit/twitter/youtube/linkedin) |
 | Inference script | Pipeline only | **`inference.py`** — hackathon `[START]/[STEP]/[END]` format |
 
 ---
@@ -88,10 +90,11 @@ Ten hard scenarios have `valid_actions: [remove, shadowban]` or similar — two 
 | Property | Value |
 |----------|-------|
 | Domain | Trust & Safety / NLP |
-| Task type | Classification + Decision Making |
-| Total scenarios | 75 (25 easy · 20 medium · 30 hard) |
-| Episode modes | Queue (3-post, mixed tiers) + Single-step (backward compat) |
-| Reward range | `-0.3` to `1.0` (partial credit + penalties) |
+| Task type | Classification + Decision Making + Campaign Detection |
+| Total scenarios | **100** (25 easy · 20 medium · 40 hard · 15 campaign sets) |
+| Episode modes | Queue (3-post) · Single-step · Campaign (3-post simultaneous) |
+| Reward range | `-0.3` to `1.0` (moderation) · `-0.2` to `1.0` (campaign) |
+| Tasks | 4 (easy / medium / hard / coordinated campaign) |
 | Reproducible | ✅ deterministic scoring, seed-controlled RNG |
 
 ---
@@ -118,7 +121,120 @@ result = env.step(action)   # done=True immediately
 
 ---
 
-## Observation (State) Space
+## Task Tiers
+
+| Task | Difficulty | Scenarios | Score Range |
+|------|-----------|-----------|-------------|
+| Easy Moderation | Easy | 25 | [0.0, 1.0] |
+| Medium Moderation | Medium | 20 | [-0.3, 1.0] |
+| Hard Moderation | Hard | 40 | [-0.3, 1.0] |
+| Coordinated Campaign | Hard+ | 15 campaign sets | [-0.2, 1.0] |
+
+---
+
+## Reward Function
+
+Range: `-0.3` to `1.0` (moderation tasks) · `-0.2` to `1.0` (campaign task)
+
+### Positive components
+
+| Component | Easy / Medium | Hard |
+|-----------|--------------|------|
+| Label correct | +0.5 | +0.4 |
+| Action correct | +0.5 | +0.4 |
+| Severity within ±1 | — | +0.2 |
+| Evasion detection bonus | +0.1 (capped 1.0) | +0.1 (capped 1.0) |
+
+### Penalties
+
+| Behavior | Penalty |
+|----------|---------|
+| False positive (safe → remove/escalate) | **-0.25** |
+| Missed severity-5 threat (→ allow/warn) | **-0.30** |
+| Missed severity-4 threat | **-0.15** |
+| Missed severity-3 threat | **-0.05** |
+| Invalid label | **-0.10** |
+| Invalid action | **-0.10** |
+| Campaign false positive | **-0.20** |
+
+Reward is **clamped** to `[-0.3, 1.0]` (moderation) and `[-0.2, 1.0]` (campaign).
+
+---
+
+## Adversarial Evasion Scenarios
+
+10 hard scenarios contain deliberately evasion-crafted content:
+
+| Evasion Type | Example |
+|-------------|--------|
+| L33tspeak | `1 h4t3 4ll 0f th3m` — character substitution |
+| Emoji slur | Rat emoji as racial slur replacement |
+| Unicode homoglyphs | Cyrillic lookalike characters |
+| Hashtag fragmentation | Misogynistic content split across hashtags |
+| Disguised spam | Hardship story concealing affiliate link |
+| Coordinated disinfo | Bot network posting identical claims |
+| Dog whistles | Extremist coded language (e.g., 1488) |
+
+Agents that **name the evasion technique** in their `rationale` receive a `+0.1` bonus.
+Keywords that trigger the bonus: `leet`, `encoded`, `obfuscated`, `bypass`, `emoji`, `coordinated`, `disguised`, etc.
+
+---
+
+## Platform Context
+
+All 85 moderation scenarios include a `platform` field:
+
+| Platform | Policy | Typical use |
+|----------|--------|-------------|
+| `reddit` | lenient | Community discussions, subreddits |
+| `twitter` | moderate | Public discourse, viral content |
+| `youtube` | strict | Video comments, creator content |
+| `linkedin` | strict | Professional network, B2B |
+
+The same content may require different actions on different platforms (e.g., a controversial product review might be `warn` on Twitter but `remove` on LinkedIn).
+
+---
+
+## Episode Modes
+
+### Queue Mode (default — `reset()`)
+
+```python
+state = env.reset()       # samples 1 easy + 1 medium + 1 hard scenario
+# Agent processes ALL 3 posts before the episode ends
+while True:
+    result = env.step(action)
+    if result["done"]:    # done=False for first 2 posts, True on 3rd
+        break
+    state = result["state"]   # next post in queue
+print(env.episode_rewards)    # [r1, r2, r3]
+```
+
+### Single-Step Mode (backward compatible — `reset(scenario_id=...)`)
+
+```python
+state = env.reset(scenario_id="scen_hard_1")
+result = env.step(action)   # done=True immediately
+```
+
+### Campaign Mode — `CampaignModerationEnv`
+
+```python
+from content_moderation_env import CampaignModerationEnv
+cenv = CampaignModerationEnv("campaign_benchmark.json", seed=42)
+
+state = cenv.reset()         # loads 3 posts from different accounts
+print(state["posts"])        # list of 3 post dicts
+
+result = cenv.step({
+    "is_coordinated": True,  # your verdict
+    "action": "escalate",   # platform action
+    "reasoning": "Posts share identical narrative arcs and stock photo profiles."
+})
+print(result["reward"])      # 1.0 if both correct, -0.2 if false positive
+```
+
+---
 
 ```python
 {

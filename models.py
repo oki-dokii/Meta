@@ -45,6 +45,14 @@ class PlatformPolicy(str, Enum):
     lenient  = "lenient"
 
 
+class Platform(str, Enum):
+    """Social media platform context."""
+    reddit   = "reddit"
+    twitter  = "twitter"
+    youtube  = "youtube"
+    linkedin = "linkedin"
+
+
 class Tier(str, Enum):
     """Benchmark difficulty tier."""
     easy   = "easy"
@@ -70,12 +78,19 @@ class Observation(BaseModel):
         Number of prior platform violations by this account (≥ 0).
     platform_policy : PlatformPolicy
         Policy enforcement level the moderation decision must respect.
+    platform : str | None
+        Social media platform context: reddit / twitter / youtube / linkedin.
+        None for legacy scenarios that predate the platform field.
     """
     text:              str              = Field(..., description="User-generated content text")
     audio_transcript:  Optional[str]    = Field(None, description="Audio/video transcript (nullable)")
     visual_tags:       List[str]        = Field(default_factory=list, description="Detected visual content tags")
     previous_flags:    int              = Field(..., ge=0, description="Prior policy violations count")
     platform_policy:   PlatformPolicy  = Field(..., description="Platform enforcement level")
+    platform:          Optional[str]    = Field(
+                           None,
+                           description="Platform: reddit/twitter/youtube/linkedin"
+                       )
 
     model_config = {"frozen": True}   # immutable — agents must not mutate state
 
@@ -149,20 +164,15 @@ class StepResult(BaseModel):
     """
     Full result returned by env.step().
 
-    state   — the original observation (unchanged after step)
-    reward  — 0.0 … 1.0 partial-credit score
-    done    — always True (single-step episodes)
+    state   — next observation (next post in queue, or final post state)
+    reward  — [-0.3, 1.0] partial-credit score (penalties may go negative)
+    done    — False until all queue posts processed; True after final step
     info    — breakdown, ground truth, submitted action, warnings
     """
     state:   Observation
-    reward:  float = Field(..., ge=0.0, le=1.0)
-    done:    bool  = True
+    reward:  float = Field(..., ge=-0.3, le=1.0)
+    done:    bool
     info:    StepInfo
-
-    @model_validator(mode="after")
-    def done_is_always_true(self):
-        assert self.done is True, "done must always be True in single-step episodes"
-        return self
 
 
 class StepInfo(BaseModel):

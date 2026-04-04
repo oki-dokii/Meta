@@ -83,8 +83,38 @@ tasks:
       - name: missed_critical_threat_penalty
         weight: -0.20
         description: Applied when GT is severity-5 toxic and agent allows/warns
-    num_scenarios: 30
+    num_scenarios: 40
     episode_type: queue
+
+  - id: coordinated_campaign
+    name: Coordinated Campaign Detection
+    description: >
+      Agent reviews 3 posts from different accounts simultaneously and determines
+      whether they form a coordinated inauthentic behavior campaign. Requires
+      cross-post pattern recognition beyond single-post classification, modelling
+      the Trust and Safety workflow used at major platforms to detect influence
+      operations and coordinated inauthentic behavior.
+    difficulty: hard_plus
+    score_range: [-0.2, 1.0]
+    score_components:
+      - name: coordination_detected
+        weight: 0.5
+        description: Correctly identifies whether posts form a coordinated campaign
+      - name: action_correct
+        weight: 0.5
+        description: Selects correct platform action for the campaign set
+    penalties:
+      - name: false_positive_flagging
+        value: -0.2
+        condition: gt_is_coordinated == false AND agent says is_coordinated == true
+      - name: invalid_action
+        value: -0.1
+        condition: submitted_action not in valid_actions
+    num_scenarios: 15
+    episode_type: single_step
+    benchmark_file: campaign_benchmark.json
+
+total_scenarios: 100   # 25 easy + 20 medium + 40 hard + 15 campaign
 
 # ── Observation space ─────────────────────────────────────────────────────────
 observation_space:

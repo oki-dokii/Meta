@@ -19,13 +19,16 @@ import gradio as gr
 SCRIPT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
-from content_moderation_env import ContentModerationEnv
+from content_moderation_env import ContentModerationEnv, CampaignModerationEnv
 from baseline_inference import decide, run_baseline, print_summary
 
-# ── env singleton ─────────────────────────────────────────────────────────────
+# ── env singletons ────────────────────────────────────────────────────────────
 SCENARIOS_PATH = SCRIPT_DIR / "moderation_benchmark.json"
 env = ContentModerationEnv(str(SCENARIOS_PATH), seed=42)
 ALL_IDS = env.scenario_ids
+
+CAMPAIGN_PATH = SCRIPT_DIR / "campaign_benchmark.json"
+campaign_env = CampaignModerationEnv(str(CAMPAIGN_PATH), seed=42)
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -317,10 +320,98 @@ pip install -r requirements.txt
 | **overall** | **~0.38** |
 """)
 
+        # ── Tab 4: Campaign Detection ────────────────────────────────────
+        with gr.Tab("🎯 Campaign Detection"):
+            gr.Markdown("""
+### Coordinated Campaign Detection
+Review **3 posts from different accounts** and determine whether they form
+a coordinated inauthentic behavior campaign.
+
+| Field | Description |
+|-------|-------------|
+| `is_coordinated` | True if posts are from a coordinated operation |
+| `action` | `allow` / `remove` / `shadowban` / `escalate` |
+| Reward | +0.5 coordination detected · +0.5 action correct · -0.2 false positive |
+""")
+            load_camp_btn = gr.Button("Load Campaign Set", variant="primary")
+            camp_type_md  = gr.Markdown()
+            camp_posts_md = gr.Markdown()
+
+            with gr.Row():
+                is_coord_dd = gr.Dropdown(
+                    choices=["true", "false"],
+                    value="false",
+                    label="Is Coordinated?"
+                )
+                camp_action_dd = gr.Dropdown(
+                    choices=["allow", "remove", "shadowban", "escalate"],
+                    value="allow",
+                    label="Action"
+                )
+            reasoning_tb = gr.Textbox(
+                label="Reasoning (optional)", lines=2,
+                placeholder="Explain your coordination assessment..."
+            )
+            camp_submit_btn = gr.Button(
+                "Submit → campaign_env.step()", variant="primary"
+            )
+            camp_result_md = gr.Markdown()
+
+            def load_campaign():
+                state = campaign_env.reset()
+                posts_md = ""
+                for i, p in enumerate(state["posts"], 1):
+                    posts_md += f"**Post {i}** — account: `{p['account_id']}`"
+                    posts_md += f" &nbsp;|&nbsp; +{p['posted_at_offset_minutes']} min"
+                    posts_md += f" &nbsp;|&nbsp; platform: `{p['platform']}`\n\n"
+                    posts_md += f"> {p['text']}\n\n"
+                    if p.get("visual_tags"):
+                        posts_md += f"*Visual signals: {', '.join(p['visual_tags'])}*\n\n"
+                    posts_md += "---\n\n"
+                return (
+                    f"**Campaign:** `{state['campaign_id']}` &nbsp;|"
+                    f"&nbsp; {state['num_posts']} posts\n",
+                    posts_md
+                )
+
+            def submit_campaign(is_coord_str, action, reasoning):
+                # reset to fresh random campaign and step it
+                campaign_env.reset()
+                action_dict = {
+                    "is_coordinated": is_coord_str == "true",
+                    "action": action,
+                    "reasoning": reasoning,
+                }
+                result = campaign_env.step(action_dict)
+                r   = result["reward"]
+                gt  = result["info"]["ground_truth"]
+                bd  = result["info"]["score_breakdown"]
+                filled = int(max(r, 0) * 20)
+                bar = "█" * filled + "░" * (20 - filled)
+                emoji = "✅" if r >= 0.8 else ("🟡" if r >= 0.4 else "❌")
+                out = f"{emoji} [{bar}] {r:.2f}\n\n"
+                out += f"**Ground truth:** coordinated=`{gt['is_coordinated']}`"
+                out += f"  action=`{gt['correct_action']}`\n\n"
+                out += f"**Score breakdown:**\n\n"
+                for k, v in bd.items():
+                    out += f"  - `{k}`: `{v}`\n"
+                return out
+
+            load_camp_btn.click(
+                load_campaign,
+                outputs=[camp_type_md, camp_posts_md]
+            )
+            camp_submit_btn.click(
+                submit_campaign,
+                inputs=[is_coord_dd, camp_action_dd, reasoning_tb],
+                outputs=[camp_result_md]
+            )
+            demo.load(load_campaign, outputs=[camp_type_md, camp_posts_md])
+
     gr.Markdown("""
 ---
 <p style="text-align:center; color: #888; font-size: 0.85rem;">
-ContentModerationEnv · OpenEnv v1.0 · MIT License
+ContentModerationEnv v2.0 · OpenEnv · MIT License
 </p>
 """)
 
@@ -377,3 +468,33 @@ async def api_state():
 
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", server_port=7860, share=False)
+
+
+@demo.app.post("/campaign/reset")
+async def campaign_reset(request: Request):
+    """POST /campaign/reset  →  observation with 3 campaign posts"""
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    campaign_id = body.get("campaign_id", None) if isinstance(body, dict) else None
+    try:
+        state = campaign_env.reset(campaign_id=campaign_id)
+        return JSONResponse({"state": state, "status": "ok"})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
+@demo.app.post("/campaign/step")
+async def campaign_step(request: Request):
+    """POST /campaign/step  →  submit coordination verdict, returns reward"""
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    action = body.get("action", {}) if isinstance(body, dict) else {}
+    try:
+        result = campaign_env.step(action)
+        return JSONResponse(result)
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
