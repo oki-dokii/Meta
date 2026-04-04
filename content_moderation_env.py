@@ -4,17 +4,28 @@ ContentModerationEnv
 An OpenEnv-compatible environment for evaluating AI content moderation agents
 against a pre-built scenario benchmark.
 
-Usage:
+Usage (standard):
     env = ContentModerationEnv("moderation_benchmark.json")
-    state = env.reset()                       # 3-post queue episode
+    state = env.reset()                         # 3-post queue episode
     state = env.reset(scenario_id="scen_hard_7")  # single-step (backward compat)
     result = env.step({
-        "label": "toxic",
-        "action": "escalate",
-        "severity": 5,
+        "label":     "toxic",
+        "action":    "escalate",
+        "severity":  5,
         "rationale": "This is doxxing ..."
     })
     env.render()
+
+Usage (appeal mechanic on adversarial scenarios):
+    state = env.reset(scenario_id="scen_adv_1")
+    result = env.step({"label": "toxic", "action": "remove"})
+    if result["info"]["appeal_available"]:
+        print(result["info"]["appeal_text"])    # the user's counter-argument
+        appeal_result = env.appeal({
+            "verdict":   "uphold",               # or "overturn"
+            "rationale": "The appeal is invalid; content violates policy."
+        })
+        print(appeal_result["appeal_reward"])   # +0.10 correct, -0.10 if fooled
 """
 
 import json
@@ -169,6 +180,10 @@ class ContentModerationEnv:
         self._episode_rewards: List[float] = []
         self._episode_actions: List[str] = []   # submitted action strings per step
         self._active_campaign: Optional[str] = None  # campaign_id if campaign episode
+
+        # Appeal state (set after step() on an adversarial scenario)
+        self._pending_appeal_scenario: Optional[dict] = None  # scenario awaiting appeal
+        self._appeal_used: bool = False          # whether appeal() was called this step
 
     # -- Core API ---------------------------------------------------------------
 
@@ -332,6 +347,7 @@ class ContentModerationEnv:
             "info": {
                 "scenario_id":            processed_scenario["id"],
                 "tier":                   processed_scenario["tier"],
+                "is_adversarial":         processed_scenario.get("is_adversarial", False),
                 "queue_position":         self._queue_index,
                 "queue_length":           len(self._queue),
                 "episode_rewards":        list(self._episode_rewards),
@@ -346,8 +362,21 @@ class ContentModerationEnv:
                 "campaign_total_posts":   processed_scenario.get("campaign_total_posts"),
                 "campaign_bonus_earned":  campaign_bonus > 0,
                 "campaign_bonus_value":   campaign_bonus,
+                # Appeal fields (only populated on adversarial scenarios)
+                "appeal_available":       processed_scenario.get("is_adversarial", False),
+                "appeal_text":            processed_scenario.get("appeal_text"),
+                "appeal_verdict_gt":      processed_scenario.get("appeal_verdict"),
             },
         }
+
+        # Arm appeal state so agent can call env.appeal() on adversarial posts
+        if processed_scenario.get("is_adversarial", False):
+            self._pending_appeal_scenario = processed_scenario
+            self._appeal_used = False
+        else:
+            self._pending_appeal_scenario = None
+            self._appeal_used = False
+
         return result
 
     def _build_state_obs(self, scenario: dict) -> dict:
@@ -379,6 +408,72 @@ class ContentModerationEnv:
         if self._current_scenario is None:
             raise RuntimeError("No active scenario. Call reset() first.")
         return self._build_state_obs(self._current_scenario)
+
+    def appeal(self, verdict_action: dict) -> dict:
+        """
+        Submit an appeal verdict on the most recent adversarial scenario.
+
+        Must be called immediately after step() returns appeal_available=True.
+        Can only be called once per step — subsequent calls raise RuntimeError.
+
+        Parameters
+        ----------
+        verdict_action : dict
+            {
+              "verdict":   str,  # REQUIRED — "uphold" | "overturn"
+              "rationale": str   # optional — not scored, logged for research
+            }
+
+        Returns
+        -------
+        result : dict
+            {
+              "appeal_reward":    float,  # +0.10 correct, -0.10 if fooled
+              "verdict_correct":  bool,
+              "gt_verdict":       str,    # what the correct verdict was
+              "submitted_verdict": str,
+              "scenario_id":      str,
+            }
+
+        Appeal reward design
+        --------------------
+        +0.10  Agent upholds a VALID moderation decision under a manipulative appeal
+               — or correctly overturns a decision given new mitigating context.
+        -0.10  Agent is FOOLED by a manipulative appeal and overturns a correct
+               decision — or reflexively upholds when new context warranted revision.
+        """
+        if self._pending_appeal_scenario is None:
+            raise RuntimeError(
+                "No pending appeal. appeal() must be called after step() on an "
+                "adversarial scenario (info['appeal_available'] == True)."
+            )
+        if self._appeal_used:
+            raise RuntimeError(
+                "appeal() already called for this step. "
+                "Each adversarial step allows at most one appeal."
+            )
+
+        self._appeal_used = True
+        scenario  = self._pending_appeal_scenario
+        gt_verdict = str(scenario.get("appeal_verdict", "uphold")).strip().lower()
+        submitted  = str(verdict_action.get("verdict", "")).strip().lower()
+
+        if submitted not in {"uphold", "overturn"}:
+            raise ValueError(
+                f"verdict must be 'uphold' or 'overturn', got {submitted!r}"
+            )
+
+        correct        = submitted == gt_verdict
+        appeal_reward  = 0.10 if correct else -0.10
+
+        return {
+            "appeal_reward":     appeal_reward,
+            "verdict_correct":   correct,
+            "gt_verdict":        gt_verdict,
+            "submitted_verdict": submitted,
+            "scenario_id":       scenario["id"],
+            "rationale":         verdict_action.get("rationale", ""),
+        }
 
     def render(self, mode: str = "text") -> None:
         """Pretty-print the current scenario and last step result."""

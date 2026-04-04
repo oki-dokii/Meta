@@ -278,7 +278,70 @@ check("episode_actions tracked in info", "episode_actions" in result["info"])
 
 # ── 4. Reward bounds ─────────────────────────────────────────────────────────
 
-# ── Graduated missed-threat penalty ───────────────────────────────────────────
+# ── Appeal mechanic (adversarial scenarios) ───────────────────────────────────
+print("\n── Appeal mechanic (adversarial scenarios) ──────────────────────────")
+
+adv_scenarios = [s for s in data if s.get("is_adversarial")]
+check("adversarial scenarios ≥ 10 defined", len(adv_scenarios) >= 10, f"found {len(adv_scenarios)}")
+uphold_count   = sum(1 for s in adv_scenarios if s.get("appeal_verdict") == "uphold")
+overturn_count = sum(1 for s in adv_scenarios if s.get("appeal_verdict") == "overturn")
+check("uphold verdicts ≥ 4",   uphold_count   >= 4, f"found {uphold_count}")
+check("overturn verdicts ≥ 2", overturn_count >= 2, f"found {overturn_count}")
+
+# Pick first uphold and overturn scenario for live tests
+uphold_sc   = next(s for s in adv_scenarios if s["appeal_verdict"] == "uphold")
+overturn_sc = next(s for s in adv_scenarios if s["appeal_verdict"] == "overturn")
+
+adv_env = ContentModerationEnv(str(JSON_PATH), seed=77)
+
+# -- Test 1: step() on adversarial scenario exposes appeal fields
+adv_env.reset(scenario_id=uphold_sc["id"])
+gt = uphold_sc["ground_truth"]
+r = adv_env.step({"label": gt["label"], "action": gt["action"],
+                  "severity": gt.get("severity", 3)})
+check("is_adversarial present in info",  r["info"]["is_adversarial"] is True)
+check("appeal_available=True on adv",    r["info"]["appeal_available"] is True)
+check("appeal_text present",             isinstance(r["info"]["appeal_text"], str)
+                                         and len(r["info"]["appeal_text"]) > 10)
+
+# -- Test 2: correct uphold verdict → +0.10
+ar = adv_env.appeal({"verdict": "uphold", "rationale": "appeal is manipulative"})
+check("correct uphold verdict → +0.10",  abs(ar["appeal_reward"] - 0.10) < 0.001,
+      f"got {ar['appeal_reward']}")
+check("verdict_correct=True on uphold",  ar["verdict_correct"] is True)
+
+# -- Test 3: double-call guard
+try:
+    adv_env.appeal({"verdict": "uphold"})
+    check("second appeal() raises RuntimeError", False)
+except RuntimeError:
+    check("second appeal() raises RuntimeError", True)
+
+# -- Test 4: wrong verdict → -0.10
+adv_env.reset(scenario_id=uphold_sc["id"])
+adv_env.step({"label": gt["label"], "action": gt["action"], "severity": gt.get("severity", 3)})
+ar_wrong = adv_env.appeal({"verdict": "overturn"})   # wrong — should uphold
+check("wrong verdict → -0.10", abs(ar_wrong["appeal_reward"] - (-0.10)) < 0.001,
+      f"got {ar_wrong['appeal_reward']}")
+check("verdict_correct=False on wrong", ar_wrong["verdict_correct"] is False)
+
+# -- Test 5: overturn case
+adv_env.reset(scenario_id=overturn_sc["id"])
+gt2 = overturn_sc["ground_truth"]
+adv_env.step({"label": gt2["label"], "action": gt2["action"], "severity": gt2.get("severity", 3)})
+ar_ov = adv_env.appeal({"verdict": "overturn"})
+check("correct overturn verdict → +0.10", abs(ar_ov["appeal_reward"] - 0.10) < 0.001,
+      f"got {ar_ov['appeal_reward']}")
+
+# -- Test 6: appeal() on non-adversarial scenario raises
+adv_env.reset(scenario_id="scen_easy_1")
+adv_env.step({"label": "safe", "action": "allow"})
+try:
+    adv_env.appeal({"verdict": "uphold"})
+    check("appeal() on non-adversarial raises RuntimeError", False)
+except RuntimeError:
+    check("appeal() on non-adversarial raises RuntimeError", True)
+
 # Build a synthetic toxic scenario at each severity level to verify penalties
 def _make_toxic(severity: int) -> dict:
     return {
