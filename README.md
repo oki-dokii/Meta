@@ -116,6 +116,9 @@ print(env.episode_rewards)    # [r1, r2, r3]
 ```
 
 ### Campaign Mode — deterministic (`reset(campaign_id=...)`)
+
+> **Tip for judges:** `reset(campaign_id='camp_crypto_001')` loads a full 3-post campaign episode deterministically — no need to wait for the 33% random trigger. Available campaigns: `camp_crypto_001`, `camp_doxx_002`, `camp_disinfo_003`.
+
 ```python
 state = env.reset(campaign_id="camp_crypto_001")
 # All 3 posts in this campaign are queued in order.
