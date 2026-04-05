@@ -5,9 +5,10 @@ Live interactive demo + API endpoint for the OpenEnv benchmark.
 
 Tabs
 ----
-  1. Try It — step through individual scenarios
-  2. Run Baseline — run the lexical agent over all 60 scenarios
-  3. API Docs — curl / Python examples
+  1. Try It        — step through individual scenarios
+  2. Campaign Mode — deterministic campaign episodes (reset(campaign_id=...))
+  3. Baseline      — run the lexical agent over all 128 scenarios
+  4. API Docs      — Python / shell examples
 """
 
 import json
@@ -19,16 +20,14 @@ import gradio as gr
 SCRIPT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
-from content_moderation_env import ContentModerationEnv, CampaignModerationEnv
-from baseline_inference import decide, run_baseline, print_summary
+from content_moderation_env import ContentModerationEnv
+from baseline_inference import run_baseline
 
-# ── env singletons ────────────────────────────────────────────────────────────
+# ── env singleton ──────────────────────────────────────────────────────────────
 SCENARIOS_PATH = SCRIPT_DIR / "moderation_benchmark.json"
-env = ContentModerationEnv(str(SCENARIOS_PATH), seed=42)
+env     = ContentModerationEnv(str(SCENARIOS_PATH), seed=42)
 ALL_IDS = env.scenario_ids
-
-CAMPAIGN_PATH = SCRIPT_DIR / "campaign_benchmark.json"
-campaign_env = CampaignModerationEnv(str(CAMPAIGN_PATH), seed=42)
+CAMPAIGN_IDS = ["camp_crypto_001", "camp_doxx_002", "camp_disinfo_003"]
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -184,22 +183,20 @@ THEME = gr.themes.Soft(
     font=[gr.themes.GoogleFont("Inter"), "ui-sans-serif"],
 )
 
-with gr.Blocks(
-    theme=THEME,
-    title="ContentModerationEnv — OpenEnv Benchmark",
-    css="""
-    .gr-box { border-radius: 12px !important; }
-    .header { text-align: center; padding: 1.5rem 0 0.5rem; }
-    """,
-) as demo:
+CSS = """
+.gr-box { border-radius: 12px !important; }
+.header { text-align: center; padding: 1.5rem 0 0.5rem; }
+"""
+
+with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
 
     gr.Markdown("""
 # 🛡️ ContentModerationEnv
 ### An OpenEnv benchmark for evaluating AI content moderation agents
 
-> **60 scenarios** across 3 difficulty tiers (easy / medium / hard) ·
-> **Partial-credit scoring** (0.0 – 1.0) · **Full OpenEnv API**  
-> `reset()` · `step()` · `state()` · typed Pydantic models · reproducible baseline
+> **128 scenarios** across 3 difficulty tiers (easy / medium / hard) ·
+> **Partial-credit scoring** (-0.3 – 1.0) · **Full OpenEnv API**  
+> `reset()` · `step()` · `state()` · `appeal()` · campaign mode · adversarial scenarios
 """, elem_classes=["header"])
 
     with gr.Tabs():
@@ -291,7 +288,7 @@ pip install -r requirements.txt
 """)
             gr.Code(API_PYTHON, language="python", label="Python usage")
             gr.Markdown("### Shell / curl equivalent")
-            gr.Code(API_CURL, language="bash", label="Shell usage")
+            gr.Textbox(API_CURL, label="Shell usage", lines=20, interactive=False)
 
             gr.Markdown("""
 ## Action Space
@@ -312,12 +309,12 @@ pip install -r requirements.txt
 
 ## Baseline Scores (lexical agent, seed=42)
 
-| Tier | Mean Reward |
-|------|-------------|
-| easy | ~0.60 |
-| medium | ~0.35 |
-| hard | ~0.20 |
-| **overall** | **~0.38** |
+| Tier | N | Mean Reward |
+|------|---|-------------|
+| easy   | 52 | 0.375 |
+| medium | 25 | 0.460 |
+| hard   | 51 | 0.144 |
+| **overall** | **128** | **0.300** |
 """)
 
         # ── Tab 4: Campaign Detection ────────────────────────────────────
@@ -467,34 +464,10 @@ async def api_state():
 
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860, share=False)
-
-
-@demo.app.post("/campaign/reset")
-async def campaign_reset(request: Request):
-    """POST /campaign/reset  →  observation with 3 campaign posts"""
-    try:
-        body = await request.json()
-    except Exception:
-        body = {}
-    campaign_id = body.get("campaign_id", None) if isinstance(body, dict) else None
-    try:
-        state = campaign_env.reset(campaign_id=campaign_id)
-        return JSONResponse({"state": state, "status": "ok"})
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=400)
-
-
-@demo.app.post("/campaign/step")
-async def campaign_step(request: Request):
-    """POST /campaign/step  →  submit coordination verdict, returns reward"""
-    try:
-        body = await request.json()
-    except Exception:
-        body = {}
-    action = body.get("action", {}) if isinstance(body, dict) else {}
-    try:
-        result = campaign_env.step(action)
-        return JSONResponse(result)
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=400)
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=False,
+        theme=THEME,
+        css=CSS,
+    )
