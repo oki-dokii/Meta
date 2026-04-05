@@ -278,6 +278,37 @@ check("episode_actions tracked in info", "episode_actions" in result["info"])
 
 # ── 4. Reward bounds ─────────────────────────────────────────────────────────
 
+# ── is_adversarial in state obs ───────────────────────────────────────────────
+adv_obs_env = ContentModerationEnv(str(JSON_PATH), seed=99)
+obs_adv    = adv_obs_env.reset(scenario_id="scen_adv_1")
+obs_normal = adv_obs_env.reset(scenario_id="scen_easy_1")
+check("is_adversarial=True in state obs on adv scenario",
+      obs_adv.get("is_adversarial") is True)
+check("is_adversarial=False in state obs on normal scenario",
+      obs_normal.get("is_adversarial") is False)
+
+# ── reset(campaign_id=...) deterministic campaign mode ─────────────────────────
+print("\n── reset(campaign_id) deterministic mode ────────────────────────────")
+camp_reset_env = ContentModerationEnv(str(JSON_PATH), seed=11)
+obs_c = camp_reset_env.reset(campaign_id="camp_crypto_001")
+check("reset(campaign_id) returns state", isinstance(obs_c, dict))
+check("reset(campaign_id) sets active_campaign",
+      camp_reset_env._active_campaign == "camp_crypto_001")
+check("reset(campaign_id) queues all 3 posts",
+      len(camp_reset_env._queue) == 3)
+check("reset(campaign_id) orders by campaign_post_index",
+      [s.get("campaign_post_index") for s in camp_reset_env._queue] == [1, 2, 3])
+try:
+    camp_reset_env.reset(campaign_id="nonexistent_xyz")
+    check("reset(bad campaign_id) raises ValueError", False)
+except ValueError:
+    check("reset(bad campaign_id) raises ValueError", True)
+try:
+    camp_reset_env.reset(scenario_id="scen_easy_1", campaign_id="camp_crypto_001")
+    check("reset(scenario_id+campaign_id) raises ValueError", False)
+except ValueError:
+    check("reset(scenario_id+campaign_id) raises ValueError", True)
+
 # ── Appeal mechanic (adversarial scenarios) ───────────────────────────────────
 print("\n── Appeal mechanic (adversarial scenarios) ──────────────────────────")
 

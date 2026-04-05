@@ -187,23 +187,28 @@ class ContentModerationEnv:
 
     # -- Core API ---------------------------------------------------------------
 
-    def reset(self, scenario_id: Optional[str] = None) -> dict:
+    def reset(self, scenario_id: Optional[str] = None,
+               campaign_id: Optional[str] = None) -> dict:
         """
         Begin a new episode.
 
         Parameters
         ----------
         scenario_id : str | None
-            If provided, loads that specific scenario (single-step mode,
-            backward compatible). If None, samples a queue episode:
-            - 33% chance: a full campaign (all posts share a campaign_id)
-            - 67% chance: standard mixed queue (1 easy + 1 medium + 1 hard)
+            Load a specific scenario (single-step mode, backward compatible).
+        campaign_id : str | None
+            Load a specific campaign deterministically. All posts belonging to
+            `campaign_id` are queued in `campaign_post_index` order.
+            Example: env.reset(campaign_id='camp_crypto_001')
+            Raises ValueError if campaign_id is unknown or has < 2 posts.
+        (If both are None, samples a queue episode: 33% campaign, 67% mixed.)
 
         Returns
         -------
         state : dict  -- first scenario's observation, enriched with campaign
                          fields if this is a campaign episode:
-                         {campaign_id, campaign_post_index, campaign_total_posts}
+                         {campaign_id, campaign_post_index, campaign_total_posts,
+                          is_adversarial}
         """
         self._episode_rewards = []
         self._episode_actions = []
@@ -214,6 +219,11 @@ class ContentModerationEnv:
         self._done = False
         self._active_campaign = None
 
+        if scenario_id is not None and campaign_id is not None:
+            raise ValueError(
+                "Provide at most one of scenario_id or campaign_id, not both."
+            )
+
         if scenario_id is not None:
             # -- Single-step mode (backward compatible) -------------------------
             if scenario_id not in self._scenarios:
@@ -223,6 +233,23 @@ class ContentModerationEnv:
                     f"Available (sample): {available}"
                 )
             self._queue = [deepcopy(self._scenarios[scenario_id])]
+
+        elif campaign_id is not None:
+            # -- Deterministic campaign mode ------------------------------------
+            posts = [
+                s for s in self._scenarios.values()
+                if s.get("campaign_id") == campaign_id
+            ]
+            if len(posts) < 2:
+                raise ValueError(
+                    f"campaign_id {campaign_id!r} not found or has fewer than 2 posts. "
+                    f"Available campaigns: {sorted({s.get('campaign_id') for s in self._scenarios.values() if s.get('campaign_id')})}"
+                )
+            self._queue = [
+                deepcopy(s) for s in
+                sorted(posts, key=lambda s: s.get("campaign_post_index", 99))
+            ]
+            self._active_campaign = campaign_id
 
         else:
             # -- Queue mode ----------------------------------------------------
@@ -401,6 +428,8 @@ class ContentModerationEnv:
             obs["campaign_id"]          = None
             obs["campaign_post_index"]  = None
             obs["campaign_total_posts"] = None
+        # Always expose is_adversarial so agents can condition on it before step()
+        obs["is_adversarial"] = scenario.get("is_adversarial", False)
         return obs
 
     def state(self) -> dict:

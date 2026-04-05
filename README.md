@@ -75,10 +75,14 @@ Ten hard scenarios have `valid_actions: [remove, shadowban]` or similar — two 
 
 | Feature | v1 | v2 |
 |---------|----|----|
-| Scenarios | 60 | **75** (25 easy · 20 medium · 30 hard) |
-| Episode type | Single-step only | **Queue mode** (3-post episode) + single-step compat |
+| Feature | v1 | v2 |
+|---------|----|----|
+| Scenarios | 60 | **128** (52 easy · 25 medium · 51 hard) |
+| Episode type | Single-step only | **Queue mode** + **Campaign mode** + single-step compat |
 | Reward range | `0.0–1.0` | **`-0.3–1.0`** (penalties) |
-| Penalties | None | **4 penalty types** (false positive, missed threat, invalid label/action) |
+| Penalties | None | **4 penalty types** + graduated severity |
+| Adversarial | None | **10 adversarial scenarios** with `appeal()` mechanic |
+| Ambiguous GT | None | **10 hard scenarios** with `valid_actions` list |
 | Inference script | Pipeline only | **`inference.py`** — hackathon `[START]/[STEP]/[END]` format |
 
 ---
@@ -89,9 +93,11 @@ Ten hard scenarios have `valid_actions: [remove, shadowban]` or similar — two 
 |----------|-------|
 | Domain | Trust & Safety / NLP |
 | Task type | Classification + Decision Making |
-| Total scenarios | 75 (25 easy · 20 medium · 30 hard) |
-| Episode modes | Queue (3-post, mixed tiers) + Single-step (backward compat) |
-| Reward range | `-0.3` to `1.0` (partial credit + penalties) |
+| Total scenarios | **128** (52 easy · 25 medium · 51 hard) |
+| Adversarial scenarios | 10 (with `appeal()` mechanic) |
+| Campaign episodes | 3 campaigns × 3 posts (`camp_crypto_001`, `camp_doxx_002`, `camp_disinfo_003`) |
+| Episode modes | Queue (3-post) + Campaign + Single-step (backward compat) |
+| Reward range | `-0.3` to `1.0` (partial credit + graduated penalties + bonuses) |
 | Reproducible | ✅ deterministic scoring, seed-controlled RNG |
 
 ---
@@ -100,20 +106,44 @@ Ten hard scenarios have `valid_actions: [remove, shadowban]` or similar — two 
 
 ### Queue Mode (default — `reset()`)
 ```python
-state = env.reset()       # samples 1 easy + 1 medium + 1 hard scenario
-# Agent processes ALL 3 posts before the episode ends
+state = env.reset()       # 33% chance: campaign episode; 67%: 1 easy + 1 medium + 1 hard
 while True:
     result = env.step(action)
-    if result["done"]:    # done=False for first 2 posts, True on 3rd
+    if result["done"]:
         break
     state = result["state"]   # next post in queue
 print(env.episode_rewards)    # [r1, r2, r3]
+```
+
+### Campaign Mode — deterministic (`reset(campaign_id=...)`)
+```python
+state = env.reset(campaign_id="camp_crypto_001")
+# All 3 posts in this campaign are queued in order.
+# Escalating all 3 earns +0.15 campaign_escalation_bonus.
+while True:
+    result = env.step(action)
+    if result["done"]:
+        print(result["info"]["campaign_bonus_earned"])  # True if all escalated
+        break
 ```
 
 ### Single-Step Mode (backward compatible — `reset(scenario_id=...)`)
 ```python
 state = env.reset(scenario_id="scen_hard_1")
 result = env.step(action)   # done=True immediately
+```
+
+### Adversarial Scenarios + Appeal Mechanic
+```python
+state = env.reset(scenario_id="scen_adv_1")
+result = env.step({"label": "toxic", "action": "remove", "severity": 5})
+if result["info"]["appeal_available"]:
+    print(result["info"]["appeal_text"])   # the poster's counter-argument
+    appeal = env.appeal({
+        "verdict":   "uphold",             # or "overturn"
+        "rationale": "Appeal is manipulative — chemistry tutorial framing."
+    })
+    print(appeal["appeal_reward"])         # +0.10 if correct, -0.10 if fooled
 ```
 
 ---
@@ -127,6 +157,12 @@ result = env.step(action)   # done=True immediately
     "visual_tags":       list[str],    # machine-detected visual signals (may be empty)
     "previous_flags":    int,          # prior policy violations (≥ 0)
     "platform_policy":   str,          # "strict" | "moderate" | "lenient"
+    # Campaign fields (None on non-campaign episodes)
+    "campaign_id":          str | None, # shared ID across campaign posts
+    "campaign_post_index":  int | None, # 1-indexed position in campaign
+    "campaign_total_posts": int | None, # total posts in campaign
+    # Adversarial flag (True = expect an appeal after step())
+    "is_adversarial":       bool,
 }
 ```
 
@@ -157,9 +193,17 @@ result = env.step(action)   # done=True immediately
 | Penalty | Value | Trigger |
 |---------|-------|---------|
 | `false_positive_penalty` | **-0.25** | GT=`safe` but agent submits `remove` or `escalate` |
-| `missed_critical_threat_penalty` | **-0.20** | GT=`toxic` severity=5 but agent `allow`s or `warn`s |
+| `missed_threat_penalty` | **-0.30 / -0.15 / -0.05** | GT=`toxic`, agent `allow`/`warn`; graduated by severity (5/4/3) |
 | `invalid_label_penalty` | **-0.10** | Label not in valid set |
 | `invalid_action_penalty` | **-0.10** | Action not in valid set |
+
+### Bonuses
+
+| Bonus | Value | Trigger |
+|-------|-------|---------|
+| `campaign_escalation_bonus` | **+0.15** | Agent escalates all posts in a campaign episode |
+| Appeal correct | **+0.10** | `env.appeal()` verdict matches `appeal_verdict` gt |
+| Appeal wrong | **-0.10** | `env.appeal()` verdict is wrong (fooled by appeal) |
 
 **Reward is clamped to `[-0.3, 1.0]`.**
 
@@ -167,14 +211,14 @@ result = env.step(action)   # done=True immediately
 
 ## Task Tiers
 
-### 🟢 Easy (25 scenarios)
-Unambiguous content — explicit hate speech, obvious spam, clearly benign text. No multimodal context.
+### 🟢 Easy (52 scenarios)
+Unambiguous content — explicit hate speech, obvious spam, clearly benign text. Covers all 4 labels × 5 actions. Includes 6 adversarial posts with appeal challenges.
 
-### 🟡 Medium (20 scenarios)
+### 🟡 Medium (25 scenarios)
 Context matters. Policy, repeat-flags, and multimodal signals determine the right action.
 
-### 🔴 Hard (30 scenarios)
-Multimodal signals, coordinated threats, non-English content, severity rating (1-5). All penalties apply.
+### 🔴 Hard (51 scenarios)
+Multimodal signals, coordinated threats, non-English content, severity rating (1–5). 10 ambiguous scenarios with `valid_actions` list. All graduated penalties apply.
 
 ---
 
@@ -192,7 +236,7 @@ pip install -r requirements.txt
 from content_moderation_env import ContentModerationEnv
 
 env = ContentModerationEnv("moderation_benchmark.json", seed=42)
-print(f"Loaded {env.num_scenarios} scenarios")  # 75
+print(f"Loaded {env.num_scenarios} scenarios")  # 128
 
 # ── Queue episode (3 posts) ───────────────────────────────────────────────────
 state = env.reset()
@@ -225,7 +269,7 @@ print(result["info"]["score_breakdown"])
 ### Run the Baseline (no API key needed)
 
 ```bash
-python3 baseline_inference.py             # all 75 scenarios
+python3 baseline_inference.py             # all 128 scenarios
 python3 baseline_inference.py --tier hard # hard tier only
 ```
 
@@ -273,12 +317,12 @@ Configure via environment variables:
 
 | Tier | N | Mean Reward | Perfect (1.0) | Zero (0.0) |
 |------|---|-------------|----------------|------------|
-| easy | 25 | 0.660 | 12 | 4 |
-| medium | 20 | 0.575 | 9 | 6 |
-| hard | 30 | 0.213 | 2 | 11 |
-| **Overall** | **75** | **0.459** | **23** | **21** |
+| easy | 52 | 0.375 | 11 | 18 |
+| medium | 25 | 0.460 | 6 | 9 |
+| hard | 51 | 0.144 | 1 | 24 |
+| **Overall** | **128** | **0.300** | **18** | **51** |
 
-> 💡 The lexical baseline scores are lower in v2 due to harder scenarios and penalties. Beat 0.459 with an LLM agent.
+> 💡 The lexical baseline scores reflect genuine difficulty: penalties, graduated severity, and ambiguous scenarios make this a robust benchmark. Beat **0.300** with an LLM agent.
 
 ---
 
@@ -287,14 +331,14 @@ Configure via environment variables:
 ```
 Meta/
 ├── openenv.yaml               # OpenEnv v2 spec manifest
-├── content_moderation_env.py  # Core env — step/reset/state/render, queue mode, penalties
+├── content_moderation_env.py  # Core env — step/reset/state/appeal/render
 ├── models.py                  # Pydantic v2 typed models
-├── moderation_benchmark.json  # 75 scenarios dataset
+├── moderation_benchmark.json  # 128 scenarios dataset
 ├── baseline_inference.py      # Reproducible lexical baseline (no API key)
 ├── inference.py               # Hackathon-format LLM inference ([START]/[STEP]/[END])
 ├── benchmark_pipeline.py      # Full 3-step pipeline (Claude + Gemini)
 ├── benchmark_pipeline_gemini.py # Gemini-only pipeline
-├── validate_openenv.py        # Self-contained validation suite
+├── validate_openenv.py        # Self-contained 92-check validation suite
 ├── app.py                     # Gradio Hugging Face Spaces UI
 ├── Dockerfile                 # HF Spaces deployment
 ├── requirements.txt
