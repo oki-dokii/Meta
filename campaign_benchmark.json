@@ -1,0 +1,497 @@
+[
+  {
+    "id": "campaign_1",
+    "is_coordinated": true,
+    "campaign_type": "health_disinfo",
+    "posts": [
+      {
+        "account_id": "user_A",
+        "text": "My cousin at the clinic says the new flu shot caused 2 hospitalizations this week. Be careful.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": ["stock_photo_profile"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_B",
+        "text": "Hearing the same from my area. Someone I know had a bad reaction and doctors won't talk about it.",
+        "posted_at_offset_minutes": 4,
+        "visual_tags": ["stock_photo_profile"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_C",
+        "text": "This is why I don't trust rushed vaccines. Multiple people in my neighborhood reporting issues. Share before deleted!",
+        "posted_at_offset_minutes": 7,
+        "visual_tags": ["stock_photo_profile", "bulk_posting_pattern"],
+        "previous_flags": 1,
+        "platform": "twitter"
+      }
+    ],
+    "correct_action": "escalate",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_2",
+    "is_coordinated": true,
+    "campaign_type": "hate_campaign",
+    "posts": [
+      {
+        "account_id": "user_D",
+        "text": "Just found out @journalist_X was arrested for fraud. The mainstream media won't cover this.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": ["stock_photo_profile", "new_account"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_E",
+        "text": "Why is @journalist_X still employed? Her employer needs to answer for the fraud allegations.",
+        "posted_at_offset_minutes": 5,
+        "visual_tags": ["stock_photo_profile", "new_account"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_F",
+        "text": "Everyone should email @journalist_X's editor and demand accountability. Here's the contact: editor@paper.com",
+        "posted_at_offset_minutes": 9,
+        "visual_tags": ["stock_photo_profile", "bulk_posting_pattern"],
+        "previous_flags": 2,
+        "platform": "twitter"
+      }
+    ],
+    "correct_action": "remove",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_3",
+    "is_coordinated": true,
+    "campaign_type": "spam_ring",
+    "posts": [
+      {
+        "account_id": "user_G",
+        "text": "I made $4,800 last month working from home using this one platform. No experience needed. Here's how: [link]",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": ["affiliate_link_detected", "stock_photo_profile"],
+        "previous_flags": 3,
+        "platform": "reddit"
+      },
+      {
+        "account_id": "user_H",
+        "text": "Same! I started two months ago and already replaced my salary. The system in that link actually works.",
+        "posted_at_offset_minutes": 3,
+        "visual_tags": ["affiliate_link_in_bio", "stock_photo_profile"],
+        "previous_flags": 2,
+        "platform": "reddit"
+      },
+      {
+        "account_id": "user_I",
+        "text": "Can confirm — this is the real deal. My sister and I both signed up and we're already seeing results after week one.",
+        "posted_at_offset_minutes": 6,
+        "visual_tags": ["stock_photo_profile", "bulk_posting_pattern"],
+        "previous_flags": 4,
+        "platform": "reddit"
+      }
+    ],
+    "correct_action": "remove",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_4",
+    "is_coordinated": true,
+    "campaign_type": "political_manip",
+    "posts": [
+      {
+        "account_id": "user_J",
+        "text": "Senator Mills voted against the veterans bill AGAIN. He doesn't care about our heroes. Pass it on.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": ["bulk_posting_pattern"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_K",
+        "text": "Disgusting. Senator Mills has voted against veterans 3 times now. His constituents deserve better. RT to spread.",
+        "posted_at_offset_minutes": 3,
+        "visual_tags": ["new_account", "bulk_posting_pattern"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_L",
+        "text": "Why is the media ignoring Senator Mills' anti-veteran votes? We need to make this go viral before midterms.",
+        "posted_at_offset_minutes": 5,
+        "visual_tags": ["new_account", "copied_profile_picture"],
+        "previous_flags": 1,
+        "platform": "twitter"
+      }
+    ],
+    "correct_action": "escalate",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_5",
+    "is_coordinated": true,
+    "campaign_type": "radicalization",
+    "posts": [
+      {
+        "account_id": "user_M",
+        "text": "Feeling lost and like the system is rigged against people like us? You're not alone. Check out the community in this server.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": ["extremist_adjacent_content"],
+        "previous_flags": 0,
+        "platform": "reddit"
+      },
+      {
+        "account_id": "user_N",
+        "text": "I felt the same way until I found others who understood. There are communities where people finally speak truth. DM me.",
+        "posted_at_offset_minutes": 6,
+        "visual_tags": [],
+        "previous_flags": 1,
+        "platform": "reddit"
+      },
+      {
+        "account_id": "user_O",
+        "text": "These guys helped me see through the lies. Join us — real people, real answers. Not like what they teach you in school.",
+        "posted_at_offset_minutes": 11,
+        "visual_tags": ["extremist_adjacent_content", "recruitment_pattern"],
+        "previous_flags": 2,
+        "platform": "reddit"
+      }
+    ],
+    "correct_action": "escalate",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_6",
+    "is_coordinated": false,
+    "campaign_type": "organic_news",
+    "posts": [
+      {
+        "account_id": "user_P",
+        "text": "Just heard about the earthquake in Turkey — sending prayers to everyone affected. Stay safe out there.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_Q",
+        "text": "Donating to the Red Cross relief effort for the Turkey earthquake. If you can spare anything, please do.",
+        "posted_at_offset_minutes": 45,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_R",
+        "text": "My professor just cancelled class so we can all follow the earthquake news together. Humanities really hits different today.",
+        "posted_at_offset_minutes": 90,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "twitter"
+      }
+    ],
+    "correct_action": "allow",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_7",
+    "is_coordinated": false,
+    "campaign_type": "organic_trending",
+    "posts": [
+      {
+        "account_id": "user_S",
+        "text": "Okay I finally watched Dune Part 2 and it absolutely lived up to the hype. Villeneuve is a genius.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "reddit"
+      },
+      {
+        "account_id": "user_T",
+        "text": "Dune Part 2 was fine but felt overlong. The battle sequences dragged. 7/10 from me.",
+        "posted_at_offset_minutes": 120,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "reddit"
+      },
+      {
+        "account_id": "user_U",
+        "text": "Hot take: Dune Part 2 is good but Part 1 had better pacing. The last act felt rushed. Curious what others think.",
+        "posted_at_offset_minutes": 200,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "reddit"
+      }
+    ],
+    "correct_action": "allow",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_8",
+    "is_coordinated": false,
+    "campaign_type": "organic_debate",
+    "posts": [
+      {
+        "account_id": "user_V",
+        "text": "Universal basic income is the only realistic safety net for an AI-driven economy. Fight me.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_W",
+        "text": "UBI sounds great until you model the inflation it causes. We need targeted job retraining programmes instead.",
+        "posted_at_offset_minutes": 55,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_X",
+        "text": "Both sides have a point but neither accounts for the political capital required. UBI pilots in Finland showed mixed results.",
+        "posted_at_offset_minutes": 110,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "twitter"
+      }
+    ],
+    "correct_action": "allow",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_9",
+    "is_coordinated": false,
+    "campaign_type": "organic_news",
+    "posts": [
+      {
+        "account_id": "user_Y",
+        "text": "The new labor law passed by a single vote. Historic moment. Whether you support it or not, democracy worked today.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "linkedin"
+      },
+      {
+        "account_id": "user_Z",
+        "text": "Really glad the labor protection bill finally passed. My team has been advocating for this for three years.",
+        "posted_at_offset_minutes": 80,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "linkedin"
+      },
+      {
+        "account_id": "user_AA",
+        "text": "Surprised by the labor bill outcome. Will affect our hiring timelines significantly — need to review compliance ASAP.",
+        "posted_at_offset_minutes": 150,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "linkedin"
+      }
+    ],
+    "correct_action": "allow",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_10",
+    "is_coordinated": false,
+    "campaign_type": "organic_trending",
+    "posts": [
+      {
+        "account_id": "user_BB",
+        "text": "Liverpool vs Arsenal was insane tonight. That last-minute equalizer had me off the couch.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_CC",
+        "text": "Arsenal were the better team for 80 mins and then Liverpool happened. Story of my life as a Gunners fan.",
+        "posted_at_offset_minutes": 30,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_DD",
+        "text": "Both managers will claim the draw as a good result. I thought the ref had a quiet but decent game actually.",
+        "posted_at_offset_minutes": 75,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "twitter"
+      }
+    ],
+    "correct_action": "allow",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_11",
+    "is_coordinated": true,
+    "campaign_type": "health_disinfo",
+    "posts": [
+      {
+        "account_id": "user_EE",
+        "text": "A friend in nursing mentioned off the record that they're seeing more cardiac events post-booster than ever. Concerning.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "youtube"
+      },
+      {
+        "account_id": "user_FF",
+        "text": "My GP said the same thing but won't put anything in writing. There's definitely something being suppressed here.",
+        "posted_at_offset_minutes": 8,
+        "visual_tags": ["stock_photo_profile"],
+        "previous_flags": 0,
+        "platform": "youtube"
+      },
+      {
+        "account_id": "user_GG",
+        "text": "I've seen three different comments today saying the same thing about cardiac events. Why isn't the media covering this?",
+        "posted_at_offset_minutes": 14,
+        "visual_tags": ["bulk_posting_pattern"],
+        "previous_flags": 1,
+        "platform": "youtube"
+      }
+    ],
+    "correct_action": "escalate",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_12",
+    "is_coordinated": true,
+    "campaign_type": "political_manip",
+    "posts": [
+      {
+        "account_id": "user_HH",
+        "text": "Interesting that the prime minister went silent on energy prices right when new figures show record profits. Coincidence?",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": ["new_account"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_II",
+        "text": "Someone needs to ask the PM directly: why are energy executives donating to your campaign while bills skyrocket?",
+        "posted_at_offset_minutes": 6,
+        "visual_tags": ["new_account", "bulk_posting_pattern"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_JJ",
+        "text": "The corruption is hiding in plain sight. Energy company profits up 400%, PM says nothing. Wake up people. #corruption",
+        "posted_at_offset_minutes": 10,
+        "visual_tags": ["new_account", "copied_profile_picture"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      }
+    ],
+    "correct_action": "escalate",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_13",
+    "is_coordinated": true,
+    "campaign_type": "hate_campaign",
+    "posts": [
+      {
+        "account_id": "user_KK",
+        "text": "Has anyone else noticed how much worse the neighborhood has gotten since new residents moved in? Just asking.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": [],
+        "previous_flags": 1,
+        "platform": "reddit"
+      },
+      {
+        "account_id": "user_LL",
+        "text": "Yeah the area was great until a certain group arrived. Property values, safety, everything changed. It's not racist to notice.",
+        "posted_at_offset_minutes": 7,
+        "visual_tags": [],
+        "previous_flags": 2,
+        "platform": "reddit"
+      },
+      {
+        "account_id": "user_MM",
+        "text": "Dog whistle much? They're not subtle about who they mean. This subreddit needs to watch out for this pattern of posts.",
+        "posted_at_offset_minutes": 25,
+        "visual_tags": [],
+        "previous_flags": 0,
+        "platform": "reddit"
+      }
+    ],
+    "correct_action": "remove",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_14",
+    "is_coordinated": true,
+    "campaign_type": "spam_ring",
+    "posts": [
+      {
+        "account_id": "user_NN",
+        "text": "Just hit my first $10k month with dropshipping. Happy to share what worked — no course to buy, just genuine advice.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": ["affiliate_link_in_bio"],
+        "previous_flags": 1,
+        "platform": "reddit"
+      },
+      {
+        "account_id": "user_OO",
+        "text": "Seconded — dropshipping finally clicked for me after following the approach user_NN mentioned in another thread.",
+        "posted_at_offset_minutes": 5,
+        "visual_tags": ["stock_photo_profile", "affiliate_link_in_bio"],
+        "previous_flags": 0,
+        "platform": "reddit"
+      },
+      {
+        "account_id": "user_PP",
+        "text": "I was sceptical but this is actually legit. Check user_NN's post history — consistent results over months. Worth a look.",
+        "posted_at_offset_minutes": 9,
+        "visual_tags": ["stock_photo_profile"],
+        "previous_flags": 2,
+        "platform": "reddit"
+      }
+    ],
+    "correct_action": "shadowban",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  },
+  {
+    "id": "campaign_15",
+    "is_coordinated": true,
+    "campaign_type": "political_manip",
+    "posts": [
+      {
+        "account_id": "user_QQ",
+        "text": "Every time there's an election, mail-in ballots mysteriously show up weeks later. The pattern is undeniable.",
+        "posted_at_offset_minutes": 0,
+        "visual_tags": ["new_account", "bulk_posting_pattern"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_RR",
+        "text": "Late ballots and uncertified drop boxes — this is how elections get stolen. Everyone needs to demand transparency.",
+        "posted_at_offset_minutes": 4,
+        "visual_tags": ["new_account", "copied_profile_picture"],
+        "previous_flags": 0,
+        "platform": "twitter"
+      },
+      {
+        "account_id": "user_SS",
+        "text": "Three separate counties reporting late ballot processing delays. This is not a coincidence. Share widely before the results.",
+        "posted_at_offset_minutes": 8,
+        "visual_tags": ["new_account", "bulk_posting_pattern"],
+        "previous_flags": 1,
+        "platform": "twitter"
+      }
+    ],
+    "correct_action": "escalate",
+    "score_rubric": {"coordination_detected": 0.5, "action_correct": 0.5}
+  }
+]

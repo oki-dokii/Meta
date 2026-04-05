@@ -130,6 +130,30 @@ def _compute_reward(action: dict, scenario: dict) -> tuple[float, dict]:
         breakdown["invalid_action_penalty"] = -0.10
         reward += -0.10
 
+    # ── Evasion detection bonus ───────────────────────────────────────────────
+    # Scenarios marked with evasion_type reward agents that identify the
+    # obfuscation technique in their rationale (+0.10, capped so total ≤ 1.0).
+    evasion_type = scenario.get("evasion_type", None)
+    if evasion_type is not None:
+        import re as _re
+        rationale_raw = str(action.get("rationale", "")).lower()
+        rationale_clean = _re.sub(r"[^\w\s]", " ", rationale_raw)
+
+        EVASION_KEYWORDS = {
+            "evasion", "evade", "bypass", "leet", "leetspeak",
+            "encoded", "obfuscated", "obfuscation", "emoji",
+            "disguised", "disguise", "coordinated", "hidden",
+            "substitut", "character substitut", "bot network"
+        }
+
+        detected = any(kw in rationale_clean for kw in EVASION_KEYWORDS)
+        if detected:
+            # Always add 0.1 — the final clamp below limits total to 1.0
+            breakdown["evasion_detection_bonus"] = 0.1
+            reward += 0.1
+        else:
+            breakdown["evasion_detection_bonus"] = 0.0
+
     # Clamp to [-0.3, 1.0]
     reward = max(-0.3, min(1.0, round(reward, 6)))
     return reward, breakdown
@@ -612,3 +636,155 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# ---------------------------------------------------------------------------
+# CampaignModerationEnv
+# ---------------------------------------------------------------------------
+
+class CampaignModerationEnv:
+    """
+    OpenEnv-compatible environment for coordinated campaign detection.
+
+    The agent receives 3 posts from different accounts simultaneously and
+    must decide whether they form a coordinated inauthentic behavior campaign.
+    Single-step episodes — one joint decision covers the entire campaign set.
+
+    Reward range: [-0.2, 1.0]
+      +0.5  coordination correctly detected (or correctly cleared)
+      +0.5  platform action matches ground truth
+      -0.2  false positive penalty (flagging genuine organic posts)
+      -0.1  invalid action submitted
+    """
+
+    VALID_ACTIONS = {"allow", "remove", "shadowban", "escalate"}
+
+    def __init__(self, campaigns_path: str, seed: Optional[int] = None):
+        if not os.path.isfile(campaigns_path):
+            raise FileNotFoundError(f"Campaign file not found: {campaigns_path!r}")
+        with open(campaigns_path, "r", encoding="utf-8") as f:
+            raw: List[dict] = json.load(f)
+        self._campaigns: Dict[str, dict] = {c["id"]: c for c in raw}
+        self._campaign_ids: List[str] = sorted(self._campaigns.keys())
+        self._rng = random.Random(seed)
+        self._current: Optional[dict] = None
+        self._done: bool = True
+
+    # -- Core API ---------------------------------------------------------------
+
+    def reset(self, campaign_id: Optional[str] = None) -> dict:
+        """
+        Begin a new episode. Returns observation dict with all 3 posts.
+
+        Parameters
+        ----------
+        campaign_id : str | None
+            If provided, loads that specific campaign set.
+            If None, randomly selects one.
+        """
+        if campaign_id is not None:
+            if campaign_id not in self._campaigns:
+                available = list(self._campaigns.keys())[:5]
+                raise ValueError(
+                    f"Unknown campaign_id {campaign_id!r}. "
+                    f"Available (sample): {available}"
+                )
+            chosen = campaign_id
+        else:
+            chosen = self._rng.choice(self._campaign_ids)
+
+        self._current = deepcopy(self._campaigns[chosen])
+        self._done = False
+
+        return {
+            "campaign_id": self._current["id"],
+            "posts": self._current["posts"],
+            "num_posts": len(self._current["posts"]),
+            "task": "coordinated_campaign_detection",
+        }
+
+    def step(self, action: dict) -> dict:
+        """
+        Submit coordination detection decision.
+
+        Parameters
+        ----------
+        action : dict
+            {
+              "is_coordinated": bool,   REQUIRED — True if campaign is coordinated
+              "action":         str,    REQUIRED — allow/remove/shadowban/escalate
+              "reasoning":      str     optional, not scored
+            }
+        """
+        if self._current is None or self._done:
+            raise RuntimeError("Call reset() before step().")
+
+        gt = self._current
+        pred_coordinated = bool(action.get("is_coordinated", False))
+        pred_action = str(action.get("action", "")).strip().lower()
+
+        gt_coordinated = bool(gt["is_coordinated"])
+        gt_action = str(gt["correct_action"]).strip().lower()
+        rubric = gt["score_rubric"]
+
+        breakdown: dict = {}
+        reward = 0.0
+
+        # Coordination detection score
+        coord_ok = pred_coordinated == gt_coordinated
+        coord_score = rubric["coordination_detected"] if coord_ok else 0.0
+        breakdown["coordination_detected"] = coord_score
+        reward += coord_score
+
+        # Action correctness score
+        action_ok = pred_action == gt_action
+        action_score = rubric["action_correct"] if action_ok else 0.0
+        breakdown["action_correct"] = action_score
+        reward += action_score
+
+        # Penalty: false positive (flagging genuine organic content)
+        if not gt_coordinated and pred_coordinated:
+            breakdown["false_positive_penalty"] = -0.2
+            reward += -0.2
+
+        # Penalty: invalid action
+        if pred_action not in self.VALID_ACTIONS:
+            breakdown["invalid_action_penalty"] = -0.1
+            reward += -0.1
+
+        reward = max(-0.2, min(1.0, round(reward, 6)))
+        self._done = True
+
+        return {
+            "state": {
+                "posts": self._current["posts"],
+                "campaign_id": self._current["id"],
+            },
+            "reward": reward,
+            "done": True,
+            "info": {
+                "campaign_id": self._current["id"],
+                "campaign_type": self._current.get("campaign_type", "unknown"),
+                "ground_truth": {
+                    "is_coordinated": gt_coordinated,
+                    "correct_action": gt_action,
+                },
+                "score_breakdown": breakdown,
+                "submitted_action": deepcopy(action),
+            },
+        }
+
+    def state(self) -> dict:
+        """Return current campaign observation without stepping."""
+        if self._current is None:
+            raise RuntimeError("No active campaign. Call reset() first.")
+        return {
+            "campaign_id": self._current["id"],
+            "posts": self._current["posts"],
+            "num_posts": len(self._current["posts"]),
+        }
+
+    @property
+    def num_campaigns(self) -> int:
+        """Total number of campaign sets in the benchmark."""
+        return len(self._campaigns)
