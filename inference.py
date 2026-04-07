@@ -34,13 +34,22 @@ sys.path.insert(0, str(SCRIPT_DIR))
 from content_moderation_env import ContentModerationEnv
 
 # ── Credentials ───────────────────────────────────────────────────────────────
-API_BASE_URL: str = os.getenv("API_BASE_URL", "https://api.groq.com/openai/v1")
-MODEL_NAME:   str = os.getenv("MODEL_NAME", "llama-3.3-70b-versatile")
-API_KEY: Optional[str] = (
-    os.getenv("GROQ_API_KEY")
-    or os.getenv("HF_TOKEN")
-    or os.getenv("OPENAI_API_KEY")
-)
+# Detect provider from environment variable
+PROVIDER: str = os.getenv("LLM_PROVIDER", "groq")  # "openai", "grok", or "groq"
+
+# API configuration based on provider
+if PROVIDER == "grok":
+    API_BASE_URL: str = os.getenv("API_BASE_URL", "https://api.x.ai/v1")
+    MODEL_NAME: str = os.getenv("MODEL_NAME", "grok-beta")
+    API_KEY: Optional[str] = os.getenv("XAI_API_KEY") or os.getenv("GROK_API_KEY")
+elif PROVIDER == "openai":
+    API_BASE_URL: str = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
+    MODEL_NAME: str = os.getenv("MODEL_NAME", "gpt-4o-mini")
+    API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY") or os.getenv("HF_TOKEN")
+else:  # default to groq
+    API_BASE_URL: str = os.getenv("API_BASE_URL", "https://api.groq.com/openai/v1")
+    MODEL_NAME: str = os.getenv("MODEL_NAME", "llama-3.3-70b-versatile")
+    API_KEY: Optional[str] = os.getenv("GROQ_API_KEY")
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 SCENARIOS_PATH = SCRIPT_DIR / "moderation_benchmark.json"

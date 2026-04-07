@@ -278,12 +278,31 @@ python3 baseline_inference.py --tier hard # hard tier only
 
 ### Run the LLM Inference Script (hackathon format)
 
+**With Groq (Default - Fast & Free!):**
 ```bash
-export OPENAI_API_KEY="sk-..."          # or HF_TOKEN for HF inference
+export LLM_PROVIDER="groq"              # or omit (groq is default)
+export GROQ_API_KEY="gsk_..."
+export MODEL_NAME="llama-3.3-70b-versatile"  # default
+python3 inference.py
+```
+
+**With OpenAI:**
+```bash
+export LLM_PROVIDER="openai"
+export OPENAI_API_KEY="sk-..."
 export MODEL_NAME="gpt-4o-mini"         # default
 python3 inference.py
-# Outputs: [START] / [STEP] / [END] lines per task
 ```
+
+**With Grok (X.AI):**
+```bash
+export LLM_PROVIDER="grok"
+export XAI_API_KEY="xai-..."
+export MODEL_NAME="grok-beta"           # default
+python3 inference.py
+```
+
+All outputs: [START] / [STEP] / [END] lines per task
 
 ### Run the Validation Suite
 
