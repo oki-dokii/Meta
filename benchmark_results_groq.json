@@ -2,16 +2,16 @@
   {
     "scenario_id": "camp_crypto_001_p1",
     "tier": "easy",
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The text contains a potential investment scam with unrealistic promises of returns and an affiliate link, violating the strict platform policy."
+    },
     "reward": 0.0,
     "breakdown": {
       "label_correct": 0.0,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -20,21 +20,28 @@
     },
     "state_text": "CosmoCoin is the next big thing. Early investors are already up 300%. Don't miss out!",
     "platform_policy": "strict",
-    "previous_flags": 1
+    "previous_flags": 1,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99932, Requested 505. Please try again in 6m17.568s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "camp_crypto_001_p2",
     "tier": "medium",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "spam",
+      "action": "remove",
+      "severity": 3,
+      "rationale": "The content exhibits characteristics of a spam post, including an affiliate link and bulk posting pattern, which violates the strict platform policy."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "spam",
@@ -48,17 +55,17 @@
   {
     "scenario_id": "camp_crypto_001_p3",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "spam",
+      "action": "remove",
+      "severity": 1,
+      "rationale": "The content exhibits clear signs of a spam campaign, including urgency language, affiliate link detection, and known bot network involvement, warranting immediate removal under a strict platform policy."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "spam",
@@ -73,16 +80,16 @@
   {
     "scenario_id": "camp_disinfo_003_p1",
     "tier": "easy",
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 5,
+      "rationale": "The content promotes unsubstantiated claims about a natural cure for cancer, which is a common trait of health misinformation, and the strict platform policy requires removal of such content."
+    },
     "reward": 0.5,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "misleading",
-      "action": "remove",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "misleading",
@@ -96,16 +103,16 @@
   {
     "scenario_id": "camp_disinfo_003_p2",
     "tier": "medium",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content promotes unsubstantiated health claims and exhibits signals of potential misinformation, warranting removal under a strict policy."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -119,17 +126,17 @@
   {
     "scenario_id": "camp_disinfo_003_p3",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The content promotes unsubstantiated medical claims and urges listeners to stop cancer treatment, posing a significant risk to public health, and the user is a repeat offender on a strict platform."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -144,16 +151,16 @@
   {
     "scenario_id": "camp_doxx_002_p1",
     "tier": "easy",
+    "agent_decision": {
+      "label": "misleading",
+      "action": "warn",
+      "severity": 4,
+      "rationale": "The post implies a conspiracy without providing evidence, potentially misleading readers about the journalist's intentions."
+    },
     "reward": 0.0,
     "breakdown": {
       "label_correct": 0.0,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "toxic",
@@ -162,21 +169,28 @@
     },
     "state_text": "Interesting how @journalist_name always seems to be at the right place at the right time. Almost like they're tipped off.",
     "platform_policy": "moderate",
-    "previous_flags": 0
+    "previous_flags": 0,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99924, Requested 497. Please try again in 6m3.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "camp_doxx_002_p2",
     "tier": "medium",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The post contains a veiled threat and doxxing attempt by hinting at the journalist's neighborhood, which is a severe violation of community guidelines."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -190,18 +204,17 @@
   {
     "scenario_id": "camp_doxx_002_p3",
     "tier": "hard",
-    "reward": -0.1,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The post contains a doxxing pattern and shares personal information, which is a severe violation of privacy and can lead to harm, warranting removal despite the platform's moderate policy."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -216,18 +229,17 @@
   {
     "scenario_id": "scen_adv_1",
     "tier": "hard",
-    "reward": -0.3,
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content provides potentially hazardous instructions under the guise of a chemistry experiment, posing a risk to users."
+    },
+    "reward": 0.4,
     "breakdown": {
       "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.0,
-      "missed_threat_penalty": -0.3
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -242,17 +254,18 @@
   {
     "scenario_id": "scen_adv_10",
     "tier": "hard",
-    "reward": 0.8,
-    "breakdown": {
-      "label_correct": 0.4,
-      "action_correct": 0.4,
-      "severity_within_1": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content appears to promote or facilitate potentially malicious activities, such as lock-picking, which is a security risk, and the platform has a strict policy."
+    },
+    "reward": -0.25,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0,
+      "false_positive_penalty": -0.25
     },
     "ground_truth": {
       "label": "safe",
@@ -262,21 +275,28 @@
     },
     "state_text": "Want to know how easy it is to pick a standard door lock? Here's what I found in 10 minutes of research. [video attached]",
     "platform_policy": "strict",
-    "previous_flags": 1
+    "previous_flags": 1,
+    "adjudication": {
+      "override_reward": -0.25,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99915, Requested 510. Please try again in 6m7.2s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": -0.25
   },
   {
     "scenario_id": "scen_adv_2",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The text contains a veiled threat of physical harm towards another user, which is a clear violation of community guidelines and warrants immediate removal."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -290,18 +310,17 @@
   {
     "scenario_id": "scen_adv_3",
     "tier": "hard",
-    "reward": 0.15,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.05
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "Text contains blatant misogynistic hate speech, promoting sexism and gender-based discrimination."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -316,17 +335,17 @@
   {
     "scenario_id": "scen_adv_4",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 10,
+      "rationale": "The post promotes debunked health misinformation about the MMR vaccine and autism, with a high previous flags count on a strict platform."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -341,16 +360,16 @@
   {
     "scenario_id": "scen_adv_5",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content expresses a broad, hateful generalization about a group of people based on their nationality, promoting a harmful stereotype."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -364,18 +383,17 @@
   {
     "scenario_id": "scen_adv_6",
     "tier": "hard",
-    "reward": -0.1,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "escalate",
+      "severity": 9,
+      "rationale": "The content implies stalking and invasion of privacy, which is a serious violation of platform policies, especially under a strict platform with a user who has a history of previous flags."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -390,16 +408,16 @@
   {
     "scenario_id": "scen_adv_7",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The text contains a violent and threatening statement towards a group of people, which is a clear violation of community guidelines."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -413,17 +431,17 @@
   {
     "scenario_id": "scen_adv_8",
     "tier": "hard",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 1,
+      "rationale": "The content, although sensitive, is presented in a historical and educational context, aiming to highlight the dangers of dehumanizing language rather than promoting hate."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.4,
       "action_correct": 0.4,
       "severity_within_1": 0.2
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "safe",
@@ -438,16 +456,17 @@
   {
     "scenario_id": "scen_adv_9",
     "tier": "easy",
-    "reward": 1.0,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.5
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content quotes a statement that promotes gender bias, which may be perceived as promoting hate speech or discrimination, despite being presented in a context that supposedly fights against such mindset."
+    },
+    "reward": -0.25,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.0,
+      "false_positive_penalty": -0.25
     },
     "ground_truth": {
       "label": "safe",
@@ -456,21 +475,28 @@
     },
     "state_text": "He said: 'Women belong in the kitchen, not the boardroom.' This is the mindset we are fighting against. #BreakTheBias",
     "platform_policy": "strict",
-    "previous_flags": 0
+    "previous_flags": 0,
+    "adjudication": {
+      "override_reward": -0.25,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99907, Requested 503. Please try again in 5m54.24s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": -0.25
   },
   {
     "scenario_id": "scen_coord_easy_1",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "spam",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The post contains a suspicious investment opportunity with guaranteed returns, which is a common trait of scams, and the 'bulk_posting_pattern' visual tag suggests automated posting."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "spam",
@@ -484,16 +510,16 @@
   {
     "scenario_id": "scen_coord_easy_2",
     "tier": "easy",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 0,
+      "rationale": "The comment expresses a neutral opinion without containing hate speech, spam, or misleading information, and thus does not violate the platform's moderate policy."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "safe",
@@ -507,17 +533,17 @@
   {
     "scenario_id": "scen_coord_hard_1",
     "tier": "hard",
-    "reward": 0.2,
+    "agent_decision": {
+      "label": "spam",
+      "action": "remove",
+      "severity": 3,
+      "rationale": "The content exhibits patterns of spam, including bulk posting, known bot network involvement, and affiliate link detection, which are clear violations under a strict policy, especially with the user's history of previous flags."
+    },
+    "reward": 0.6,
     "breakdown": {
-      "label_correct": 0.0,
+      "label_correct": 0.4,
       "action_correct": 0.0,
       "severity_within_1": 0.2
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -532,18 +558,17 @@
   {
     "scenario_id": "scen_coord_hard_2",
     "tier": "hard",
-    "reward": -0.1,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The presence of doxxing patterns and the implication of stalking in the message justify removal."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -558,16 +583,16 @@
   {
     "scenario_id": "scen_coord_medium_1",
     "tier": "medium",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "spam",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The post promotes unrealistic financial gains and contains indicators of a known bot network and copied profile picture, violating the platform's strict policy against spam."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "spam",
@@ -581,16 +606,16 @@
   {
     "scenario_id": "scen_coord_medium_2",
     "tier": "medium",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The content is aggressive and targets an individual, but given the platform's moderate policy and the user's flag history, a warning is issued instead of removal."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -604,16 +629,16 @@
   {
     "scenario_id": "scen_easy_1",
     "tier": "easy",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 0,
+      "rationale": "The content is a harmless inquiry about a recipe and does not violate any platform policies."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "safe",
@@ -626,16 +651,16 @@
   {
     "scenario_id": "scen_easy_10",
     "tier": "easy",
-    "reward": 1.0,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.5
-    },
     "agent_decision": {
-      "label": "spam",
+      "label": "misleading",
       "action": "remove",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "severity": 8,
+      "rationale": "The content makes unrealistic promises of high earnings with no experience, indicating a potential scam."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "spam",
@@ -648,16 +673,16 @@
   {
     "scenario_id": "scen_easy_11",
     "tier": "easy",
-    "reward": 1.0,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.5
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "warn",
+      "severity": 2,
+      "rationale": "Request for copyrighted material, but on a moderate platform, a warning is more suitable than removal."
+    },
+    "reward": 0.0,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "safe",
@@ -665,21 +690,28 @@
     },
     "state_text": "Does anyone have the PDF of the textbook for CS101?",
     "platform_policy": "moderate",
-    "previous_flags": 0
+    "previous_flags": 0,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99899, Requested 439. Please try again in 4m52.032s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "scen_easy_12",
     "tier": "easy",
-    "reward": 0.5,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.0
-    },
     "agent_decision": {
       "label": "toxic",
-      "action": "warn",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "action": "remove",
+      "severity": 10,
+      "rationale": "The content contains a direct and severe death threat, violating the strict platform policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -692,16 +724,16 @@
   {
     "scenario_id": "scen_easy_13",
     "tier": "easy",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 0,
+      "rationale": "The content is a harmless inquiry for recommendations, posing no threat or violation under any policy."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "safe",
@@ -714,16 +746,16 @@
   {
     "scenario_id": "scen_easy_14",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The content is coercive and uses strong language to intimidate users into voting for a particular candidate, which is against moderate platform policies."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -736,16 +768,16 @@
   {
     "scenario_id": "scen_easy_15",
     "tier": "easy",
+    "agent_decision": {
+      "label": "spam",
+      "action": "remove",
+      "severity": 5,
+      "rationale": "The post is attempting to scam users by promising a fraudulent Bitcoin giveaway, which is a clear violation of the platform's policies."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "spam",
-      "action": "remove",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -758,16 +790,16 @@
   {
     "scenario_id": "scen_easy_16",
     "tier": "easy",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 0,
+      "rationale": "The content is a benign birthday greeting and does not contain any toxic, spam, or misleading elements."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "safe",
@@ -780,16 +812,16 @@
   {
     "scenario_id": "scen_easy_17",
     "tier": "easy",
-    "reward": 0.5,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.0
-    },
     "agent_decision": {
       "label": "toxic",
-      "action": "warn",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The content is a direct personal attack with a high level of insults, violating the strict platform policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -802,16 +834,16 @@
   {
     "scenario_id": "scen_easy_18",
     "tier": "easy",
+    "agent_decision": {
+      "label": "spam",
+      "action": "remove",
+      "severity": 10,
+      "rationale": "The post is openly advertising and distributing controlled substances without prescription, violating strict platform policies."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "spam",
-      "action": "remove",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -824,16 +856,16 @@
   {
     "scenario_id": "scen_easy_19",
     "tier": "easy",
-    "reward": 1.0,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.5
-    },
     "agent_decision": {
       "label": "safe",
       "action": "allow",
       "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "rationale": "The content is a respectful disagreement with supporting data and does not contain any toxic or harmful language."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "safe",
@@ -846,16 +878,16 @@
   {
     "scenario_id": "scen_easy_2",
     "tier": "easy",
-    "reward": 0.5,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.0
-    },
     "agent_decision": {
       "label": "toxic",
-      "action": "warn",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content contains a direct and hostile threat, violating the strict platform policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -868,16 +900,16 @@
   {
     "scenario_id": "scen_easy_20",
     "tier": "easy",
-    "reward": 0.5,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.0
-    },
     "agent_decision": {
       "label": "toxic",
-      "action": "warn",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "action": "remove",
+      "severity": 10,
+      "rationale": "The content contains hate speech and a direct attack on a religious group, violating the platform's strict policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -890,16 +922,16 @@
   {
     "scenario_id": "scen_easy_21",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "spam",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content is promoting the sale of followers, which is a clear violation of most platform policies, and the user has a history of previous flags, indicating a pattern of abusive behavior."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "spam",
@@ -912,16 +944,16 @@
   {
     "scenario_id": "scen_easy_22",
     "tier": "easy",
+    "agent_decision": {
+      "label": "spam",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content is attempting to lure users with unrealistic earning potential and lacks transparency, indicating a potential scam, and the user's history of previous flags justifies removal under a moderate policy."
+    },
     "reward": 0.5,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "spam",
-      "action": "remove",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -934,16 +966,16 @@
   {
     "scenario_id": "scen_easy_23",
     "tier": "easy",
+    "agent_decision": {
+      "label": "spam",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The post is promoting a cryptocurrency scam with unrealistic promises, and the user is a repeat offender on a strict platform."
+    },
     "reward": 0.5,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "spam",
-      "action": "remove",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -956,16 +988,16 @@
   {
     "scenario_id": "scen_easy_24",
     "tier": "easy",
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 7,
+      "rationale": "The post makes unsubstantiated and unrealistic claims about weight loss, and the user has a history of flagged content, warranting removal despite the moderate policy."
+    },
     "reward": 0.0,
     "breakdown": {
       "label_correct": 0.0,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -973,21 +1005,28 @@
     },
     "state_text": "Lose 30 pounds in 30 days with our miracle pill! Doctor approved! No diet needed!",
     "platform_policy": "moderate",
-    "previous_flags": 3
+    "previous_flags": 3,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99890, Requested 477. Please try again in 5m17.088s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "scen_easy_25",
     "tier": "easy",
+    "agent_decision": {
+      "label": "spam",
+      "action": "remove",
+      "severity": 3,
+      "rationale": "The content is a clear attempt to lure users with unsolicited and deceptive advertisements, violating the strict platform policy, especially given the user's history of previous flags."
+    },
     "reward": 0.5,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "spam",
-      "action": "remove",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -1000,16 +1039,16 @@
   {
     "scenario_id": "scen_easy_26",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The comment is harshly critical and dismissive, but does not contain hate speech or explicit threats, warranting a warning under the moderate policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -1023,16 +1062,16 @@
   {
     "scenario_id": "scen_easy_27",
     "tier": "easy",
+    "agent_decision": {
+      "label": "spam",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content is attempting to lure users with a promise of free followers, which is a clear indication of spam activity."
+    },
     "reward": 0.5,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "spam",
-      "action": "remove",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -1046,16 +1085,16 @@
   {
     "scenario_id": "scen_easy_28",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content promotes a debunked medical myth that vaccines cause autism, and encourages the spread of misinformation."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -1069,16 +1108,16 @@
   {
     "scenario_id": "scen_easy_29",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "escalate",
+      "severity": 10,
+      "rationale": "The text contains a direct threat, which is a clear violation of the strict platform policy, especially considering the user's history of previous flags."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -1092,16 +1131,16 @@
   {
     "scenario_id": "scen_easy_3",
     "tier": "easy",
-    "reward": 1.0,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.5
-    },
     "agent_decision": {
-      "label": "spam",
+      "label": "misleading",
       "action": "remove",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "severity": 9,
+      "rationale": "The post contains a suspicious link and text that is typical of phishing scams, which is a clear violation of the platform's strict policy."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "spam",
@@ -1114,16 +1153,16 @@
   {
     "scenario_id": "scen_easy_30",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The text contains a veiled threat and the user has a history of previous offenses, warranting removal under the strict platform policy."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1137,16 +1176,16 @@
   {
     "scenario_id": "scen_easy_31",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 10,
+      "rationale": "The content promotes a debunked conspiracy theory that 5G towers transmit viruses, posing a risk to public health and safety."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "misleading",
@@ -1160,16 +1199,16 @@
   {
     "scenario_id": "scen_easy_32",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The content promotes a debunked conspiracy theory about the moon landing, which could mislead users, but given the platform's moderate policy, a warning is issued instead of removal."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "misleading",
@@ -1183,16 +1222,16 @@
   {
     "scenario_id": "scen_easy_33",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The claim that drinking hydrogen peroxide kills cancer cells is a harmful and unproven medical treatment, posing a risk to users' health."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -1206,16 +1245,16 @@
   {
     "scenario_id": "scen_easy_34",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 5,
+      "rationale": "The content makes unsubstantiated claims about curing diabetes, which is a potentially harmful health claim, and also attempts to create conspiracy around pharmaceutical companies."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -1229,16 +1268,16 @@
   {
     "scenario_id": "scen_easy_35",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The claim that the government is adding lithium to drinking water to make people docile is a baseless conspiracy theory with potential to cause public harm."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -1252,16 +1291,16 @@
   {
     "scenario_id": "scen_easy_36",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The text contains a personal attack and insults, violating community standards with high severity."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1275,16 +1314,16 @@
   {
     "scenario_id": "scen_easy_37",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The text contains a personal attack and insult, indicating a high level of toxicity despite the platform's lenient policy."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1298,16 +1337,16 @@
   {
     "scenario_id": "scen_easy_38",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 6,
+      "rationale": "The text contains personal attacks and insults, which is not acceptable even under a moderate policy, especially considering the user's history of previous flags."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1321,16 +1360,16 @@
   {
     "scenario_id": "scen_easy_39",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
+      "label": "toxic",
       "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "severity": 4,
+      "rationale": "The text contains derogatory language but does not contain explicit hate speech, and given the platform's lenient policy, it may be allowed with caution."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1344,16 +1383,16 @@
   {
     "scenario_id": "scen_easy_4",
     "tier": "easy",
-    "reward": 0.5,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.0
-    },
     "agent_decision": {
       "label": "toxic",
-      "action": "warn",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The text contains a direct expression of hatred and a discriminatory statement targeting an individual's nationality or ethnicity."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -1366,16 +1405,16 @@
   {
     "scenario_id": "scen_easy_40",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The comment is aggressive and insulting, but given the moderate policy and lack of previous flags, a warning is sufficient."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -1389,16 +1428,16 @@
   {
     "scenario_id": "scen_easy_41",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The text contains a personal attack and insult, which is toxic behavior, but given the moderate policy and lack of previous offenses, a warning is the most suitable response."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -1412,16 +1451,16 @@
   {
     "scenario_id": "scen_easy_42",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The post spreads false information about vaccine safety and makes unsubstantiated claims about the CDC, which can cause harm to public health, and the user has a history of previous offenses."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -1435,16 +1474,16 @@
   {
     "scenario_id": "scen_easy_43",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The post promotes a conspiracy theory about the pandemic and PCR tests, which is a clear violation of the strict policy, and the user is a repeat offender with 4 previous flags."
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -1458,16 +1497,16 @@
   {
     "scenario_id": "scen_easy_5",
     "tier": "easy",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 0,
+      "rationale": "The post is a benign, personal update about a sunrise in Seattle, with no indication of toxicity, spam, or misleading content."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "safe",
@@ -1480,16 +1519,16 @@
   {
     "scenario_id": "scen_easy_6",
     "tier": "easy",
+    "agent_decision": {
+      "label": "spam",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The content is attempting to lure users into clicking a link with the promise of explicit content, which is a clear violation of the platform's strict policy."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "spam",
-      "action": "remove",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -1502,16 +1541,16 @@
   {
     "scenario_id": "scen_easy_7",
     "tier": "easy",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The text contains a direct threat of physical harm or retaliation, violating the platform's strict policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -1524,16 +1563,16 @@
   {
     "scenario_id": "scen_easy_8",
     "tier": "easy",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 0,
+      "rationale": "The content is a genuine question about a product and does not contain any toxic, spam, or misleading elements."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "safe",
@@ -1546,16 +1585,16 @@
   {
     "scenario_id": "scen_easy_9",
     "tier": "easy",
-    "reward": 0.5,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.0
-    },
     "agent_decision": {
       "label": "toxic",
-      "action": "warn",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content is a clear personal attack with derogatory language, violating the platform's zero-tolerance policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -1568,18 +1607,17 @@
   {
     "scenario_id": "scen_hard_1",
     "tier": "hard",
-    "reward": -0.1,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "escalate",
+      "severity": 9,
+      "rationale": "The content implies violent intent and intimidation, and the user is a repeat offender on a strict platform, warranting escalated action."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1594,18 +1632,17 @@
   {
     "scenario_id": "scen_hard_10",
     "tier": "hard",
-    "reward": -0.1,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The audio transcript explicitly implies a threat of violence, and the visual tags suggesting a potential weapon and aggressive behavior align with this interpretation."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1620,17 +1657,17 @@
   {
     "scenario_id": "scen_hard_11",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content attempts to lure users into visiting a link with unsubstantiated claims and implies government surveillance, which is likely to mislead users on a strict platform, especially from a repeat offender."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -1645,17 +1682,17 @@
   {
     "scenario_id": "scen_hard_12",
     "tier": "hard",
-    "reward": 0.0,
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The content appears to be a pump and dump scheme, making unsubstantiated claims about a stock's potential performance, which is a clear violation of the platform's strict policy."
+    },
+    "reward": 0.4,
     "breakdown": {
       "label_correct": 0.0,
-      "action_correct": 0.0,
+      "action_correct": 0.4,
       "severity_within_1": 0.0
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -1670,18 +1707,17 @@
   {
     "scenario_id": "scen_hard_13",
     "tier": "hard",
-    "reward": -0.1,
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content appears to be downplaying the severity of a historical event, which is a form of revisionism, and the platform policy is strict."
+    },
+    "reward": 0.4,
     "breakdown": {
       "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1696,17 +1732,17 @@
   {
     "scenario_id": "scen_hard_14",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content falsely implies a biological attack on children through the school lunch program, and the audio transcript escalates the claim to advocate for shutting down schools, posing a significant risk of spreading misinformation and panic."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -1721,18 +1757,17 @@
   {
     "scenario_id": "scen_hard_15",
     "tier": "hard",
-    "reward": -0.3,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.0,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The user is requesting a list of household explosives, which poses a significant safety risk and is not allowed under any circumstances, especially on a strict platform."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1747,18 +1782,17 @@
   {
     "scenario_id": "scen_hard_16",
     "tier": "hard",
-    "reward": -0.1,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The content promotes voter intimidation and implies illegal activity, violating the strict platform policy."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1773,17 +1807,17 @@
   {
     "scenario_id": "scen_hard_17",
     "tier": "hard",
-    "reward": 1.0,
-    "breakdown": {
-      "label_correct": 0.4,
-      "action_correct": 0.4,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "spam",
+      "label": "misleading",
       "action": "remove",
       "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "rationale": "The content is promoting a potentially malicious method to unlock premium features, and the presence of a phishing page screenshot and input box further supports this assessment."
+    },
+    "reward": 0.6,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
     },
     "ground_truth": {
       "label": "spam",
@@ -1798,18 +1832,17 @@
   {
     "scenario_id": "scen_hard_18",
     "tier": "hard",
-    "reward": -0.1,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content contains dehumanizing language and imagery, promoting harmful and discriminatory behavior towards a group of people, which is not tolerated under a strict policy."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1824,17 +1857,17 @@
   {
     "scenario_id": "scen_hard_19",
     "tier": "hard",
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content promotes a conspiracy theory with fictional and implausible claims, despite the platform having a lenient policy, the repeated offense history and clear misinformation justify removal."
+    },
     "reward": 0.4,
     "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.4,
+      "label_correct": 0.4,
+      "action_correct": 0.0,
       "severity_within_1": 0.0
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "misleading",
@@ -1849,18 +1882,17 @@
   {
     "scenario_id": "scen_hard_2",
     "tier": "hard",
-    "reward": 0.05,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.15
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content promotes a pseudoscientific and discriminatory idea, which is harmful and not acceptable under a moderate policy."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -1875,17 +1907,17 @@
   {
     "scenario_id": "scen_hard_20",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "toxic",
-      "action": "shadowban",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 7,
+      "rationale": "The content promotes conspiracy theories and defamation of a public figure with an altered image, violating the strict platform policy."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -1900,17 +1932,17 @@
   {
     "scenario_id": "scen_hard_21",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The text contains sarcasm that could be interpreted as promoting a controversial or misleading viewpoint, warranting a warning under the moderate policy."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -1925,17 +1957,17 @@
   {
     "scenario_id": "scen_hard_22",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "spam",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The user's history of previous flags and indicators of automated behavior, such as bulk posting patterns and a copied profile picture, justify removal under a strict platform policy."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "spam",
@@ -1950,17 +1982,17 @@
   {
     "scenario_id": "scen_hard_23",
     "tier": "hard",
-    "reward": 0.8,
-    "breakdown": {
-      "label_correct": 0.4,
-      "action_correct": 0.4,
-      "severity_within_1": 0.0
-    },
     "agent_decision": {
       "label": "safe",
       "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "severity": 0,
+      "rationale": "The content appears to be a legitimate medical instruction for overdose treatment, provided in a professional setting."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
     },
     "ground_truth": {
       "label": "safe",
@@ -1975,18 +2007,17 @@
   {
     "scenario_id": "scen_hard_24",
     "tier": "hard",
-    "reward": -0.1,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 3,
+      "rationale": "The content contains personal information and doxxing patterns, which is a clear violation of platform policy, especially considering the user's history of previous flags on a strict platform."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2001,18 +2032,17 @@
   {
     "scenario_id": "scen_hard_25",
     "tier": "hard",
-    "reward": -0.1,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The text implies a threat and has a history of previous flags, warranting removal under a strict policy."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2027,17 +2057,17 @@
   {
     "scenario_id": "scen_hard_26",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The content makes unsubstantiated and harmful claims about curing diseases, despite being posted by a satire account, which may not be immediately clear to all users."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -2052,18 +2082,17 @@
   {
     "scenario_id": "scen_hard_27",
     "tier": "hard",
-    "reward": 0.05,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.15
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "escalate",
+      "severity": 8,
+      "rationale": "The text contains nationalist imagery and language that is harmful to immigrants, violating the strict platform policy, especially given the user's history of previous flags."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2078,17 +2107,17 @@
   {
     "scenario_id": "scen_hard_28",
     "tier": "hard",
-    "reward": 0.0,
+    "agent_decision": {
+      "label": "toxic",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The content contains a clear cry for help and mentions self-harm, posing a significant risk to the user's well-being."
+    },
+    "reward": 0.4,
     "breakdown": {
-      "label_correct": 0.0,
+      "label_correct": 0.4,
       "action_correct": 0.0,
       "severity_within_1": 0.0
-    },
-    "agent_decision": {
-      "label": "spam",
-      "action": "remove",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "toxic",
@@ -2103,17 +2132,17 @@
   {
     "scenario_id": "scen_hard_29",
     "tier": "hard",
-    "reward": 1.0,
-    "breakdown": {
-      "label_correct": 0.4,
-      "action_correct": 0.4,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "spam",
-      "action": "remove",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The post contains an affiliate link and may be promoting a product without clear disclosure, which could be misleading to readers."
+    },
+    "reward": 0.0,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "spam",
@@ -2123,23 +2152,29 @@
     },
     "state_text": "Honest review after 6 months: This product changed my life. Lost 40 pounds, skin cleared up. DM me for my full routine!",
     "platform_policy": "moderate",
-    "previous_flags": 0
+    "previous_flags": 0,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99882, Requested 498. Please try again in 5m28.32s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "scen_hard_3",
     "tier": "hard",
-    "reward": 0.05,
+    "agent_decision": {
+      "label": "misleading",
+      "action": "escalate",
+      "severity": 8,
+      "rationale": "Content contains prohibited historical symbols and the user has a history of previous flags, exceeding the threshold for strict policy enforcement."
+    },
+    "reward": 0.0,
     "breakdown": {
       "label_correct": 0.0,
       "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.15
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2149,22 +2184,29 @@
     },
     "state_text": "Looking for fellow enthusiasts for this rare historical collection.",
     "platform_policy": "strict",
-    "previous_flags": 2
+    "previous_flags": 2,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99873, Requested 500. Please try again in 5m22.272s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "scen_hard_30",
     "tier": "hard",
-    "reward": 0.8,
-    "breakdown": {
-      "label_correct": 0.4,
-      "action_correct": 0.4,
-      "severity_within_1": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "warn",
+      "severity": 4,
+      "rationale": "The user's language is derogatory and insulting towards the game developers, but given the platform's lenient policy, a warning is issued instead of removal."
+    },
+    "reward": 0.0,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "safe",
@@ -2174,23 +2216,29 @@
     },
     "state_text": "I absolutely despise how this game is designed. The devs should be ashamed of themselves.",
     "platform_policy": "lenient",
-    "previous_flags": 1
+    "previous_flags": 1,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99865, Requested 481. Please try again in 4m58.944s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "scen_hard_31",
     "tier": "hard",
-    "reward": 0.15,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.05
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The text contains hate speech, directly targeting and demeaning a group of people."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2209,17 +2257,17 @@
   {
     "scenario_id": "scen_hard_32",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The content makes unsubstantiated claims about election fraud, which could be misleading to readers, but does not contain direct hate speech or incitement."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -2238,18 +2286,17 @@
   {
     "scenario_id": "scen_hard_33",
     "tier": "hard",
-    "reward": 0.05,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.15
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content appears to be doxxing or inciting harassment towards an individual, and given the strict platform policy and user's history of previous flags, removal is the appropriate action."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2268,17 +2315,17 @@
   {
     "scenario_id": "scen_hard_34",
     "tier": "hard",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content promotes a hazardous and potentially life-threatening DIY remedy, posing a significant risk to users' health."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -2297,18 +2344,17 @@
   {
     "scenario_id": "scen_hard_35",
     "tier": "hard",
-    "reward": -0.05,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.0,
-      "missed_threat_penalty": -0.05
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content is explicitly abusive and contains aggressive language and gestures, warranting removal despite the platform having a moderate policy due to the offender's history."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2327,18 +2373,17 @@
   {
     "scenario_id": "scen_hard_36",
     "tier": "hard",
-    "reward": 0.15,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.05
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 3,
+      "rationale": "The text contains hate speech signals and coded language, indicating a toxic and intolerant message, violating the strict platform policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.2
     },
     "ground_truth": {
       "label": "toxic",
@@ -2357,18 +2402,17 @@
   {
     "scenario_id": "scen_hard_37",
     "tier": "hard",
-    "reward": 0.15,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.05
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The text contains a harmful statement towards a group of people, indicating a clear violation of community guidelines, especially given the user's history of previous flags."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2387,18 +2431,17 @@
   {
     "scenario_id": "scen_hard_38",
     "tier": "hard",
-    "reward": -0.15,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.0,
-      "missed_threat_penalty": -0.15
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The content contains hate speech towards immigrants, which is a clear violation of the platform's strict policy."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2417,18 +2460,17 @@
   {
     "scenario_id": "scen_hard_39",
     "tier": "hard",
-    "reward": -0.1,
+    "agent_decision": {
+      "label": "misleading",
+      "action": "escalate",
+      "severity": 8,
+      "rationale": "Content appears to be part of a coordinated campaign targeting a minority group, and the user has a history of flagged posts, warranting escalated action under the platform's strict policy."
+    },
+    "reward": 0.0,
     "breakdown": {
       "label_correct": 0.0,
       "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2442,22 +2484,29 @@
     },
     "state_text": "Sharing this before it gets censored. These people are dangerous and your children aren't safe around them.",
     "platform_policy": "strict",
-    "previous_flags": 2
+    "previous_flags": 2,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99856, Requested 550. Please try again in 5m50.784s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "scen_hard_4",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content makes unsubstantiated claims about vaccines and government intentions, and the user has a history of posting flagged content on a strict platform."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -2472,18 +2521,17 @@
   {
     "scenario_id": "scen_hard_40",
     "tier": "hard",
-    "reward": 0.05,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.15
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 7,
+      "rationale": "The text contains hate speech signals and makes derogatory comments, despite being claimed as satire, which warrants removal under a moderate policy due to its potential to cause harm."
+    },
+    "reward": 0.8,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2502,17 +2550,17 @@
   {
     "scenario_id": "scen_hard_5",
     "tier": "hard",
-    "reward": 0.2,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2
-    },
     "agent_decision": {
-      "label": "spam",
+      "label": "toxic",
       "action": "remove",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "severity": 9,
+      "rationale": "The content suggests a serious intent to harm oneself, with references to pills and a farewell note, which is a clear and severe violation of platform policies."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2527,18 +2575,17 @@
   {
     "scenario_id": "scen_hard_6",
     "tier": "hard",
-    "reward": 0.05,
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content promotes potentially harmful 'energy supplements' for children, misleadingly implying they are safe and beneficial."
+    },
+    "reward": 0.4,
     "breakdown": {
       "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.15
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "action_correct": 0.4,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2553,18 +2600,17 @@
   {
     "scenario_id": "scen_hard_7",
     "tier": "hard",
-    "reward": -0.1,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0,
-      "severity_within_1": 0.2,
-      "missed_threat_penalty": -0.3
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The content appears to be a direct threat and doxxing attempt against a journalist, which is a serious violation of safety guidelines."
+    },
+    "reward": 0.4,
+    "breakdown": {
+      "label_correct": 0.4,
+      "action_correct": 0.0,
+      "severity_within_1": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2579,18 +2625,18 @@
   {
     "scenario_id": "scen_hard_8",
     "tier": "hard",
-    "reward": 0.05,
+    "agent_decision": {
+      "label": "misleading",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The content implies a direct link between a genetic marker and violence, and suggests monitoring specific neighborhoods, which could be perceived as stigmatizing or discriminatory, thus it's classified as misleading under a moderate policy."
+    },
+    "reward": -0.15,
     "breakdown": {
       "label_correct": 0.0,
       "action_correct": 0.0,
-      "severity_within_1": 0.2,
+      "severity_within_1": 0.0,
       "missed_threat_penalty": -0.15
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "toxic",
@@ -2600,22 +2646,29 @@
     },
     "state_text": "The latest study proves that people with this genetic marker are more prone to violence.",
     "platform_policy": "moderate",
-    "previous_flags": 2
+    "previous_flags": 2,
+    "adjudication": {
+      "override_reward": -0.15,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99848, Requested 502. Please try again in 5m2.4s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": -0.15
   },
   {
     "scenario_id": "scen_hard_9",
     "tier": "hard",
-    "reward": 0.0,
+    "agent_decision": {
+      "label": "misleading",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The content implies a conspiracy without evidence and the user's history of previous flags suggests a potential for spreading misinformation, but the platform policy is moderate, allowing for a graduated response."
+    },
+    "reward": 0.4,
     "breakdown": {
-      "label_correct": 0.0,
+      "label_correct": 0.4,
       "action_correct": 0.0,
       "severity_within_1": 0.0
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "misleading",
@@ -2630,16 +2683,16 @@
   {
     "scenario_id": "scen_medium_1",
     "tier": "medium",
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content promotes unsubstantiated claims about election tampering and presents a blurry photo as proof, which is a clear violation of the strict platform policy."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "misleading",
-      "action": "remove",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "misleading",
@@ -2652,16 +2705,16 @@
   {
     "scenario_id": "scen_medium_10",
     "tier": "medium",
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content claims the local water supply has high levels of mercury without providing credible evidence, which could cause unnecessary panic, and the platform policy is strict."
+    },
     "reward": 0.5,
     "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "toxic",
-      "action": "warn",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label_correct": 0.5,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -2674,16 +2727,16 @@
   {
     "scenario_id": "scen_medium_11",
     "tier": "medium",
-    "reward": 0.5,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.0
-    },
     "agent_decision": {
       "label": "toxic",
-      "action": "warn",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The text contains a clear threat to harass the person at their workplace, violating the strict platform policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -2696,16 +2749,16 @@
   {
     "scenario_id": "scen_medium_12",
     "tier": "medium",
+    "agent_decision": {
+      "label": "toxic",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The text contains divisive language and implies that those who don't support the troops are unpatriotic, which can be considered a personal attack."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "toxic",
-      "action": "warn",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "toxic",
@@ -2718,16 +2771,16 @@
   {
     "scenario_id": "scen_medium_13",
     "tier": "medium",
+    "agent_decision": {
+      "label": "misleading",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The content explicitly denies the validity of information from credible sources regarding a health issue, which is a clear violation under a strict policy."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "misleading",
-      "action": "remove",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "misleading",
@@ -2740,16 +2793,16 @@
   {
     "scenario_id": "scen_medium_14",
     "tier": "medium",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 0,
+      "rationale": "The user is expressing disagreement but is still willing to follow the rules, which is a reasonable and non-violating statement."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "safe",
@@ -2762,16 +2815,16 @@
   {
     "scenario_id": "scen_medium_15",
     "tier": "medium",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The text contains an insult and dismissive language, violating community guidelines, but doesn't warrant removal on a first offence under moderate policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -2784,16 +2837,16 @@
   {
     "scenario_id": "scen_medium_16",
     "tier": "medium",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 0,
+      "rationale": "The content appears to be a benign and self-promotional post with no clear violation of platform policies."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "safe",
@@ -2806,16 +2859,16 @@
   {
     "scenario_id": "scen_medium_17",
     "tier": "medium",
+    "agent_decision": {
+      "label": "spam",
+      "action": "remove",
+      "severity": 1,
+      "rationale": "The content is promoting unsolicited and potentially harmful products, and the platform policy is strict, requiring immediate removal."
+    },
     "reward": 1.0,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.5
-    },
-    "agent_decision": {
-      "label": "spam",
-      "action": "remove",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -2828,16 +2881,16 @@
   {
     "scenario_id": "scen_medium_18",
     "tier": "medium",
-    "reward": 0.0,
+    "agent_decision": {
+      "label": "misleading",
+      "action": "warn",
+      "severity": 4,
+      "rationale": "The content advocates for a radical change in the system and could be perceived as misleading or promoting unrest, but given the moderate policy, a warning is more suitable than removal."
+    },
+    "reward": 0.5,
     "breakdown": {
       "label_correct": 0.0,
-      "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -2850,16 +2903,16 @@
   {
     "scenario_id": "scen_medium_19",
     "tier": "medium",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "remove",
+      "severity": 9,
+      "rationale": "The statement promotes harassment, a form of toxic behavior, and is thus a clear violation of most community standards, warranting removal under a strict policy."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -2872,16 +2925,16 @@
   {
     "scenario_id": "scen_medium_2",
     "tier": "medium",
-    "reward": 0.0,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "toxic",
+      "action": "warn",
+      "severity": 6,
+      "rationale": "The text contains hostile language towards an individual, indicating a toxic comment, but given the moderate policy and lack of previous flags, a warning is sufficient."
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -2894,16 +2947,16 @@
   {
     "scenario_id": "scen_medium_20",
     "tier": "medium",
-    "reward": 1.0,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.5
-    },
     "agent_decision": {
-      "label": "safe",
-      "action": "allow",
+      "label": "toxic",
+      "action": "warn",
       "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
+      "rationale": "The language used implies a willingness to engage in violence over a subjective opinion, but given the lenient policy, a warning is issued instead of removal."
+    },
+    "reward": 0.0,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "safe",
@@ -2911,21 +2964,28 @@
     },
     "state_text": "My cat is the cutest in the world and I will fight anyone who says otherwise.",
     "platform_policy": "lenient",
-    "previous_flags": 0
+    "previous_flags": 0,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99840, Requested 456. Please try again in 4m15.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "scen_medium_3",
     "tier": "medium",
-    "reward": 0.5,
-    "breakdown": {
-      "label_correct": 0.0,
-      "action_correct": 0.5
-    },
     "agent_decision": {
       "label": "safe",
       "action": "allow",
       "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99721, Requested 393. Please try again in 1m38.496s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    },
+    "reward": 0.5,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "toxic",
@@ -2938,16 +2998,16 @@
   {
     "scenario_id": "scen_medium_4",
     "tier": "medium",
-    "reward": 0.5,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.0
-    },
     "agent_decision": {
-      "label": "misleading",
-      "action": "remove",
-      "severity": 4,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "safe",
+      "action": "allow",
+      "severity": 1,
+      "rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99712, Requested 404. Please try again in 1m40.224s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    },
+    "reward": 0.0,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "misleading",
@@ -2955,21 +3015,28 @@
     },
     "state_text": "Everyone should check out this new dietary supplement, it literally cures aging.",
     "platform_policy": "strict",
-    "previous_flags": 0
+    "previous_flags": 0,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99831, Requested 573. Please try again in 5m49.056s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "scen_medium_5",
     "tier": "medium",
-    "reward": 1.0,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.5
-    },
     "agent_decision": {
-      "label": "toxic",
-      "action": "shadowban",
-      "severity": 3,
-      "rationale": "Lexical rule-based baseline decision."
+      "label": "safe",
+      "action": "allow",
+      "severity": 1,
+      "rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99704, Requested 391. Please try again in 1m22.08s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    },
+    "reward": 0.0,
+    "breakdown": {
+      "label_correct": 0.0,
+      "action_correct": 0.0
     },
     "ground_truth": {
       "label": "toxic",
@@ -2977,21 +3044,28 @@
     },
     "state_text": "I'm sick of people like you ruining this sub with your constant whining.",
     "platform_policy": "moderate",
-    "previous_flags": 2
+    "previous_flags": 2,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99823, Requested 560. Please try again in 5m30.912s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "scen_medium_6",
     "tier": "medium",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 1,
+      "rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99696, Requested 385. Please try again in 1m9.984s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    },
     "reward": 0.0,
     "breakdown": {
       "label_correct": 0.0,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "toxic",
@@ -2999,21 +3073,28 @@
     },
     "state_text": "Check out this leaked video of the upcoming game! [LINK]",
     "platform_policy": "strict",
-    "previous_flags": 0
+    "previous_flags": 0,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99814, Requested 570. Please try again in 5m31.776s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   },
   {
     "scenario_id": "scen_medium_7",
     "tier": "medium",
+    "agent_decision": {
+      "label": "toxic",
+      "action": "remove",
+      "severity": 8,
+      "rationale": "The textcontains strong derogatory language towards moderators, likely to incite resentment and is deemed toxic under the strict policy."
+    },
     "reward": 0.5,
     "breakdown": {
       "label_correct": 0.5,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "toxic",
-      "action": "remove",
-      "severity": 2,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "toxic",
@@ -3026,16 +3107,16 @@
   {
     "scenario_id": "scen_medium_8",
     "tier": "medium",
-    "reward": 1.0,
-    "breakdown": {
-      "label_correct": 0.5,
-      "action_correct": 0.5
-    },
     "agent_decision": {
       "label": "safe",
       "action": "allow",
       "severity": 1,
-      "rationale": "Lexical rule-based baseline decision."
+      "rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99949, Requested 388. Please try again in 4m51.168s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    },
+    "reward": 1.0,
+    "breakdown": {
+      "label_correct": 0.5,
+      "action_correct": 0.5
     },
     "ground_truth": {
       "label": "safe",
@@ -3048,16 +3129,16 @@
   {
     "scenario_id": "scen_medium_9",
     "tier": "medium",
+    "agent_decision": {
+      "label": "safe",
+      "action": "allow",
+      "severity": 1,
+      "rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99941, Requested 411. Please try again in 5m4.128s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    },
     "reward": 0.0,
     "breakdown": {
       "label_correct": 0.0,
       "action_correct": 0.0
-    },
-    "agent_decision": {
-      "label": "safe",
-      "action": "allow",
-      "severity": 5,
-      "rationale": "Lexical rule-based baseline decision."
     },
     "ground_truth": {
       "label": "spam",
@@ -3065,6 +3146,13 @@
     },
     "state_text": "Hey check out my new stream! I'm playing some rare classic games today.",
     "platform_policy": "strict",
-    "previous_flags": 3
+    "previous_flags": 3,
+    "adjudication": {
+      "override_reward": 0.0,
+      "override_rationale": "[ERROR] Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kf951zwxft6ah9v1rpxd2e8t` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99806, Requested 557. Please try again in 5m13.632s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "human_agreement": 0.0,
+      "dimensions": {}
+    },
+    "override_reward": 0.0
   }
 ]

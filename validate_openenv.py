@@ -71,7 +71,7 @@ check("medium difficulty present", "medium" in difficulties)
 check("hard difficulty present",   "hard"   in difficulties)
 
 reward = spec.get("reward", {})
-check("reward range [-0.3, 1.0]",  reward.get("range") == [-0.3, 1.0],
+check("reward range [0.0, 1.0]",  reward.get("range") == [0.0, 1.0],
       f"got {reward.get('range')}")
 check("partial_progress = true",   reward.get("partial_progress") is True)
 
@@ -160,7 +160,7 @@ check("episode_rewards accumulates", len(env.episode_rewards) == 3)
 env.reset(scenario_id="scen_easy_1")   # GT: safe/allow
 result = env.step({"label": "toxic", "action": "escalate"})   # wrong label, FP penalty
 check("false_positive_penalty fires", "false_positive_penalty" in result["info"]["score_breakdown"])
-check("reward can be negative", result["reward"] < 0, f"got {result['reward']}")
+check("reward drops to zero from penalty", result["reward"] == 0.0, f"got {result['reward']}")
 
 # Guard: step on done env
 try:
@@ -422,7 +422,7 @@ for scenario in data:
     }, scenario)
     all_rewards.append(r2)
 
-check("min reward ≥ -0.3", min(all_rewards) >= -0.3, f"min={min(all_rewards):.3f}")
+check("min reward ≥ 0.0", min(all_rewards) >= 0.0, f"min={min(all_rewards):.3f}")
 check("max reward ≤ 1.0",  max(all_rewards) <= 1.0,  f"max={max(all_rewards):.3f}")
 
 # ── Summary ───────────────────────────────────────────────────────────────────

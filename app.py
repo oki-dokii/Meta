@@ -20,12 +20,14 @@ import gradio as gr
 SCRIPT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
-from content_moderation_env import ContentModerationEnv
+from content_moderation_env import ContentModerationEnv, CampaignModerationEnv
 from baseline_inference import run_baseline
 
 # ── env singleton ──────────────────────────────────────────────────────────────
 SCENARIOS_PATH = SCRIPT_DIR / "moderation_benchmark.json"
+CAMPAIGNS_PATH = SCRIPT_DIR / "campaign_benchmark.json"
 env     = ContentModerationEnv(str(SCENARIOS_PATH), seed=42)
+campaign_env = CampaignModerationEnv(str(CAMPAIGNS_PATH), seed=42)
 ALL_IDS = env.scenario_ids
 CAMPAIGN_IDS = ["camp_crypto_001", "camp_doxx_002", "camp_disinfo_003"]
 
@@ -176,28 +178,52 @@ print(f"Breakdown: {result['info']['score_breakdown']}")
 
 # ── Build UI ──────────────────────────────────────────────────────────────────
 
-THEME = gr.themes.Soft(
+THEME = gr.themes.Default(
     primary_hue="indigo",
-    secondary_hue="violet",
+    secondary_hue="blue",
     neutral_hue="slate",
-    font=[gr.themes.GoogleFont("Inter"), "ui-sans-serif"],
+    font=[gr.themes.GoogleFont("Outfit"), "sans-serif"],
+).set(
+    body_background_fill="linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
+    body_background_fill_dark="linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+    button_primary_background_fill="*primary_500",
+    button_primary_background_fill_hover="*primary_400",
+    border_color_primary="rgba(0,0,0,0.1)",
+    border_color_primary_dark="rgba(255,255,255,0.1)",
 )
 
 CSS = """
-.gr-box { border-radius: 12px !important; }
-.header { text-align: center; padding: 1.5rem 0 0.5rem; }
+.gradio-container {
+    max-width: 1000px !important;
+}
+.gr-box, .gradio-container .form {
+    border-radius: 16px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    backdrop-filter: blur(8px);
+}
+.header { text-align: center; padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.05); }
+.header > h1 { 
+    background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    font-size: 2.5rem;
+}
+.action-btn { transition: all 0.2s ease !important; border-radius: 12px !important; }
+.action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important; }
 """
 
-with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
+with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark", theme=THEME, css=CSS) as demo:
 
-    gr.Markdown("""
+    with gr.Column(elem_classes=["header"]):
+        gr.Markdown("""
 # 🛡️ ContentModerationEnv
 ### An OpenEnv benchmark for evaluating AI content moderation agents
 
 > **128 scenarios** across 3 difficulty tiers (easy / medium / hard) ·
 > **Partial-credit scoring** (-0.3 – 1.0) · **Full OpenEnv API**  
 > `reset()` · `step()` · `state()` · `appeal()` · campaign mode · adversarial scenarios
-""", elem_classes=["header"])
+""")
 
     with gr.Tabs():
 
@@ -208,10 +234,9 @@ with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
                     sid_dd = gr.Dropdown(
                         choices=ALL_IDS,
                         value=ALL_IDS[0],
-                        label="Scenario ID",
+                        label="Select Scenario ID to Load",
                         interactive=True,
                     )
-                    load_btn = gr.Button("Load Scenario", variant="primary")
                     tier_md  = gr.Markdown()
 
                 with gr.Column(scale=2):
@@ -232,11 +257,11 @@ with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
 
             rationale_tb = gr.Textbox(label="Rationale (optional)", lines=2,
                                       placeholder="Brief explanation …")
-            step_btn  = gr.Button("Submit → env.step()", variant="primary")
+            step_btn  = gr.Button("Submit → env.step()", variant="primary", elem_classes=["action-btn"])
             result_md = gr.Markdown()
             result_raw = gr.Markdown()
 
-            load_btn.click(
+            sid_dd.change(
                 load_scenario,
                 inputs=[sid_dd],
                 outputs=[state_md, tier_md, sev_slider],
@@ -330,9 +355,17 @@ a coordinated inauthentic behavior campaign.
 | `action` | `allow` / `remove` / `shadowban` / `escalate` |
 | Reward | +0.5 coordination detected · +0.5 action correct · -0.2 false positive |
 """)
-            load_camp_btn = gr.Button("Load Campaign Set", variant="primary")
-            camp_type_md  = gr.Markdown()
-            camp_posts_md = gr.Markdown()
+            with gr.Row():
+                with gr.Column(scale=1):
+                    camp_sid_dd = gr.Dropdown(
+                        choices=CAMPAIGN_IDS,
+                        value=CAMPAIGN_IDS[0],
+                        label="Select Campaign to Load",
+                        interactive=True,
+                    )
+                    camp_type_md  = gr.Markdown()
+                with gr.Column(scale=2):
+                    camp_posts_md = gr.Markdown()
 
             with gr.Row():
                 is_coord_dd = gr.Dropdown(
@@ -350,39 +383,42 @@ a coordinated inauthentic behavior campaign.
                 placeholder="Explain your coordination assessment..."
             )
             camp_submit_btn = gr.Button(
-                "Submit → campaign_env.step()", variant="primary"
+                "Submit → campaign_env.step()", variant="primary", elem_classes=["action-btn"]
             )
             camp_result_md = gr.Markdown()
 
-            def load_campaign():
-                state = campaign_env.reset()
+            def load_campaign(campaign_id):
+                if campaign_id:
+                    state = campaign_env.reset(campaign_id)
+                else:
+                    state = campaign_env.reset()
                 posts_md = ""
-                for i, p in enumerate(state["posts"], 1):
-                    posts_md += f"**Post {i}** — account: `{p['account_id']}`"
-                    posts_md += f" &nbsp;|&nbsp; +{p['posted_at_offset_minutes']} min"
-                    posts_md += f" &nbsp;|&nbsp; platform: `{p['platform']}`\n\n"
-                    posts_md += f"> {p['text']}\n\n"
+                for i, p in enumerate(state.get("posts", []), 1):
+                    posts_md += f"**Post {i}** — account: `{p.get('account_id', 'N/A')}`"
+                    posts_md += f" &nbsp;|&nbsp; +{p.get('posted_at_offset_minutes', 0)} min"
+                    posts_md += f" &nbsp;|&nbsp; platform: `{p.get('platform', 'unknown')}`\n\n"
+                    posts_md += f"> {p.get('text', '')}\n\n"
                     if p.get("visual_tags"):
-                        posts_md += f"*Visual signals: {', '.join(p['visual_tags'])}*\n\n"
+                         posts_md += f"*Visual signals: {', '.join(p['visual_tags'])}*\n\n"
                     posts_md += "---\n\n"
                 return (
-                    f"**Campaign:** `{state['campaign_id']}` &nbsp;|"
-                    f"&nbsp; {state['num_posts']} posts\n",
+                    f"**Campaign:** `{state.get('campaign_id', 'N/A')}` &nbsp;|"
+                    f"&nbsp; {state.get('num_posts', 0)} posts\n",
                     posts_md
                 )
 
             def submit_campaign(is_coord_str, action, reasoning):
-                # reset to fresh random campaign and step it
-                campaign_env.reset()
                 action_dict = {
                     "is_coordinated": is_coord_str == "true",
                     "action": action,
                     "reasoning": reasoning,
                 }
                 result = campaign_env.step(action_dict)
-                r   = result["reward"]
-                gt  = result["info"]["ground_truth"]
-                bd  = result["info"]["score_breakdown"]
+                # Ensure the environment resets up for the next step just in case
+                r   = result.get("reward", 0.0)
+                info = result.get("info", {})
+                gt  = info.get("ground_truth", {"is_coordinated": False, "correct_action": "None"})
+                bd  = info.get("score_breakdown", {})
                 filled = int(max(r, 0) * 20)
                 bar = "█" * filled + "░" * (20 - filled)
                 emoji = "✅" if r >= 0.8 else ("🟡" if r >= 0.4 else "❌")
@@ -394,8 +430,9 @@ a coordinated inauthentic behavior campaign.
                     out += f"  - `{k}`: `{v}`\n"
                 return out
 
-            load_camp_btn.click(
+            camp_sid_dd.change(
                 load_campaign,
+                inputs=[camp_sid_dd],
                 outputs=[camp_type_md, camp_posts_md]
             )
             camp_submit_btn.click(
@@ -403,7 +440,7 @@ a coordinated inauthentic behavior campaign.
                 inputs=[is_coord_dd, camp_action_dd, reasoning_tb],
                 outputs=[camp_result_md]
             )
-            demo.load(load_campaign, outputs=[camp_type_md, camp_posts_md])
+            demo.load(load_campaign, inputs=[camp_sid_dd], outputs=[camp_type_md, camp_posts_md])
 
     gr.Markdown("""
 ---

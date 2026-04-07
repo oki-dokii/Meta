@@ -154,8 +154,8 @@ def _compute_reward(action: dict, scenario: dict) -> tuple[float, dict]:
         else:
             breakdown["evasion_detection_bonus"] = 0.0
 
-    # Clamp to [-0.3, 1.0]
-    reward = max(-0.3, min(1.0, round(reward, 6)))
+    # Math boundaries: Clamp to [0.0, 1.0]
+    reward = max(0.0, min(1.0, round(reward, 6)))
     return reward, breakdown
 
 

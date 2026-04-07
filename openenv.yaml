@@ -18,7 +18,7 @@ tasks:
       benign posts) and select the correct moderation action. Labels and actions
       are unambiguous; no multimodal signals.
     difficulty: easy
-    score_range: [-0.3, 1.0]
+    score_range: [0.0, 1.0]
     score_components:
       - name: label_correct
         weight: 0.5
@@ -45,7 +45,7 @@ tasks:
       audio_transcript, visual_tags) significantly changes the correct action.
       Requires understanding nuance and escalation policies.
     difficulty: medium
-    score_range: [-0.3, 1.0]
+    score_range: [0.0, 1.0]
     score_components:
       - name: label_correct
         weight: 0.5
@@ -66,7 +66,7 @@ tasks:
       hate-speech severity rating (1-5) and detailed policy reasoning. Severity
       score is awarded within +-1 of ground truth. All penalties apply.
     difficulty: hard
-    score_range: [-0.3, 1.0]
+    score_range: [0.0, 1.0]
     score_components:
       - name: label_correct
         weight: 0.4
@@ -95,7 +95,7 @@ tasks:
       the Trust and Safety workflow used at major platforms to detect influence
       operations and coordinated inauthentic behavior.
     difficulty: hard_plus
-    score_range: [-0.2, 1.0]
+    score_range: [0.0, 1.0]
     score_components:
       - name: coordination_detected
         weight: 0.5
@@ -164,14 +164,14 @@ action_space:
 
 # ── Reward function ───────────────────────────────────────────────────────────
 reward:
-  range: [-0.3, 1.0]
+  range: [0.0, 1.0]
   type: deterministic
   description: >
     Partial-credit scoring with penalties. Each correct component (label, action,
     severity) contributes its rubric weight. Four penalty types can reduce the
     score below zero: false_positive_escalation (-0.25), missed_critical_threat
     (-0.20), invalid_label (-0.10), invalid_action (-0.10). Reward clamped to
-    [-0.3, 1.0]. Severity credited within +-1 of ground truth (hard tier only).
+    [0.0, 1.0]. Severity credited within +-1 of ground truth (hard tier only).
   partial_progress: true
   penalties:
     - name: false_positive_penalty
