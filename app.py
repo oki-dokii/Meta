@@ -182,38 +182,21 @@ THEME = gr.themes.Default(
     primary_hue="indigo",
     secondary_hue="blue",
     neutral_hue="slate",
-    font=[gr.themes.GoogleFont("Outfit"), "sans-serif"],
-).set(
-    body_background_fill="linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
-    body_background_fill_dark="linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
-    button_primary_background_fill="*primary_500",
-    button_primary_background_fill_hover="*primary_400",
-    border_color_primary="rgba(0,0,0,0.1)",
-    border_color_primary_dark="rgba(255,255,255,0.1)",
 )
 
 CSS = """
 .gradio-container {
     max-width: 1000px !important;
 }
-.gr-box, .gradio-container .form {
-    border-radius: 16px !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-    backdrop-filter: blur(8px);
+.header { 
+    text-align: center; 
+    padding: 2rem 0; 
+    margin-bottom: 2rem; 
+    border-bottom: 1px solid rgba(0,0,0,0.05); 
 }
-.header { text-align: center; padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.05); }
-.header > h1 { 
-    background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 800;
-    font-size: 2.5rem;
-}
-.action-btn { transition: all 0.2s ease !important; border-radius: 12px !important; }
-.action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important; }
 """
 
-with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark", theme=THEME, css=CSS) as demo:
+with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
 
     with gr.Column(elem_classes=["header"]):
         gr.Markdown("""
@@ -503,4 +486,6 @@ if __name__ == "__main__":
         server_name="0.0.0.0",
         server_port=7860,
         share=False,
+        theme=THEME,
+        css=CSS,
     )
