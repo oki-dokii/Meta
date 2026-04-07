@@ -269,7 +269,7 @@ with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
                     tier_md  = gr.Markdown()
 
                 with gr.Column(scale=2):
-                    state_md = gr.Markdown(label="Observation")
+                    state_md = gr.Markdown("**Select a scenario** from the dropdown to begin →", label="Observation")
 
             gr.Markdown("### Your moderation decision")
             with gr.Row():
@@ -300,7 +300,6 @@ with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
                 inputs=[sid_dd, label_dd, action_dd, sev_slider, rationale_tb],
                 outputs=[result_md, result_raw],
             )
-            demo.load(load_scenario, inputs=[sid_dd], outputs=[state_md, tier_md, sev_slider])
 
         # ── Tab 2: Baseline ───────────────────────────────────────────────────
         with gr.Tab("📊 Baseline"):
@@ -394,7 +393,7 @@ a coordinated inauthentic behavior campaign.
                     )
                     camp_type_md  = gr.Markdown()
                 with gr.Column(scale=2):
-                    camp_posts_md = gr.Markdown()
+                    camp_posts_md = gr.Markdown("**Select a campaign** from the dropdown to begin →")
 
             with gr.Row():
                 is_coord_dd = gr.Dropdown(
@@ -426,7 +425,6 @@ a coordinated inauthentic behavior campaign.
                 inputs=[is_coord_dd, camp_action_dd, reasoning_tb],
                 outputs=[camp_result_md]
             )
-            demo.load(load_campaign, inputs=[camp_sid_dd], outputs=[camp_type_md, camp_posts_md])
 
     gr.Markdown("""
 ---
