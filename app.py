@@ -124,7 +124,53 @@ def run_baseline_tab(tier_filter: str):
     return rows, f"Baseline complete. Overall mean reward: **{overall:.3f}**"
 
 
-# ── Tab 3: API examples ───────────────────────────────────────────────────────
+# ── Tab 3: Campaign Detection ────────────────────────────────────────────────
+
+def load_campaign(campaign_id=None):
+    """Load a campaign scenario for the Campaign Detection tab"""
+    # Always use random reset to avoid campaign_id errors
+    state = campaign_env.reset()
+    posts_md = ""
+    for i, p in enumerate(state.get("posts", []), 1):
+        posts_md += f"**Post {i}** — account: `{p.get('account_id', 'N/A')}`"
+        posts_md += f" &nbsp;|&nbsp; +{p.get('posted_at_offset_minutes', 0)} min"
+        posts_md += f" &nbsp;|&nbsp; platform: `{p.get('platform', 'unknown')}`\n\n"
+        posts_md += f"> {p.get('text', '')}\n\n"
+        if p.get("visual_tags"):
+             posts_md += f"*Visual signals: {', '.join(p['visual_tags'])}*\n\n"
+        posts_md += "---\n\n"
+    return (
+        f"**Campaign:** `{state.get('campaign_id', 'N/A')}` &nbsp;|"
+        f"&nbsp; {state.get('num_posts', 0)} posts\n",
+        posts_md
+    )
+
+
+def submit_campaign(is_coord_str, action, reasoning):
+    """Submit campaign detection decision"""
+    action_dict = {
+        "is_coordinated": is_coord_str == "true",
+        "action": action,
+        "reasoning": reasoning,
+    }
+    result = campaign_env.step(action_dict)
+    r   = result.get("reward", 0.0)
+    info = result.get("info", {})
+    gt  = info.get("ground_truth", {"is_coordinated": False, "correct_action": "None"})
+    bd  = info.get("score_breakdown", {})
+    filled = int(max(r, 0) * 20)
+    bar = "█" * filled + "░" * (20 - filled)
+    emoji = "✅" if r >= 0.8 else ("🟡" if r >= 0.4 else "❌")
+    out = f"{emoji} [{bar}] {r:.2f}\n\n"
+    out += f"**Ground truth:** coordinated=`{gt['is_coordinated']}`"
+    out += f"  action=`{gt['correct_action']}`\n\n"
+    out += f"**Score breakdown:**\n\n"
+    for k, v in bd.items():
+        out += f"  - `{k}`: `{v}`\n"
+    return out
+
+
+# ── Tab 4: API examples ───────────────────────────────────────────────────────
 
 API_CURL = """\
 # 1. Reset (load a random scenario)
@@ -369,47 +415,6 @@ a coordinated inauthentic behavior campaign.
                 "Submit → campaign_env.step()", variant="primary", elem_classes=["action-btn"]
             )
             camp_result_md = gr.Markdown()
-
-            def load_campaign(campaign_id=None):
-                # Always use random reset to avoid campaign_id errors
-                state = campaign_env.reset()
-                posts_md = ""
-                for i, p in enumerate(state.get("posts", []), 1):
-                    posts_md += f"**Post {i}** — account: `{p.get('account_id', 'N/A')}`"
-                    posts_md += f" &nbsp;|&nbsp; +{p.get('posted_at_offset_minutes', 0)} min"
-                    posts_md += f" &nbsp;|&nbsp; platform: `{p.get('platform', 'unknown')}`\n\n"
-                    posts_md += f"> {p.get('text', '')}\n\n"
-                    if p.get("visual_tags"):
-                         posts_md += f"*Visual signals: {', '.join(p['visual_tags'])}*\n\n"
-                    posts_md += "---\n\n"
-                return (
-                    f"**Campaign:** `{state.get('campaign_id', 'N/A')}` &nbsp;|"
-                    f"&nbsp; {state.get('num_posts', 0)} posts\n",
-                    posts_md
-                )
-
-            def submit_campaign(is_coord_str, action, reasoning):
-                action_dict = {
-                    "is_coordinated": is_coord_str == "true",
-                    "action": action,
-                    "reasoning": reasoning,
-                }
-                result = campaign_env.step(action_dict)
-                # Ensure the environment resets up for the next step just in case
-                r   = result.get("reward", 0.0)
-                info = result.get("info", {})
-                gt  = info.get("ground_truth", {"is_coordinated": False, "correct_action": "None"})
-                bd  = info.get("score_breakdown", {})
-                filled = int(max(r, 0) * 20)
-                bar = "█" * filled + "░" * (20 - filled)
-                emoji = "✅" if r >= 0.8 else ("🟡" if r >= 0.4 else "❌")
-                out = f"{emoji} [{bar}] {r:.2f}\n\n"
-                out += f"**Ground truth:** coordinated=`{gt['is_coordinated']}`"
-                out += f"  action=`{gt['correct_action']}`\n\n"
-                out += f"**Score breakdown:**\n\n"
-                for k, v in bd.items():
-                    out += f"  - `{k}`: `{v}`\n"
-                return out
 
             camp_sid_dd.change(
                 load_campaign,
