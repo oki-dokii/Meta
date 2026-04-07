@@ -213,7 +213,7 @@ CSS = """
 .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important; }
 """
 
-with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
+with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark", theme=THEME, css=CSS) as demo:
 
     with gr.Column(elem_classes=["header"]):
         gr.Markdown("""
@@ -503,6 +503,4 @@ if __name__ == "__main__":
         server_name="0.0.0.0",
         server_port=7860,
         share=False,
-        theme=THEME,
-        css=CSS,
     )
