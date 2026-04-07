@@ -213,7 +213,7 @@ CSS = """
 .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important; }
 """
 
-with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark", theme=THEME, css=CSS) as demo:
+with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
 
     with gr.Column(elem_classes=["header"]):
         gr.Markdown("""
@@ -387,11 +387,9 @@ a coordinated inauthentic behavior campaign.
             )
             camp_result_md = gr.Markdown()
 
-            def load_campaign(campaign_id):
-                if campaign_id:
-                    state = campaign_env.reset(campaign_id)
-                else:
-                    state = campaign_env.reset()
+            def load_campaign(campaign_id=None):
+                # Always use random reset to avoid campaign_id errors
+                state = campaign_env.reset()
                 posts_md = ""
                 for i, p in enumerate(state.get("posts", []), 1):
                     posts_md += f"**Post {i}** — account: `{p.get('account_id', 'N/A')}`"
