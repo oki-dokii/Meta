@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=67.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "content-moderation-env"
+version = "2.0.0"
+description = "ContentModerationEnv — an OpenEnv benchmark for AI content moderation agents"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+  {name = "Soham Banerjee"}
+]
+keywords = ["openenv", "benchmark", "content-moderation", "reinforcement-learning"]
+dependencies = [
+  "gradio>=4.40.0",
+  "openai>=1.0.0",
+  "groq>=0.9.0",
+  "pydantic>=2.0",
+  "fastapi",
+  "uvicorn",
+  "openenv-core>=0.2.0",
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["content_moderation_env*"]

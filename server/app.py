@@ -17,7 +17,7 @@ from pathlib import Path
 
 import gradio as gr
 
-SCRIPT_DIR = Path(__file__).parent
+SCRIPT_DIR = Path(__file__).parent.parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 from content_moderation_env import ContentModerationEnv, CampaignModerationEnv
@@ -438,11 +438,13 @@ ContentModerationEnv v2.0 · OpenEnv · MIT License
 # Added to the Gradio FastAPI instance so POST /reset returns HTTP 200,
 # satisfying the HF Space validator check.
 
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from fastapi import Request
+import uvicorn
 
+app = FastAPI()
 
-@demo.app.post("/reset")
+@app.post("/reset")
 async def api_reset(request: Request):
     """POST /reset  →  initial observation, HTTP 200"""
     try:
@@ -459,7 +461,7 @@ async def api_reset(request: Request):
         return JSONResponse({"error": str(exc)}, status_code=400)
 
 
-@demo.app.post("/step")
+@app.post("/step")
 async def api_step(request: Request):
     """POST /step  →  takes action dict, returns result"""
     try:
@@ -474,7 +476,7 @@ async def api_step(request: Request):
         return JSONResponse({"error": str(exc)}, status_code=400)
 
 
-@demo.app.get("/state")
+@app.get("/state")
 async def api_state():
     """GET /state  →  current environment state"""
     try:
@@ -484,11 +486,11 @@ async def api_state():
         return JSONResponse({"error": str(exc)}, status_code=400)
 
 
+app = gr.mount_gradio_app(app, demo, path="/")
+
+def main():
+    uvicorn.run("server.app:app", host="0.0.0.0", port=7860)
+
 if __name__ == "__main__":
-    demo.launch(
-        server_name="0.0.0.0",
-        server_port=7860,
-        share=False,
-        theme=THEME,
-        css=CSS,
-    )
+    main()
+
