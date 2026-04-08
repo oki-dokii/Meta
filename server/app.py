@@ -29,7 +29,7 @@ CAMPAIGNS_PATH = SCRIPT_DIR / "campaign_benchmark.json"
 env     = ContentModerationEnv(str(SCENARIOS_PATH), seed=42)
 campaign_env = CampaignModerationEnv(str(CAMPAIGNS_PATH), seed=42)
 ALL_IDS = env.scenario_ids
-CAMPAIGN_IDS = ["camp_crypto_001", "camp_doxx_002", "camp_disinfo_003"]
+CAMPAIGN_IDS = campaign_env._campaign_ids
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
