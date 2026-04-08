@@ -34,22 +34,13 @@ sys.path.insert(0, str(SCRIPT_DIR))
 from content_moderation_env import ContentModerationEnv
 
 # ── Credentials ───────────────────────────────────────────────────────────────
-# Detect provider from environment variable
-PROVIDER: str = os.getenv("LLM_PROVIDER", "groq")  # "openai", "grok", or "groq"
+# ── Credentials ───────────────────────────────────────────────────────────────
+API_BASE_URL = os.getenv("API_BASE_URL", "https://api.groq.com/openai/v1")
+MODEL_NAME = os.getenv("MODEL_NAME", "llama-3.3-70b-versatile")
+HF_TOKEN = os.getenv("HF_TOKEN")
 
-# API configuration based on provider
-if PROVIDER == "grok":
-    API_BASE_URL: str = os.getenv("API_BASE_URL", "https://api.x.ai/v1")
-    MODEL_NAME: str = os.getenv("MODEL_NAME", "grok-beta")
-    API_KEY: Optional[str] = os.getenv("XAI_API_KEY") or os.getenv("GROK_API_KEY")
-elif PROVIDER == "openai":
-    API_BASE_URL: str = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
-    MODEL_NAME: str = os.getenv("MODEL_NAME", "gpt-4o-mini")
-    API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY") or os.getenv("HF_TOKEN")
-else:  # default to groq
-    API_BASE_URL: str = os.getenv("API_BASE_URL", "https://api.groq.com/openai/v1")
-    MODEL_NAME: str = os.getenv("MODEL_NAME", "llama-3.3-70b-versatile")
-    API_KEY: Optional[str] = os.getenv("GROQ_API_KEY")
+# Optional - if you use from_docker_image():
+LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 SCENARIOS_PATH = SCRIPT_DIR / "moderation_benchmark.json"
@@ -343,13 +334,14 @@ def run_task(
 
 def main() -> None:
     """Entry point — run all 3 task episodes."""
-    if not API_KEY:
+    if not HF_TOKEN:
         # Still emit output so the format check passes; auth will fail at LLM call
         sys.stderr.write(
-            "WARNING: No API key found. Set HF_TOKEN or OPENAI_API_KEY.\n"
+            "WARNING: No API key found. Set HF_TOKEN.\n"
         )
 
-    client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY or "no-key")
+    # For hackathon local debugging outside the container, you can also inject it via GROQ_API_KEY manually before this point, but HF_TOKEN is strictly required by the validator string parser.
+    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN or os.getenv("GROQ_API_KEY") or "no-key")
     env = ContentModerationEnv(str(SCENARIOS_PATH), seed=42)
 
     for task in TASKS:
