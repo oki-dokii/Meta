@@ -191,7 +191,7 @@ if result["info"]["appeal_available"]:
 | easy / medium | 0.5 | 0.5 | — |
 | hard | 0.4 | 0.4 | 0.2 |
 
-### Penalties (may push reward below 0)
+### Penalties (subtracted from partial credit)
 
 | Penalty | Value | Trigger |
 |---------|-------|---------|
