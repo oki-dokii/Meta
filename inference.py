@@ -39,7 +39,6 @@ API_BASE_URL = os.getenv("API_BASE_URL", "https://api.groq.com/openai/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "llama-3.3-70b-versatile")
 HF_TOKEN = os.getenv("HF_TOKEN")
 
-# Optional - if you use from_docker_image():
 LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 
 # ── Constants ─────────────────────────────────────────────────────────────────
@@ -340,8 +339,7 @@ def main() -> None:
             "WARNING: No API key found. Set HF_TOKEN.\n"
         )
 
-    # For hackathon local debugging outside the container, you can also inject it via GROQ_API_KEY manually before this point, but HF_TOKEN is strictly required by the validator string parser.
-    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN or os.getenv("GROQ_API_KEY") or "no-key")
+    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
     env = ContentModerationEnv(str(SCENARIOS_PATH), seed=42)
 
     for task in TASKS:
