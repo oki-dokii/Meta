@@ -416,9 +416,11 @@ Meta/
 ├── benchmark_pipeline.py      # Full 3-step pipeline (Claude + Gemini)
 ├── benchmark_pipeline_gemini.py # Gemini-only pipeline
 ├── validate_openenv.py        # Self-contained 92-check validation suite
-├── app.py                     # Gradio Hugging Face Spaces UI
+├── server/
+│   └── app.py                 # Gradio Hugging Face Spaces UI & API endpoints
 ├── Dockerfile                 # HF Spaces deployment
-├── requirements.txt
+├── uv.lock                    # Dependency lockfile
+├── pyproject.toml             # Project build configuration
 └── README.md
 ```
 
