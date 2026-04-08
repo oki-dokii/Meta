@@ -445,6 +445,7 @@ import uvicorn
 app = FastAPI()
 
 @app.post("/reset")
+@app.post("/reset/")
 async def api_reset(request: Request):
     """POST /reset  →  initial observation, HTTP 200"""
     try:
@@ -462,6 +463,7 @@ async def api_reset(request: Request):
 
 
 @app.post("/step")
+@app.post("/step/")
 async def api_step(request: Request):
     """POST /step  →  takes action dict, returns result"""
     try:
@@ -477,6 +479,7 @@ async def api_step(request: Request):
 
 
 @app.get("/state")
+@app.get("/state/")
 async def api_state():
     """GET /state  →  current environment state"""
     try:
