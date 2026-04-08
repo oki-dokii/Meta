@@ -128,8 +128,10 @@ def run_baseline_tab(tier_filter: str):
 
 def load_campaign(campaign_id=None):
     """Load a campaign scenario for the Campaign Detection tab"""
-    # Always use random reset to avoid campaign_id errors
-    state = campaign_env.reset()
+    try:
+        state = campaign_env.reset(campaign_id=campaign_id)
+    except Exception as e:
+        return f"Error: {e}", "Failed to load campaign."
     posts_md = ""
     for i, p in enumerate(state.get("posts", []), 1):
         posts_md += f"**Post {i}** — account: `{p.get('account_id', 'N/A')}`"
@@ -146,8 +148,12 @@ def load_campaign(campaign_id=None):
     )
 
 
-def submit_campaign(is_coord_str, action, reasoning):
+def submit_campaign(campaign_id, is_coord_str, action, reasoning):
     """Submit campaign detection decision"""
+    try:
+        campaign_env.reset(campaign_id=campaign_id)
+    except Exception as e:
+        return f"Error resetting campaign: {e}"
     action_dict = {
         "is_coordinated": is_coord_str == "true",
         "action": action,
@@ -422,7 +428,7 @@ a coordinated inauthentic behavior campaign.
             )
             camp_submit_btn.click(
                 submit_campaign,
-                inputs=[is_coord_dd, camp_action_dd, reasoning_tb],
+                inputs=[camp_sid_dd, is_coord_dd, camp_action_dd, reasoning_tb],
                 outputs=[camp_result_md]
             )
 
