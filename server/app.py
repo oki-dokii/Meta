@@ -230,25 +230,61 @@ print(f"Breakdown: {result['info']['score_breakdown']}")
 
 # ── Build UI ──────────────────────────────────────────────────────────────────
 
-THEME = gr.themes.Default(
-    primary_hue="indigo",
-    secondary_hue="blue",
-    neutral_hue="slate",
+THEME = gr.themes.Soft(
+    primary_hue="emerald",
+    neutral_hue="zinc",
+    font=[gr.themes.GoogleFont("Inter"), "ui-sans-serif", "system-ui", "sans-serif"],
+).set(
+    button_primary_background_fill="*primary_500",
+    button_primary_background_fill_hover="*primary_600",
+    block_radius="12px",
+    block_border_width="1px",
+    block_border_color="*neutral_200",
+    block_border_color_dark="*neutral_700",
+    block_background_fill="*background_fill_secondary",
 )
 
 CSS = """
 .gradio-container {
-    max-width: 1000px !important;
+    max-width: 1100px !important;
+    margin: 0 auto;
 }
 .header { 
     text-align: center; 
-    padding: 2rem 0; 
+    padding: 3rem 0 2rem; 
     margin-bottom: 2rem; 
-    border-bottom: 1px solid rgba(0,0,0,0.05); 
+    background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(59,130,246,0.1) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+.dark .header {
+    background: linear-gradient(135deg, rgba(16,185,129,0.05) 0%, rgba(59,130,246,0.05) 100%);
+    border-color: rgba(255,255,255,0.05);
+}
+.action-btn { 
+    font-weight: 600 !important;
+    font-size: 1.1rem !important;
+    padding: 0.75rem !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
+    transition: transform 0.1s ease !important;
+}
+.action-btn:hover {
+    transform: translateY(-1px) !important;
+}
+.observation-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.05);
+}
+.dark .observation-card {
+    background: #1f2937;
+    border-color: #374151;
 }
 """
 
-with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
+with gr.Blocks(theme=THEME, css=CSS, title="ContentModerationEnv — OpenEnv Benchmark") as demo:
 
     with gr.Column(elem_classes=["header"]):
         gr.Markdown("""
@@ -275,7 +311,7 @@ with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
                     tier_md  = gr.Markdown()
 
                 with gr.Column(scale=2):
-                    state_md = gr.Markdown("**Select a scenario** from the dropdown to begin →", label="Observation")
+                    state_md = gr.Markdown("**Select a scenario** from the dropdown to begin →", label="Observation", elem_classes=["observation-card"])
 
             gr.Markdown("### Your moderation decision")
             with gr.Row():
@@ -399,7 +435,7 @@ a coordinated inauthentic behavior campaign.
                     )
                     camp_type_md  = gr.Markdown()
                 with gr.Column(scale=2):
-                    camp_posts_md = gr.Markdown("**Select a campaign** from the dropdown to begin →")
+                    camp_posts_md = gr.Markdown("**Select a campaign** from the dropdown to begin →", elem_classes=["observation-card"])
 
             with gr.Row():
                 is_coord_dd = gr.Dropdown(
