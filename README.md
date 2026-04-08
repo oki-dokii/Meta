@@ -33,7 +33,7 @@ tags:
 2. **Take action**: `allow | warn | remove | shadowban | escalate`
 3. **Rate severity** (hard tier): `1` (mild) → `5` (critical)
 
-Agents receive **partial-credit rewards with penalties** (`-0.3` to `1.0`) providing rich gradient signals for learning.
+Agents receive **partial-credit rewards with penalties** (`0.0` to `1.0`) providing rich gradient signals for learning.
 
 ---
 
@@ -79,7 +79,7 @@ Ten hard scenarios have `valid_actions: [remove, shadowban]` or similar — two 
 |---------|----|----|
 | Scenarios | 60 | **128** (52 easy · 25 medium · 51 hard) |
 | Episode type | Single-step only | **Queue mode** + **Campaign mode** + single-step compat |
-| Reward range | `0.0–1.0` | **`-0.3–1.0`** (penalties) |
+| Reward range | `0.0–1.0` | **`0.0–1.0`** (penalties clamped) |
 | Penalties | None | **4 penalty types** + graduated severity |
 | Adversarial | None | **10 adversarial scenarios** with `appeal()` mechanic |
 | Ambiguous GT | None | **10 hard scenarios** with `valid_actions` list |
@@ -97,7 +97,7 @@ Ten hard scenarios have `valid_actions: [remove, shadowban]` or similar — two 
 | Adversarial scenarios | 10 (with `appeal()` mechanic) |
 | Campaign episodes | 3 campaigns × 3 posts (`camp_crypto_001`, `camp_doxx_002`, `camp_disinfo_003`) |
 | Episode modes | Queue (3-post) + Campaign + Single-step (backward compat) |
-| Reward range | `-0.3` to `1.0` (partial credit + graduated penalties + bonuses) |
+| Reward range | `0.0` to `1.0` (partial credit + graduated penalties + bonuses) |
 | Reproducible | ✅ deterministic scoring, seed-controlled RNG |
 
 ---
@@ -208,7 +208,7 @@ if result["info"]["appeal_available"]:
 | Appeal correct | **+0.10** | `env.appeal()` verdict matches `appeal_verdict` gt |
 | Appeal wrong | **-0.10** | `env.appeal()` verdict is wrong (fooled by appeal) |
 
-**Reward is clamped to `[-0.3, 1.0]`.**
+**Reward is clamped to `[0.0, 1.0]`.**
 
 ---
 

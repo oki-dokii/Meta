@@ -250,7 +250,7 @@ with gr.Blocks(title="ContentModerationEnv — OpenEnv Benchmark") as demo:
 ### An OpenEnv benchmark for evaluating AI content moderation agents
 
 > **128 scenarios** across 3 difficulty tiers (easy / medium / hard) ·
-> **Partial-credit scoring** (-0.3 – 1.0) · **Full OpenEnv API**  
+> **Partial-credit scoring** (0.0 – 1.0) · **Full OpenEnv API**  
 > `reset()` · `step()` · `state()` · `appeal()` · campaign mode · adversarial scenarios
 """)
 
