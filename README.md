@@ -37,6 +37,61 @@ Agents receive **partial-credit rewards with penalties** (`0.0` to `1.0`) provid
 
 ---
 
+## System Architecture & Interaction Loop
+
+### 1. High-Level Architecture
+```mermaid
+graph LR
+    subgraph "Data Layer"
+        A[JSON Datasets] --> B(ContentModerationEnv)
+        A2[Campaign Sets] --> B
+    end
+    
+    subgraph "Environment Backend"
+        B --> C{Pydantic Validations}
+        C --> D[Partial Reward Grader]
+    end
+    
+    subgraph "Agent / Execution"
+        F[inference.py] -->|1. reset/step| B
+        D -.->|Reward / Done| F
+        F -->|2. Prompt via API| G(LLM: Groq / OpenAI)
+        G -->|3. JSON Decision| F
+    end
+    
+    classDef env fill:#1d2b45,stroke:#3b5687;
+    classDef agent fill:#293d25,stroke:#4b7044;
+    class B,C,D env;
+    class F,G agent;
+```
+
+### 2. Core Interaction Loop
+```mermaid
+flowchart TD
+    A([Start Episode]) --> B{Select Mode}
+    B -->|Queue| C(Pop 3 Scenarios)
+    B -->|Campaign| D(Load 3-Post Campaign)
+    B -->|Single| E(Load 1 Scenario)
+    
+    C --> F[Agent Observes Content & Context]
+    D --> F
+    E --> F
+    
+    F --> G[Agent Predicts Label, Action, Severity]
+    
+    G --> H{Scenario Adversarial?}
+    H -->|Yes| I[Poster Appeals Action]
+    I --> J[Agent Submits Uphold/Overturn]
+    J --> K[Compute Validated Reward]
+    H -->|No| K
+    
+    K --> L{Queue Finished?}
+    L -->|No| F
+    L -->|Yes| M([End Episode])
+```
+
+---
+
 ## Why ContentModerationEnv is Different
 
 Most NLP benchmarks test **accuracy**. Real-world content moderation fails in more interesting ways: an agent may be *consistent under pressure*, *calibrated about uncertainty*, or *manipulated by persuasive appeals*. This environment is designed to surface those failures.
