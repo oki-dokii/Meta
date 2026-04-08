@@ -17,7 +17,7 @@ Credentials (read from environment variables — first non-empty wins):
 Stdout format (zero deviation allowed):
     [START] task=<name> env=content_moderation model=<model>
     [STEP]  step=<n> action=<json> reward=<0.00> done=<true|false> error=<msg|null>
-    [END]   success=<true|false> steps=<n> rewards=<r1,r2,...>
+    [END]   success=<true|false> steps=<n> score=<score> rewards=<r1,r2,...>
 """
 
 import json
@@ -98,17 +98,18 @@ def log_step(
     )
 
 
-def log_end(success: bool, steps: int, rewards: List[float]) -> None:
+def log_end(success: bool, steps: int, score: float, rewards: List[float]) -> None:
     """Emit [END] line.
 
     Rules:
     - success: lowercase string 'true' or 'false'
+    - score: exactly 3 decimal places
     - rewards: comma-separated, each exactly 2 decimal places
     """
     success_str = "true" if success else "false"
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
     print(
-        f"[END] success={success_str} steps={steps} rewards={rewards_str}",
+        f"[END] success={success_str} steps={steps} score={score:.3f} rewards={rewards_str}",
         flush=True,
     )
 
@@ -276,6 +277,7 @@ def run_task(
     """
     rewards: List[float] = []
     steps_taken = 0
+    score = 0.0
     success = False
 
     log_start(task_name, MODEL_NAME)
@@ -320,13 +322,14 @@ def run_task(
                 log_step(steps_taken, action, reward, done, step_error)
 
         mean_reward = sum(rewards) / len(rewards) if rewards else 0.0
-        success = mean_reward >= 0.1
+        score = max(0.0, min(1.0, mean_reward))
+        success = score >= 0.1
 
     except Exception as exc:  # noqa: BLE001
         print(f"[DEBUG] Task fatal error: {exc}", flush=True)
 
     finally:
-        log_end(success, steps_taken, rewards)
+        log_end(success, steps_taken, score, rewards)
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
