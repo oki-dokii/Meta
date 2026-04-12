@@ -1,0 +1,1646 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "Symbol database for multimodal content moderation. Edit this file to add/update symbols without changing code.",
+    "schema": {
+      "id": "unique snake_case identifier",
+      "name": "human-readable display name",
+      "keywords": "list of fuzzy-match keywords — any hit scores a match",
+      "aliases": "optional alternative spellings / numbers",
+      "description": "what the model should look for visually",
+      "confidence_required": "0.0–1.0: threshold above which the symbol is auto-flagged; below this it routes to human review",
+      "route_to_human_below": "if confidence is below this value, always route_to_human=true",
+      "category": "parent category key",
+      "severity": "1–5 severity level if auto-flagged",
+      "hit_count": "Number of times human confirmed this symbol",
+      "miss_count": "Number of times human overturned a hit for this symbol",
+      "is_learned": "True if this symbol was auto-generated from feedback"
+    }
+  },
+  "categories": {
+    "western_hate_symbols": [
+      {
+        "id": "swastika",
+        "name": "Swastika / Hakenkreuz",
+        "keywords": [
+          "swastika",
+          "hakenkreuz",
+          "nazi cross",
+          "hooked cross",
+          "tilted cross"
+        ],
+        "aliases": [
+          "卐",
+          "卍"
+        ],
+        "description": "Black swastika tilted 45 degrees, often on red/white background; also appears as graffiti or tattoo",
+        "confidence_required": 0.75,
+        "route_to_human_below": 0.4,
+        "category": "western_hate_symbols",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "ss_bolts",
+        "name": "SS Bolts (Schutzstaffel)",
+        "keywords": [
+          "ss bolts",
+          "lightning bolts",
+          "double lightning",
+          "runic ss",
+          "schutzstaffel"
+        ],
+        "aliases": [
+          "ϟϟ"
+        ],
+        "description": "Two angular lightning bolt runes side by side; appears on patches, flags, tattoos",
+        "confidence_required": 0.8,
+        "route_to_human_below": 0.5,
+        "category": "western_hate_symbols",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "kkk_cross",
+        "name": "KKK Burning Cross",
+        "keywords": [
+          "burning cross",
+          "kkk",
+          "ku klux klan",
+          "klan cross",
+          "flaming cross"
+        ],
+        "aliases": [],
+        "description": "Cross set on fire; used by KKK as symbol of intimidation",
+        "confidence_required": 0.8,
+        "route_to_human_below": 0.5,
+        "category": "western_hate_symbols",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "celtic_cross_hate",
+        "name": "Celtic Cross (white power context)",
+        "keywords": [
+          "celtic cross",
+          "odin cross",
+          "sun cross",
+          "white power cross",
+          "stormfront logo"
+        ],
+        "aliases": [],
+        "description": "Equal-armed cross within a circle; benign in religious context but used as white nationalist symbol — assess surrounding context",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.65,
+        "category": "western_hate_symbols",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "black_sun",
+        "name": "Black Sun / Sonnenrad",
+        "keywords": [
+          "black sun",
+          "sonnenrad",
+          "sunwheel",
+          "twelve spokes",
+          "twelve spoke wheel",
+          "nazi sun"
+        ],
+        "aliases": [],
+        "description": "Circular symbol with twelve radiating runes, resembling a black sun; used by neo-Nazis",
+        "confidence_required": 0.78,
+        "route_to_human_below": 0.5,
+        "category": "western_hate_symbols",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "noose",
+        "name": "Noose / Hangman's Noose",
+        "keywords": [
+          "noose",
+          "hangman noose",
+          "rope noose",
+          "lynching rope",
+          "gallows rope"
+        ],
+        "aliases": [],
+        "description": "Rope tied in a loop knot; used as a racial terror threat symbol",
+        "confidence_required": 0.75,
+        "route_to_human_below": 0.5,
+        "category": "western_hate_symbols",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "iron_cross",
+        "name": "Iron Cross (extremist context)",
+        "keywords": [
+          "iron cross",
+          "eisernes kreuz",
+          "balkenkreuz",
+          "german cross"
+        ],
+        "aliases": [],
+        "description": "Black Prussian/German military cross; context-dependent — skateboarding/gaming uses are benign; white nationalist use is harmful",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.7,
+        "category": "western_hate_symbols",
+        "severity": 2,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "blood_drop_cross",
+        "name": "Blood Drop Cross (KKK)",
+        "keywords": [
+          "blood drop cross",
+          "blood drop",
+          "klan drop",
+          "kkk insignia"
+        ],
+        "aliases": [],
+        "description": "Cross with a blood-red drop inside; official KKK emblem",
+        "confidence_required": 0.8,
+        "route_to_human_below": 0.55,
+        "category": "western_hate_symbols",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "aryan_fist",
+        "name": "Aryan / White Power Fist",
+        "keywords": [
+          "white power fist",
+          "aryan fist",
+          "raised fist white nationalist",
+          "wp salute fist"
+        ],
+        "aliases": [],
+        "description": "Raised clenched fist used as white power salute; distinct from leftist raised fist by context and surrounding symbols",
+        "confidence_required": 0.9,
+        "route_to_human_below": 0.72,
+        "category": "western_hate_symbols",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "odinist_runes_hate",
+        "name": "Odinist / Norse Runes (hate context)",
+        "keywords": [
+          "othala rune",
+          "life rune",
+          "tyr rune",
+          "wolfsangel",
+          "algiz rune hate",
+          "odinist rune"
+        ],
+        "aliases": [],
+        "description": "Pre-Christian Norse runes repurposed by neo-Nazis; Othala rune was official Nazi symbol — assess context carefully",
+        "confidence_required": 0.88,
+        "route_to_human_below": 0.7,
+        "category": "western_hate_symbols",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "valknut",
+        "name": "Valknut (Odin's Knot)",
+        "keywords": [
+          "valknut",
+          "odin knot",
+          "knot of the slain",
+          "interlocking triangles",
+          "three triangles"
+        ],
+        "aliases": [],
+        "description": "Three interlocking triangles; used as symbol of Norse religion but co-opted by white supremacists to denote willingness to die for the race",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.7,
+        "category": "western_hate_symbols",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "day_of_the_rope",
+        "name": "Day of the Rope (The Turner Diaries reference)",
+        "keywords": [
+          "day of the rope",
+          "rope day",
+          "the turner diaries symbol",
+          "hanging traitors code"
+        ],
+        "aliases": [],
+        "description": "Reference to a fictional white supremacist revolution in 'The Turner Diaries'; used as a call for mass lynchings",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.6,
+        "category": "western_hate_symbols",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "bowlcut_dylann_roof",
+        "name": "Bowlcut (Dylann Roof Reference)",
+        "keywords": [
+          "bowlcut extremist",
+          "bowl cut nazi",
+          "roof bowlcut",
+          "dylann roof hair symbol"
+        ],
+        "aliases": [],
+        "description": "The specific bowl-shaped hairstyle of mass murderer Dylann Roof; used by white supremacists as a symbol of 'saint-like' status for the killer",
+        "confidence_required": 0.9,
+        "route_to_human_below": 0.75,
+        "category": "western_hate_symbols",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "hyperborea_esoteric",
+        "name": "Hyperborea / Agartha (Esoteric Fascism)",
+        "keywords": [
+          "hyperborea symbol",
+          "agartha",
+          "esoteric fascism",
+          "aryan homeland",
+          "mystical nazi"
+        ],
+        "aliases": [],
+        "description": "Pseudo-historical mystical themes used by modern 'Gen Z' extremists to frame white supremacy as a lost spiritual civilization",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.7,
+        "category": "western_hate_symbols",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "GNET Global Extremism Research"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      }
+    ],
+    "numeric_codes": [
+      {
+        "id": "code_88",
+        "name": "88 — Heil Hitler",
+        "keywords": [
+          "88",
+          "hh",
+          "code 88",
+          "eighty eight"
+        ],
+        "aliases": [
+          "HH"
+        ],
+        "description": "H is the 8th letter; '88' = 'Heil Hitler'; appears on clothing, tattoos, licence plates, usernames",
+        "confidence_required": 0.82,
+        "route_to_human_below": 0.6,
+        "category": "numeric_codes",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_14",
+        "name": "14 — The 14 Words",
+        "keywords": [
+          "14 words",
+          "the 14 words",
+          "code 14",
+          "fourteen words"
+        ],
+        "aliases": [
+          "14"
+        ],
+        "description": "Reference to white nationalist slogan 'We must secure the existence of our people and a future for white children'",
+        "confidence_required": 0.82,
+        "route_to_human_below": 0.6,
+        "category": "numeric_codes",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_1488",
+        "name": "1488 — Combined 14 Words + 88",
+        "keywords": [
+          "1488",
+          "14/88",
+          "fourteen eighty eight"
+        ],
+        "aliases": [],
+        "description": "Combining the 14 words and 88 (HH); strongest combined white nationalist numeric code",
+        "confidence_required": 0.75,
+        "route_to_human_below": 0.5,
+        "category": "numeric_codes",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_311",
+        "name": "311 — KKK (K=11th letter)",
+        "keywords": [
+          "311",
+          "kkk numeric",
+          "triple eleven"
+        ],
+        "aliases": [],
+        "description": "K is the 11th letter; 3×11 = KKK; appears in KKK recruitment",
+        "confidence_required": 0.88,
+        "route_to_human_below": 0.7,
+        "category": "numeric_codes",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_13",
+        "name": "13 — Sureno / MS-13",
+        "keywords": [
+          "ms13",
+          "ms-13",
+          "mara salvatrucha",
+          "sureno 13",
+          "sur 13"
+        ],
+        "aliases": [
+          "XIII",
+          "13"
+        ],
+        "description": "MS-13 gang code; M=13th letter; appears as tattoos, graffiti, hand signs",
+        "confidence_required": 0.8,
+        "route_to_human_below": 0.55,
+        "category": "numeric_codes",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_18",
+        "name": "18 — 18th Street Gang / Adolf Hitler",
+        "keywords": [
+          "18 street",
+          "18th street",
+          "barrio 18",
+          "mara 18",
+          "ah code",
+          "code 18"
+        ],
+        "aliases": [
+          "AH",
+          "XVIII"
+        ],
+        "description": "Refers to 18th Street Gang (A=1, H=8) or Adolf Hitler depending on context",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "numeric_codes",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_100",
+        "name": "100 — Aryan Brotherhood",
+        "keywords": [
+          "aryan brotherhood",
+          "ab code",
+          "triple zero",
+          "aryan 100"
+        ],
+        "aliases": [],
+        "description": "Code used by Aryan Brotherhood prison gang",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "numeric_codes",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_12",
+        "name": "12 — AB (Aryan Brotherhood)",
+        "keywords": [
+          "code 12",
+          "ab aryan brother",
+          "12 aryan",
+          "aryan brother 12"
+        ],
+        "aliases": [
+          "XII"
+        ],
+        "description": "A=1, B=2; used by Aryan Brotherhood prison gang; appears on tattoos",
+        "confidence_required": 0.88,
+        "route_to_human_below": 0.68,
+        "category": "numeric_codes",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_666_hate",
+        "name": "666 / FFF (white nationalist inversion)",
+        "keywords": [
+          "fff code",
+          "666 white power",
+          "f is sixth letter code"
+        ],
+        "aliases": [],
+        "description": "F=6th letter; 'FFF' = some extremist groups; context-dependent — mostly satanic aesthetic but sometimes used by accelerationists",
+        "confidence_required": 0.92,
+        "route_to_human_below": 0.8,
+        "category": "numeric_codes",
+        "severity": 2,
+        "metadata": {
+          "sources": [
+            "Moonshot CVE Coded Signals"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_109",
+        "name": "109 — Antisemitic Code",
+        "keywords": [
+          "109",
+          "code 109",
+          "one hundred nine"
+        ],
+        "aliases": [],
+        "description": "Refers to white supremacist claim that Jews have been expelled from 109 locations; used as antisemitic signal",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "numeric_codes",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_23_16",
+        "name": "23/16 — White Power (W=23, P=16)",
+        "keywords": [
+          "23/16",
+          "code 23 16",
+          "23 16 symbol"
+        ],
+        "aliases": [
+          "WP"
+        ],
+        "description": "W is 23rd letter, P is 16th letter; stands for White Power; used by white supremacist gangs",
+        "confidence_required": 0.82,
+        "route_to_human_below": 0.6,
+        "category": "numeric_codes",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_13_52",
+        "name": "13/52 (Racist crime statistic meme)",
+        "keywords": [
+          "13/52",
+          "13 52",
+          "thirteen fifty two",
+          "crime statistic meme"
+        ],
+        "aliases": [
+          "13/50"
+        ],
+        "description": "Refers to a debunked/misinterpreted statistic used by white supremacists to claim Black people are inherently violent",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "numeric_codes",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Moonshot CVE Coded Signals"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "code_420_extremist",
+        "name": "4/20 (Hitler's Birthday context)",
+        "keywords": [
+          "4/20 nazi",
+          "april 20th birthday",
+          "adolf birthday signal"
+        ],
+        "aliases": [],
+        "description": "While 420 is common cannabis slang, in the context of other hate symbols it refers to Adolf Hitler's birthday (April 20th)",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.9,
+        "category": "numeric_codes",
+        "severity": 2,
+        "metadata": {
+          "sources": [
+            "Moonshot CVE Coded Signals"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      }
+    ],
+    "gang_signs": [
+      {
+        "id": "crip_sign",
+        "name": "Crips Gang Sign",
+        "keywords": [
+          "crip sign",
+          "crips hand sign",
+          "crab sign",
+          "blue rag",
+          "crip walk"
+        ],
+        "aliases": [],
+        "description": "Various C-shaped finger configurations; typically paired with blue clothing or bandana",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "gang_signs",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "blood_sign",
+        "name": "Bloods Gang Sign",
+        "keywords": [
+          "blood sign",
+          "bloods hand sign",
+          "b hand",
+          "red rag",
+          "piru sign"
+        ],
+        "aliases": [],
+        "description": "B-shaped gesture or 'B' formed with fingers; associated with red clothing",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "gang_signs",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "ms13_sign",
+        "name": "MS-13 Hand Sign",
+        "keywords": [
+          "ms13 sign",
+          "ms-13 gesture",
+          "mara gesture",
+          "salvatrucha sign"
+        ],
+        "aliases": [],
+        "description": "'M' shape formed with both hands; often displayed by multiple people",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "gang_signs",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "folk_nation_pitchfork",
+        "name": "Folk Nation Pitchfork",
+        "keywords": [
+          "pitchfork sign",
+          "folk nation",
+          "gangster disciples pitchfork",
+          "gd pitchfork",
+          "six pointed star gang"
+        ],
+        "aliases": [],
+        "description": "Three-finger gesture resembling a pitchfork; associated with Gangster Disciples/Folk Nation",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "gang_signs",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "vice_lords_sign",
+        "name": "Vice Lords Hand Sign",
+        "keywords": [
+          "vice lords sign",
+          "vice lord gesture",
+          "vl hand sign",
+          "people nation sign"
+        ],
+        "aliases": [],
+        "description": "Diamond shape formed with hands; associated with People Nation / Vice Lords",
+        "confidence_required": 0.87,
+        "route_to_human_below": 0.65,
+        "category": "gang_signs",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "latin_kings_sign",
+        "name": "Latin Kings Hand Sign / Crown",
+        "keywords": [
+          "latin kings sign",
+          "alkqn sign",
+          "crown hand sign",
+          "lk crown gesture",
+          "latin kings crown"
+        ],
+        "aliases": [],
+        "description": "Crown shape or 'LK' formed with fingers; associated with Latin Kings (Almighty Latin King and Queen Nation)",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "gang_signs",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "sureno_hand_sign",
+        "name": "Sureño Hand Sign",
+        "keywords": [
+          "sureno sign",
+          "sur sign",
+          "south side sign",
+          "xiii sign",
+          "southern mexico gang"
+        ],
+        "aliases": [
+          "SUR"
+        ],
+        "description": "S-shaped or XIII finger sign associated with Sureño gang network; paired with blue clothing",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "gang_signs",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      }
+    ],
+    "regional_india": [
+      {
+        "id": "saffron_crescent_combo",
+        "name": "Saffron + Crescent Juxtaposition (communal provocation)",
+        "keywords": [
+          "saffron crescent",
+          "saffron moon",
+          "hindu crescent",
+          "communal symbol",
+          "temple mosque juxtapose"
+        ],
+        "aliases": [],
+        "description": "Deliberate juxtaposition of Hindu (saffron/trident) and Islamic (crescent/star) symbols in antagonistic framing; context is critical",
+        "confidence_required": 0.9,
+        "route_to_human_below": 0.7,
+        "category": "regional_india",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Regional Intelligence / GNET Glocalization"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "cow_slaughter_imagery",
+        "name": "Cow Slaughter Propaganda Imagery",
+        "keywords": [
+          "cow slaughter",
+          "gau hatya",
+          "beef propaganda",
+          "gau raksha mob"
+        ],
+        "aliases": [],
+        "description": "Images used to incite communal violence in India around cow slaughter; often manipulated or out-of-context",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "regional_india",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Regional Intelligence / GNET Glocalization"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "rss_volunteer_uniform",
+        "name": "RSS Volunteer Uniform in Violent Context",
+        "keywords": [
+          "rss uniform",
+          "khaki shorts uniform",
+          "shakha uniform",
+          "rashtriya swayamsevak"
+        ],
+        "aliases": [],
+        "description": "RSS volunteer uniform (khaki shorts, white shirt, cap); benign in most contexts but may appear in violence-incitement imagery",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.8,
+        "category": "regional_india",
+        "severity": 2,
+        "metadata": {
+          "sources": [
+            "Regional Intelligence / GNET Glocalization"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "kashmir_propaganda",
+        "name": "Kashmir Separatist / Propaganda Symbol",
+        "keywords": [
+          "kashmir flag",
+          "azad kashmir symbol",
+          "hurriyat flag",
+          "kashmir separatist"
+        ],
+        "aliases": [],
+        "description": "Flags or symbols associated with violent Kashmir separatist groups",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "regional_india",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Regional Intelligence / GNET Glocalization"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "khalistani_symbol",
+        "name": "Khalistani Symbol (violent context)",
+        "keywords": [
+          "khalistan",
+          "khalistani flag",
+          "dal khalsa extremist",
+          "sikh separatist violence"
+        ],
+        "aliases": [],
+        "description": "Khalistan movement imagery; typically benign cultural expression but can be violence-incitement in specific contexts",
+        "confidence_required": 0.9,
+        "route_to_human_below": 0.75,
+        "category": "regional_india",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Regional Intelligence / GNET Glocalization"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "anti_muslim_caricature",
+        "name": "Anti-Muslim Caricature (India)",
+        "keywords": [
+          "anti muslim caricature",
+          "islamophobic image india",
+          "communal cartoon",
+          "topi cap caricature"
+        ],
+        "aliases": [],
+        "description": "Dehumanising caricatures of Muslims using stereotyped features; often used in communal incitement content",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "regional_india",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Regional Intelligence / GNET Glocalization"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "anti_dalit_imagery",
+        "name": "Anti-Dalit Dehumanising Imagery",
+        "keywords": [
+          "anti dalit",
+          "caste violence image",
+          "untouchable caricature",
+          "dalit dehumanise"
+        ],
+        "aliases": [],
+        "description": "Imagery used to dehumanise or incite caste-based violence against Dalits; includes derogatory labour-caste depictions",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "regional_india",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Regional Intelligence / GNET Glocalization"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "northeast_insurgent_flag",
+        "name": "Northeast India Insurgent Group Flag",
+        "keywords": [
+          "ulfa flag",
+          "nscn flag",
+          "manipur insurgent",
+          "northeast separatist flag",
+          "assam ulfa"
+        ],
+        "aliases": [],
+        "description": "Flags of designated terror organisations operating in Northeast India (ULFA-I, NSCN factions, etc.)",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.65,
+        "category": "regional_india",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "GNET Global Extremism Research"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "communal_riot_patterns",
+        "name": "Communal Riot Incitement Imagery",
+        "keywords": [
+          "riot pattern",
+          "mob arson",
+          "sectarian violence india",
+          "weapon prep communal",
+          "neighborhood barricade communal"
+        ],
+        "aliases": [],
+        "description": "Visual patterns indicating preparation for or participation in communal riots (e.g. stockpiled glass bottles, specific religious markings on target houses)",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.75,
+        "category": "regional_india",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Regional Intelligence / GNET Glocalization"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "political_incitement_misuse",
+        "name": "Misuse of Political Symbols for Incitement",
+        "keywords": [
+          "political logo threat",
+          "party symbol weapon",
+          "incitement poster",
+          "leader caricature violent"
+        ],
+        "aliases": [],
+        "description": "Political flags or logos paired with weapons, dehumanising text, or calls for violence against specific communities",
+        "confidence_required": 0.95,
+        "route_to_human_below": 0.85,
+        "category": "regional_india",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "Regional Intelligence / GNET Glocalization"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      }
+    ],
+    "extremist_flags": [
+      {
+        "id": "isis_flag",
+        "name": "ISIS / ISIL Black Flag (Shahada)",
+        "keywords": [
+          "isis flag",
+          "isil flag",
+          "islamic state flag",
+          "black flag shahada",
+          "daesh flag",
+          "jihadist flag"
+        ],
+        "aliases": [
+          "داعش"
+        ],
+        "description": "Black flag with white Arabic text (Shahada); used specifically by ISIS/Daesh; note: many jihadist groups use similar flags",
+        "confidence_required": 0.8,
+        "route_to_human_below": 0.55,
+        "category": "extremist_flags",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "GNET Global Extremism Research"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "al_qaeda_flag",
+        "name": "Al-Qaeda Affiliated Flag",
+        "keywords": [
+          "al qaeda flag",
+          "al nusra flag",
+          "al shabaab flag",
+          "jabhat flag",
+          "salafi jihadist flag"
+        ],
+        "aliases": [],
+        "description": "Black flag variants used by al-Qaeda affiliates; similar to ISIS flag but different text/seal arrangement",
+        "confidence_required": 0.8,
+        "route_to_human_below": 0.55,
+        "category": "extremist_flags",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "GNET Global Extremism Research"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "neo_nazi_flag",
+        "name": "Neo-Nazi / NSM Flag",
+        "keywords": [
+          "neo nazi flag",
+          "nsm flag",
+          "national socialist movement flag",
+          "white nationalist flag",
+          "aryan flag"
+        ],
+        "aliases": [],
+        "description": "Red flag with swastika or SS bolts; used by modern neo-Nazi organisations",
+        "confidence_required": 0.78,
+        "route_to_human_below": 0.55,
+        "category": "extremist_flags",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "GNET Global Extremism Research"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "atomwaffen_flag",
+        "name": "Atomwaffen / Accelerationist Flag",
+        "keywords": [
+          "atomwaffen",
+          "skull mask flag",
+          "deaths head flag",
+          "accelerationist",
+          "siege culture flag",
+          "rwds flag"
+        ],
+        "aliases": [],
+        "description": "Skull/death imagery on flags; used by neo-Nazi accelerationist groups like Atomwaffen Division",
+        "confidence_required": 0.8,
+        "route_to_human_below": 0.6,
+        "category": "extremist_flags",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "boogaloo_flag",
+        "name": "Boogaloo Movement Symbol",
+        "keywords": [
+          "boogaloo flag",
+          "igloo flag",
+          "big igloo",
+          "boogaloo bois",
+          "hawaiian shirt gun"
+        ],
+        "aliases": [],
+        "description": "Hawaiian shirt + weapons imagery; associated with anti-government violent extremism in the US",
+        "confidence_required": 0.82,
+        "route_to_human_below": 0.62,
+        "category": "extremist_flags",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "proud_boys_symbol",
+        "name": "Proud Boys Symbol",
+        "keywords": [
+          "proud boys",
+          "western chauvinist",
+          "pb logo",
+          "proud boys patch",
+          "fraternal order"
+        ],
+        "aliases": [],
+        "description": "Logo and patches used by Proud Boys; context is critical as organisation itself is not universally designated",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.7,
+        "category": "extremist_flags",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "azov_battalion_flag",
+        "name": "Azov Battalion / Regiment Symbol",
+        "keywords": [
+          "azov flag",
+          "azov wolfangel",
+          "wolfsangel black sun azov",
+          "ukraine neo nazi flag"
+        ],
+        "aliases": [],
+        "description": "Black Wolfsangel on yellow background; used by Azov Battalion — context critical as organisation has mixed status",
+        "confidence_required": 0.85,
+        "route_to_human_below": 0.68,
+        "category": "extremist_flags",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "GNET Global Extremism Research"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "hammerskin_symbol",
+        "name": "Hammerskin Nation Symbol",
+        "keywords": [
+          "hammerskin",
+          "crossed hammers patch",
+          "hammerskin badge",
+          "hsn patch"
+        ],
+        "aliases": [],
+        "description": "Two crossed hammers (similar to Pink Floyd motif) inside a circle; used by Hammerskin Nation neo-Nazi group",
+        "confidence_required": 0.8,
+        "route_to_human_below": 0.6,
+        "category": "extremist_flags",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "sonnenrad_variant_global",
+        "name": "Sonnenrad Variants (Glocalized)",
+        "keywords": [
+          "esoteric sun",
+          "twelve spoke wheel asian",
+          "extremist sun motif",
+          "localized sunwheel"
+        ],
+        "aliases": [],
+        "description": "Global adaptations of the Black Sun (Sonnenrad) used by non-Western extremist groups to signal alignment with global white nationalist aesthetics",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.75,
+        "category": "extremist_flags",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "GNET Global Extremism Research"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      }
+    ],
+    "coded_gestures": [
+      {
+        "id": "okay_sign_wp",
+        "name": "OK / Circle-Game Gesture (white power context)",
+        "keywords": [
+          "okay sign",
+          "ok gesture",
+          "circle game",
+          "wp hand sign",
+          "white power okay",
+          "three fingers down"
+        ],
+        "aliases": [
+          "👌"
+        ],
+        "description": "Standard OK hand sign co-opted as 'WP' (White Power) symbol — HIGHLY CONTEXT DEPENDENT: presence of other hate symbols or specific contexts elevates risk",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.8,
+        "category": "coded_gestures",
+        "severity": 2,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "roman_salute",
+        "name": "Roman / Nazi Salute",
+        "keywords": [
+          "roman salute",
+          "nazi salute",
+          "sieg heil salute",
+          "straight arm raise",
+          "heil salute",
+          "fascist salute"
+        ],
+        "aliases": [],
+        "description": "Extended straight arm raised at an angle; historically associated with fascism and Nazism",
+        "confidence_required": 0.8,
+        "route_to_human_below": 0.58,
+        "category": "coded_gestures",
+        "severity": 5,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "frog_pepe",
+        "name": "Pepe the Frog (hate context)",
+        "keywords": [
+          "pepe frog",
+          "pepe hate",
+          "pepe nazi",
+          "alt right pepe",
+          "npc meme frog",
+          "clown pepe",
+          "nazi pepe",
+          "pepe variant",
+          "honk honk pepe"
+        ],
+        "aliases": [],
+        "description": "Pepe the Frog meme character in hate-symbol context (Nazi uniform, KKK hood, etc.); benign alone; includes variants like Honkler/Clown Pepe used in extremist circles.",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.7,
+        "category": "coded_gestures",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "white_rabbit",
+        "name": "White Rabbit (ethno-nationalist code)",
+        "keywords": [
+          "white rabbit",
+          "follow the white rabbit",
+          "whiterabbit",
+          "era movement"
+        ],
+        "aliases": [],
+        "description": "White rabbit imagery used as a coded symbol by some white nationalist groups online",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.75,
+        "category": "coded_gestures",
+        "severity": 2,
+        "metadata": {
+          "sources": [
+            "Moonshot CVE Coded Signals"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "milk_glass",
+        "name": "Glass of Milk (white nationalist code)",
+        "keywords": [
+          "milk gesture",
+          "glass of milk symbol",
+          "milk white nationalist",
+          "milk supremacist"
+        ],
+        "aliases": [],
+        "description": "Drinking milk as coded signal of white supremacy (lactose tolerance claim); very context-dependent",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.85,
+        "category": "coded_gestures",
+        "severity": 1,
+        "metadata": {
+          "sources": [
+            "Moonshot CVE Coded Signals"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "index_up_sky",
+        "name": "Index Finger Pointed Skyward (jihadist context)",
+        "keywords": [
+          "finger sky",
+          "index sky",
+          "one finger raised",
+          "tawhid gesture",
+          "shahada finger"
+        ],
+        "aliases": [],
+        "description": "Single index finger raised toward sky; common Islamic gesture of Tawhid (oneness of God) — ONLY harmful in explicit jihadist propaganda context",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.85,
+        "category": "coded_gestures",
+        "severity": 2,
+        "metadata": {
+          "sources": [
+            "Regional Intelligence / GNET Glocalization"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "three_percent_symbol",
+        "name": "Three Percenter Symbol",
+        "keywords": [
+          "three percenter",
+          "3 percenter",
+          "iii percent",
+          "threeper",
+          "three percent militia"
+        ],
+        "aliases": [
+          "III%"
+        ],
+        "description": "Roman numeral III inside a circle or star; associated with anti-government militia movements in the US",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.65,
+        "category": "coded_gestures",
+        "severity": 3,
+        "metadata": {
+          "sources": [
+            "ADL Hate Symbols Database"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "hands_up_dont_shoot",
+        "name": "Hands Up (contextual incitement)",
+        "keywords": [
+          "hands up gesture mob",
+          "hands raised incitement",
+          "hands up violent protest"
+        ],
+        "aliases": [],
+        "description": "Raised hands gesture — overwhelmingly benign; only flagged if combined with explicit incitement text or imagery",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.9,
+        "category": "coded_gestures",
+        "severity": 1,
+        "metadata": {
+          "sources": [
+            "Cross-referenced Intelligence"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      },
+      {
+        "id": "gesture_combo_threat",
+        "name": "Combined Threat Gestures",
+        "keywords": [
+          "gesture combo",
+          "multiple hand signs violent",
+          "hand sign sequence group"
+        ],
+        "aliases": [],
+        "description": "Sequence or combination of hand signs (e.g. OK sign + gun gesture) used to convey target-specific threats",
+        "confidence_required": 1.1,
+        "route_to_human_below": 0.8,
+        "category": "coded_gestures",
+        "severity": 4,
+        "metadata": {
+          "sources": [
+            "Moonshot CVE Coded Signals"
+          ],
+          "verification_status": "Agent Verified (latest pull)"
+        },
+        "hit_count": 0,
+        "miss_count": 0,
+        "is_learned": false
+      }
+    ]
+  }
+}
