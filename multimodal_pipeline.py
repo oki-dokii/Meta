@@ -397,7 +397,11 @@ def _load_audio_bytes(source: str) -> tuple[bytes, str]:
     parsed = urlparse(source)
     if parsed.scheme in ("http", "https"):
         # URL: download to a temp buffer
-        with urllib.request.urlopen(source, timeout=30) as resp:
+        req = urllib.request.Request(
+            source,
+            headers={"User-Agent": "MultimodalModerationBot/1.0 (Contact: agentic-ai@meta.com)"}
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
             audio_bytes = resp.read()
         # Infer filename from URL path or default to .ogg
         url_path = parsed.path
@@ -663,7 +667,7 @@ def analyse_audio(
 # ── Visual constants ──────────────────────────────────────────────────────────
 
 # LLaMA 3.2 Vision on Groq
-VISUAL_LLM_MODEL = os.getenv("VISUAL_MODEL_NAME", "llama-3.2-11b-vision-preview")
+VISUAL_LLM_MODEL = os.getenv("VISUAL_MODEL_NAME", "meta-llama/llama-4-scout-17b-16e-instruct")
 
 SUPPORTED_IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp"}
 SUPPORTED_VIDEO_EXTS = {".mp4", ".webm", ".mov", ".avi", ".mkv"}
@@ -762,7 +766,14 @@ def _fuzzy_score(needle: str, haystack: str) -> float:
     from difflib import SequenceMatcher
     needle_l = needle.lower()
     hay_l    = haystack.lower()
-    if needle_l in hay_l:
+    
+    # 1. Whole-word exact match (prevents 'SUR' matching 'surface')
+    # We use \b boundary anchors to ensure we match the word itself.
+    if re.search(rf"\b{re.escape(needle_l)}\b", hay_l):
+        return 1.0
+
+    # 2. Substring containment ONLY for longer phrases (e.g. "hate speech" in a sentence)
+    if len(needle_l) > 5 and needle_l in hay_l:
         return 1.0
     # Check word-boundary partial match on each word in the haystack
     words = re.split(r"[\s,;.!?\-/]+", hay_l)
@@ -885,8 +896,8 @@ def _build_image_system_prompt(db: Optional[dict] = None) -> str:
     symbol_ref = "\n".join(symbol_lines) if symbol_lines else "  (no entries loaded)"
 
     return f"""\
-You are a visual content safety analyst for a content moderation platform.
-Analyse the image thoroughly and classify what you see.
+You are a historical and cultural visual analyst.
+Analyze the provided image objectively and describe its components in detail.
 
 You MUST check specifically for these 7 harm categories:
   1. weapons           — firearms, knives, bombs, any weapon
@@ -986,7 +997,11 @@ def _load_image_bytes(source: str) -> tuple[bytes, str]:
     """
     parsed = urlparse(source)
     if parsed.scheme in ("http", "https"):
-        with urllib.request.urlopen(source, timeout=30) as resp:
+        req = urllib.request.Request(
+            source,
+            headers={"User-Agent": "MultimodalModerationBot/1.0 (Contact: agentic-ai@meta.com)"}
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
             raw = resp.read()
         filename = Path(parsed.path).name or "image.jpg"
         if not Path(filename).suffix:
@@ -1009,18 +1024,27 @@ def _image_bytes_to_base64(raw_bytes: bytes, filename: str) -> str:
     Non-JPEG formats converted via Pillow; falls back to raw encoding.
     """
     import base64
-    ext = Path(filename).suffix.lower()
-    if ext not in (".jpg", ".jpeg"):
-        try:
-            from PIL import Image as _PIL
-            buf_in = io.BytesIO(raw_bytes)
-            img = _PIL.open(buf_in).convert("RGB")
-            buf_out = io.BytesIO()
-            img.save(buf_out, format="JPEG", quality=85)
-            return base64.b64encode(buf_out.getvalue()).decode()
-        except ImportError:
-            pass
-    return base64.b64encode(raw_bytes).decode()
+    from PIL import Image as _PIL
+    try:
+        buf_in = io.BytesIO(raw_bytes)
+        img = _PIL.open(buf_in)
+        
+        # Flatten transparency to white background
+        if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
+            background = _PIL.new("RGB", img.size, (255, 255, 255))
+            if img.mode == "P":
+                img = img.convert("RGBA")
+            background.paste(img, mask=img.split()[3]) # 3 is the alpha channel
+            img = background
+        else:
+            img = img.convert("RGB")
+
+        buf_out = io.BytesIO()
+        img.save(buf_out, format="JPEG", quality=85)
+        return base64.b64encode(buf_out.getvalue()).decode()
+    except Exception:
+        # Fallback to raw if PIL fails
+        return base64.b64encode(raw_bytes).decode()
 
 
 def _parse_image_response(
@@ -1036,6 +1060,10 @@ def _parse_image_response(
     try:
         parsed = json.loads(raw_text)
     except json.JSONDecodeError:
+        # Fallback: if it's a plain text refusal (common for safety blocks),
+        # return a synthetic tag so Layer 2 knows what happened.
+        if any(w in raw_text.lower() for w in ["cannot", "unable", "sorry", "safety", "policy"]):
+            return ["model-refusal-safety"], [], {"model-refusal-safety": 1.0}
         return [], [], {}
 
     # --- visual_tags ---
@@ -1205,8 +1233,16 @@ class ImagePipeline:
                 max_tokens=800,
             )
             raw = (response.choices[0].message.content or "").strip()
+            
+            # --- Debugging fallback ---
+            if not raw:
+                print("\n[DEBUG] Vision model returned an EMPTY response (likely an API-level safety refusal).")
+            
             visual_tags, harmful_tags, confidence_per_tag = _parse_image_response(raw)
 
+            if not visual_tags and raw:
+                # If we got text but no tags, the model likely refused or gave non-JSON
+                print(f"\n[DEBUG] Vision model raw response: {raw[:500]}...")
             # ── Layer 2: run _CONTEXT_ANALYZER on the image description ──────
             # Extract the image_description field from the raw response for
             # richer fuzzy matching (includes evidence notes from the model).
@@ -1250,7 +1286,8 @@ class ImagePipeline:
 
             return visual_tags, harmful_tags, confidence_per_tag
 
-        except Exception:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
+            print(f"\n[DEBUG] Error calling vision model: {exc}")
             return [], [], {}
 
 
@@ -1739,33 +1776,39 @@ def _cli():
     parser = argparse.ArgumentParser(
         description="Multimodal pipeline — audio / image / video analysis"
     )
+    parser.add_argument("--self-test", action="store_true", help="Run the automated self-test suite")
+    parser.add_argument("--json", action="store_true", help="Output result as JSON")
+    parser.add_argument("--previous-flags", type=int, default=0)
+    parser.add_argument("--platform-policy", default="moderate")
+
     sub = parser.add_subparsers(dest="mode", required=False)
 
     def _add_common(p):
-        p.add_argument("source")
-        p.add_argument("--json", action="store_true")
-        p.add_argument("--previous-flags", type=int, default=0)
-        p.add_argument("--platform-policy", default=None)
+        p.add_argument("source", help="Path or URL to the media")
+        p.add_argument("--json", action="store_true", help="Output result as JSON")
 
     _add_common(sub.add_parser("audio", help="Transcribe + tone-detect an audio file"))
     _add_common(sub.add_parser("image", help="Extract visual tags from an image"))
     _add_common(sub.add_parser("video", help="Full video analysis (keyframes + audio)"))
 
-    # Legacy positional (no sub-command → defaults to audio)
-    parser.add_argument("source", nargs="?")
-    parser.add_argument("--json", action="store_true")
-    parser.add_argument("--previous-flags", type=int, default=0)
-    parser.add_argument("--platform-policy", default=None)
+    # Global positional source (only used if no sub-command)
+    parser.add_argument("global_source", nargs="?", help="Source file or URL (used if no subcommand)")
 
     args = parser.parse_args()
+
+    if args.self_test:
+        _run_self_test()
+        return
+
+    # Consolidate source: if sub-command used, it has 'source'. Else use 'global_source'
     mode = args.mode or "audio"
-    source = args.source
-    as_json = args.json
+    source = getattr(args, "source", None) or args.global_source
+    as_json = args.json or getattr(args, "json", False)
     prev_flags = args.previous_flags
     policy = args.platform_policy
 
     if not source:
-        parser.error("source argument required")
+        parser.error("source argument required (directly or via sub-command)")
 
     if mode == "image":
         result = analyse_visual(source, platform_policy=policy, previous_flags=prev_flags)
@@ -1780,8 +1823,6 @@ def _cli():
         pprint.pprint(result)
 
 
-if __name__ == "__main__":
-    _cli()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -2229,3 +2270,6 @@ def learn_from_feedback(
         "is_overturn": is_overturn,
         "symbol_id": target_sid_clean if target_sid else None
     }
+
+if __name__ == "__main__":
+    _cli()
